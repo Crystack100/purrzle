@@ -10,7 +10,10 @@ for kind in ("sun", "moon"):
 import base64
 font = base64.b64encode((root / "src/fredoka-latin.woff2").read_bytes()).decode()
 face = ('<style>@font-face { font-family: "Fredoka"; font-style: normal; font-weight: 300 700; font-display: swap; '
-        'src: url(data:font/woff2;base64,' + font + ') format("woff2"); }</style>')
+        'src: url(data:font/woff2;base64,' + font + ') format("woff2"); }\n'
+        # A sharper sans for menus and instructions (Settings, How to play).
+        '@font-face { font-family: "Plus Jakarta Sans"; font-style: normal; font-weight: 500 800; font-display: swap; '
+        'src: url(data:font/woff2;base64,' + base64.b64encode((root / "src/jakarta-latin.woff2").read_bytes()).decode() + ') format("woff2"); }</style>')
 gfonts = [l for l in game.splitlines() if "fonts.googleapis.com" in l or "fonts.gstatic.com" in l]
 for l in gfonts: game = game.replace(l + "\n", "")
 game = game.replace("<style>", face + "\n<style>", 1)

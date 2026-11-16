@@ -1,7 +1,7 @@
 <title>Purrzle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500..800&display=swap">
 <style>
 /* Layout: a phone app shell. Top status bar, one screen at a time (home, level map, shop, puzzle),
    and a bottom tab bar. The cats on the board are the hero.
@@ -15,6 +15,7 @@
   --bad: #e8676b; --bad-soft: rgba(232, 103, 107, .16);
   --shadow: rgba(60, 50, 40, .14);
   --font-display: "Fredoka", "Avenir Next Rounded", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --font-ui: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-body: "Fredoka", "Avenir Next Rounded", system-ui, -apple-system, sans-serif;
 }
 /* Shop skins come after the system blocks so they win when equipped. */
@@ -880,6 +881,49 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
 .how-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-radius: 16px; cursor: pointer; text-align: left; color: var(--ink);
   background: var(--cell); box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--cell) 86%, #000); font: 600 1.05rem var(--font-display); }
 .how-btn svg { width: 40px; height: 40px; flex: none; padding: 9px; box-sizing: border-box; border-radius: 12px; color: #fff; background: linear-gradient(var(--acc-lt, #f8c08c), var(--accent)); box-shadow: 0 3px 0 color-mix(in srgb, var(--accent) 68%, #000); fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Sharper type for menus and instructions: Settings, How to play and the tutorial's sentences.
+   Fredoka stays for the logo, buttons and big headlines. */
+#sheet .sheet, #sheet .sheet *, #how-sheet .sheet, #how-sheet .sheet *, .tut-text, .tut-msg, .tut-rules li { font-family: var(--font-ui) !important; }
+.set-head { font: 800 1.45rem/1 var(--font-ui) !important; letter-spacing: -.01em; text-shadow: 0 1px 0 var(--acc-dk); }
+#sheet .slider label, #sheet .how-btn { font-weight: 700 !important; font-size: 1rem !important; letter-spacing: -.005em; }
+#sheet .slider output { font-weight: 600 !important; font-size: .9rem !important; font-variant-numeric: tabular-nums; }
+#sheet .na-txt b { font-weight: 800 !important; font-size: 1.12rem !important; letter-spacing: -.01em; text-shadow: 0 1px 0 var(--acc-dk); }
+#sheet .na-txt small { font-weight: 500 !important; }
+#sheet .na-price, #sheet .na-ic b { font-weight: 800 !important; }
+.tut-text { font-weight: 500; font-size: 1rem; letter-spacing: -.005em; }
+.tut-msg { font-weight: 600; font-size: .95rem; }
+.tut-rules li { font-weight: 500; font-size: .93rem; }
+
+/* How to play: a bold title line and a plain sentence under it, for each rule. */
+#how-sheet h3 { font: 800 1.45rem/1.1 var(--font-ui) !important; letter-spacing: -.015em; color: var(--ink); }
+#how-sheet .note { margin: -8px 0 0; font-weight: 500; font-size: .95rem; }
+.rule-strip.how-rules div { font: 500 .93rem/1.4 var(--font-ui); color: color-mix(in srgb, var(--ink) 82%, var(--muted)); }
+.rule-strip.how-rules span b { display: block; font: 800 1rem/1.3 var(--font-ui); color: var(--ink); letter-spacing: -.01em; margin-bottom: 1px; }
+#how-sheet .how-foot { margin: -2px 0 2px; text-align: center; font-size: .85rem; }
+
+/* A sign drawn like the ones on the board, so it can sit inside a sentence. */
+.sign { display: inline-grid; place-items: center; width: 1.45em; height: 1.45em; margin: 0 .08em; border-radius: 50%; vertical-align: -.38em;
+  background: var(--surface); box-shadow: 0 0 0 1.5px var(--line), 0 1px 3px rgb(0 0 0 / .14); }
+.sign svg { width: 62%; height: 62%; fill: none; stroke: currentColor; stroke-width: 3.6; stroke-linecap: round; }
+.sign.eq { color: #2f86d6; } .sign.op { color: #f07a2a; }
+.rule-strip.how-rules .sign { width: 1.3em; height: 1.3em; vertical-align: -.32em; }
+.rule-strip.how-rules .sign svg { width: 62%; height: 62%; flex: none; }
+.tut-sign { width: 74px; height: 74px; margin: -4px 0 0; font-size: 51px; vertical-align: 0; box-shadow: 0 0 0 3px var(--line), 0 6px 14px -6px var(--shadow); }
+.tut-sign[hidden] { display: none; }
+.tut-sign.bounce { animation: pop .4s cubic-bezier(.3, 1.8, .5, 1); }
+
+/* A broken row or column gets a red frame around the whole line and a tag saying what's wrong. */
+.err-bands { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.err-band { position: absolute; border-radius: 13px; box-shadow: inset 0 0 0 3px var(--bad), 0 0 0 3px color-mix(in srgb, var(--bad) 22%, transparent);
+  background: color-mix(in srgb, var(--bad) 9%, transparent); animation: bandIn .25s ease-out; }
+.err-band i { position: absolute; font: 800 .68rem/1 var(--font-ui); font-style: normal; color: #fff; background: var(--bad); padding: 4px 7px; border-radius: 999px;
+  white-space: nowrap; box-shadow: 0 0 0 2px var(--surface); }
+.err-band.row i { right: 6px; top: 0; translate: 0 -55%; }
+.err-band.col i { left: 50%; top: 0; translate: -50% -60%; }
+@keyframes bandIn { from { opacity: 0; scale: .97; } }
+/* Inside a framed line the red tiles are enough, so the "!" badges go away. */
+.board .cell.bad::after { content: none; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1182,12 +1226,13 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
 <div class="sheet-bg" id="how-sheet" hidden>
   <div class="sheet pop-card how-card" role="dialog" aria-modal="true" aria-labelledby="how-title">
     <h3 id="how-title">How to play</h3>
-    <p class="note">Fill every square with Sunny or Luna.</p>
+    <p class="note">Put a Sunny or a Luna in every square.</p>
     <div class="rule-strip how-rules">
-        <div><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1.0" y="8.0" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="0.0" y="6.5" width="15" height="15"/><rect x="15.3" y="8.0" width="13" height="13" rx="2.5" class="rt t1"/><use href="#moon" x="14.3" y="6.5" width="15" height="15"/><rect x="29.6" y="8.0" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="28.6" y="6.5" width="15" height="15"/><rect x="1.0" y="22.3" width="13" height="13" rx="2.5" class="rt t1"/><use href="#moon" x="0.0" y="20.8" width="15" height="15"/><rect x="15.3" y="22.3" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="14.3" y="20.8" width="15" height="15"/><rect x="29.6" y="22.3" width="13" height="13" rx="2.5" class="rt t1"/><use href="#moon" x="28.6" y="20.8" width="15" height="15"/></svg><span><b>3 of each.</b> Every row and column has 3 Sunnys and 3 Lunas.</span></div>
-        <div><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1.0" y="15.5" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="0.0" y="14.0" width="15" height="15"/><rect x="15.3" y="15.5" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="14.3" y="14.0" width="15" height="15"/><rect x="29.6" y="15.5" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="28.6" y="14.0" width="15" height="15"/><path d="M6 10 38 34M38 10 6 34" stroke="var(--bad)" stroke-width="2.6" opacity=".9" stroke-linecap="round"/></svg><span><b>No 3 in a row.</b> Never more than 2 of the same cat side by side.</span></div>
-        <div><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1" y="4" width="14" height="14" rx="2.5" class="rt t0"/><use href="#sun" x="0" y="2.5" width="16" height="16"/><rect x="29" y="4" width="14" height="14" rx="2.5" class="rt t0"/><use href="#sun" x="28" y="2.5" width="16" height="16"/><rect x="1" y="26" width="14" height="14" rx="2.5" class="rt t0"/><use href="#sun" x="0" y="24.5" width="16" height="16"/><rect x="29" y="26" width="14" height="14" rx="2.5" class="rt t1"/><use href="#moon" x="28" y="24.5" width="16" height="16"/><text x="22" y="15.5" class="rs">=</text><text x="22" y="37.5" class="rs">&#215;</text></svg><span><b>Signs.</b> = means the two cats match. &#215; means they are opposite.</span></div>
+        <div><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1.0" y="8.0" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="0.0" y="6.5" width="15" height="15"/><rect x="15.3" y="8.0" width="13" height="13" rx="2.5" class="rt t1"/><use href="#moon" x="14.3" y="6.5" width="15" height="15"/><rect x="29.6" y="8.0" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="28.6" y="6.5" width="15" height="15"/><rect x="1.0" y="22.3" width="13" height="13" rx="2.5" class="rt t1"/><use href="#moon" x="0.0" y="20.8" width="15" height="15"/><rect x="15.3" y="22.3" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="14.3" y="20.8" width="15" height="15"/><rect x="29.6" y="22.3" width="13" height="13" rx="2.5" class="rt t1"/><use href="#moon" x="28.6" y="20.8" width="15" height="15"/></svg><span><b>Half and half</b>Each row and column gets 3 Sunnys and 3 Lunas.</span></div>
+        <div><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1.0" y="15.5" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="0.0" y="14.0" width="15" height="15"/><rect x="15.3" y="15.5" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="14.3" y="14.0" width="15" height="15"/><rect x="29.6" y="15.5" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="28.6" y="14.0" width="15" height="15"/><path d="M6 10 38 34M38 10 6 34" stroke="var(--bad)" stroke-width="2.6" opacity=".9" stroke-linecap="round"/></svg><span><b>Max two in a row</b>Three of the same cat can't sit side by side.</span></div>
+        <div><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1" y="4" width="14" height="14" rx="2.5" class="rt t0"/><use href="#sun" x="0" y="2.5" width="16" height="16"/><rect x="29" y="4" width="14" height="14" rx="2.5" class="rt t0"/><use href="#sun" x="28" y="2.5" width="16" height="16"/><rect x="1" y="26" width="14" height="14" rx="2.5" class="rt t0"/><use href="#sun" x="0" y="24.5" width="16" height="16"/><rect x="29" y="26" width="14" height="14" rx="2.5" class="rt t1"/><use href="#moon" x="28" y="24.5" width="16" height="16"/><text x="22" y="15.5" class="rs">=</text><text x="22" y="37.5" class="rs">&#215;</text></svg><span><b>Follow the signs</b>Cats joined by <span class="sign eq"><svg viewBox="0 0 16 16"><path d="M3 5.2h10M3 10.8h10"/></svg></span> match. Cats joined by <span class="sign op"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></span> are different.</span></div>
     </div>
+    <p class="note how-foot">Every puzzle has one answer, so you never have to guess.</p>
     <button class="chunky" id="how-tut" type="button">Play the tutorial</button>
     <button class="soft" id="how-close" type="button">Got it</button>
   </div>
@@ -1213,13 +1258,14 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   <div class="tut-card">
     <div class="tut-top"><div class="tut-dots" id="tut-dots"></div><button class="tut-skip" id="tut-skip" type="button">Skip</button></div>
     <svg class="tut-cat" id="tut-cat" viewBox="0 0 100 100" aria-hidden="true"><use href="#sun"/></svg>
+    <span class="tut-sign sign" id="tut-sign" aria-hidden="true" hidden></span>
     <h3 id="tut-title">How to play</h3>
     <p class="tut-text" id="tut-text"></p>
     <div class="tut-row" id="tut-row"></div>
     <ul class="tut-rules" id="tut-rules" hidden>
       <li><b>1</b>No more than 2 of the same cat side by side</li>
       <li><b>2</b>Each row and column has 3 Sunny and 3 Luna</li>
-      <li><b>3</b><span><span class="tr-eq">=</span> means same cat, <span class="tr-op">×</span> means different</span></li>
+      <li><b>3</b><span>Squares joined by <span class="sign eq"><svg viewBox="0 0 16 16"><path d="M3 5.2h10M3 10.8h10"/></svg></span> match, and by <span class="sign op"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></span> are different</span></li>
     </ul>
     <p class="tut-msg" id="tut-msg" aria-live="polite"></p>
     <button class="tut-go" id="tut-go" type="button">Next</button>
@@ -1445,15 +1491,15 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   // First-time tutorial: five tiny lessons, each solved by tapping the glowing square.
   var TUT = [
     { title: "Meet Sunny and Luna", text: "Tap the glowing square to place Sunny. Tap it again for Luna.", row: [-1], goal: 0, answer: 1, cat: "sun",
-      say: { 0: "That's Sunny! Tap again for Luna.", 1: "And that's Luna! A third tap clears the square." } },
+      say: { 0: "That's Sunny! Tap again for Luna.", 1: "And that's Luna! Tap again to switch back to Sunny." } },
     { title: "No three in a row", text: "Never put 3 of the same cat side by side.", row: [0, 0, -1, 1], goal: 2, answer: 1, cat: "sun",
       bad: { 0: { msg: "Three Sunnys in a row! Tap again to swap.", cells: [0, 1, 2] } } },
     { title: "Three of each", text: "Every row and column holds 3 Sunny and 3 Luna.", row: [1, 0, 0, 1, 0, -1], goal: 5, answer: 1, cat: "moon",
       bad: { 0: { msg: "That's 4 Sunnys. Only 3 of each fit in a row.", cells: [1, 2, 4, 5] } } },
-    { title: "= means the same", text: "Cats joined by = must be the same.", row: [-1, 1], edges: [{ a: 0, type: "=" }], goal: 0, answer: 1, cat: "moon",
-      bad: { 0: { msg: "The = wants matching cats. Try Luna.", edge: 0 } } },
-    { title: "× means different", text: "Cats joined by × must be different.", row: [0, -1], edges: [{ a: 0, type: "×" }], goal: 1, answer: 1, cat: "sun",
-      bad: { 0: { msg: "The × wants different cats. Try Luna.", edge: 0 } } },
+    { title: "Matching pair", sign: "eq", text: "Two squares joined by <span class=\"sign eq\"><svg viewBox=\"0 0 16 16\"><path d=\"M3 5.2h10M3 10.8h10\"/></svg></span> always hold the same cat.", row: [-1, 1], edges: [{ a: 0, type: "=" }], goal: 0, answer: 1, cat: "moon",
+      bad: { 0: { msg: "These two have to match. Try Luna.", edge: 0 } } },
+    { title: "Opposite pair", sign: "op", text: "Two squares joined by <span class=\"sign op\"><svg viewBox=\"0 0 16 16\"><path d=\"M4 4l8 8M12 4l-8 8\"/></svg></span> always hold different cats.", row: [0, -1], edges: [{ a: 0, type: "×" }], goal: 1, answer: 1, cat: "sun",
+      bad: { 0: { msg: "These two can't be the same. Try Luna.", edge: 0 } } },
     { title: "You're ready!", text: "Fill every square so all the rules hold. Each puzzle has exactly one answer, so you never need to guess.", rules: true, cat: "sun" }
   ];
   var tut = null;
@@ -1470,7 +1516,10 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   function tutStep() {
     var L = TUT[tut.step], cat = $("tut-cat");
     tut.row = (L.row || []).slice();
-    $("tut-title").textContent = L.title; $("tut-text").textContent = L.text;
+    $("tut-title").textContent = L.title; $("tut-text").innerHTML = L.text;
+    // Sign lessons show the sign itself as the picture, so the sentence never has to open with a symbol.
+    $("tut-sign").innerHTML = L.sign ? (L.sign === "eq" ? '<svg viewBox="0 0 16 16"><path d="M3 5.2h10M3 10.8h10"/></svg>' : '<svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg>') : "";
+    $("tut-sign").className = "tut-sign sign " + (L.sign || ""); $("tut-sign").hidden = !L.sign; cat.style.display = L.sign ? "none" : "";
     cat.innerHTML = '<use href="#' + L.cat + '"/>'; cat.classList.remove("bounce");
     $("tut-dots").querySelectorAll("i").forEach(function (d, k) { d.className = k === tut.step ? "on" : k < tut.step ? "done" : ""; });
     $("tut-rules").hidden = !L.rules; $("tut-row").hidden = !!L.rules;
@@ -1508,7 +1557,8 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   function tutTap(i) {
     var L = TUT[tut.step];
     if (tut.solved && tut.step > 0) return;
-    var v = tut.row[i] === -1 ? 0 : tut.row[i] === 0 ? 1 : -1;
+    // In the tutorial a tap only swaps Sunny and Luna; squares never go back to empty.
+    var v = tut.row[i] === 0 ? 1 : 0;
     tut.row[i] = v; tut.changed = i;
     Audio.sfx(v === -1 ? "clear" : "place" + v);
     var bad = L.bad && L.bad[v];
@@ -1528,7 +1578,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     else tutMsg("", "");
     if (v === L.answer && !tut.solved) {
       tut.solved = true; $("tut-go").disabled = false; Audio.sfx("star", 1);
-      var cat = $("tut-cat"); cat.classList.remove("bounce"); void cat.offsetWidth; cat.classList.add("bounce");
+      var cat = $("tut-cat").style.display === "none" ? $("tut-sign") : $("tut-cat"); cat.classList.remove("bounce"); void cat.offsetWidth; cat.classList.add("bounce");
     }
     tutRow();
   }
@@ -1578,11 +1628,13 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     });
     errSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); errSvg.setAttribute("class", "err-lines"); errSvg.setAttribute("aria-hidden", "true");
     boardEl.appendChild(errSvg); errKey = "";
+    bandBox = document.createElement("div"); bandBox.className = "err-bands"; bandBox.setAttribute("aria-hidden", "true");
+    boardEl.appendChild(bandBox); bandKey = "";
   }
   // Three alike in a row turns red at once. Other broken rules (= or ×, more than 3 of a cat in a line)
   // wait until the player pauses, so tapping through Sunny to reach Luna never flashes red.
   // A cat that is wrong but breaks no rule stays quiet; a full board that isn't the answer gets a nudge.
-  var ERROR_DELAY = 1200, shown = { cells: new Set(), edges: new Set() }, errT = null, errSvg = null, errKey = "";
+  var bandBox = null, bandKey = "", ERROR_DELAY = 1200, shown = { cells: new Set(), edges: new Set() }, errT = null, errSvg = null, errKey = "";
   // Red lines: through three-in-a-row, and across a broken = or ×. Drawn only for breaks already shown.
   function drawErrLines(res) {
     if (!errSvg) return;
@@ -1602,6 +1654,34 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
       var x1 = a[0] - ux * cw, y1 = a[1] - uy * cw, x2 = b[0] + ux * cw, y2 = b[1] + uy * cw;
       var d = "M" + x1.toFixed(1) + " " + y1.toFixed(1) + "L" + x2.toFixed(1) + " " + y2.toFixed(1), L = (len + 2 * cw).toFixed(0);
       return '<path class="halo" d="' + d + '"/><path class="ln" style="--len:' + L + '" d="' + d + '"/>';
+    }).join("");
+  }
+  // Frame every row or column that breaks a rule (too many of one cat, or three alike in a row),
+  // so it's obvious which line is wrong. Only breaks already showing are framed.
+  function drawBands() {
+    if (!bandBox) return;
+    var out = [], k;
+    function line(get, isRow, n) {
+      var cnt = [0, 0], idx = [], label = "";
+      for (k = 0; k < N; k++) { idx.push(get(k)); if (play.board[get(k)] !== -1) cnt[play.board[get(k)]]++; }
+      [0, 1].forEach(function (v) {
+        if (cnt[v] > N / 2 && idx.some(function (i) { return play.board[i] === v && shown.cells.has(i); })) label = cnt[v] + " " + (v ? "Lunas" : "Sunnys");
+      });
+      for (k = 0; !label && k + 2 < N; k++) {
+        var a = idx[k], b = idx[k + 1], c = idx[k + 2];
+        if (play.board[a] !== -1 && play.board[a] === play.board[b] && play.board[a] === play.board[c] &&
+            shown.cells.has(a) && shown.cells.has(b) && shown.cells.has(c)) label = "3 in a row";
+      }
+      if (label) out.push([isRow ? "row" : "col", n, label]);
+    }
+    for (var r = 0; r < N; r++) line(function (k) { return r * N + k; }, true, r);
+    for (var c = 0; c < N; c++) line(function (k) { return k * N + c; }, false, c);
+    var key = out.join("|"); if (key === bandKey) return; bandKey = key;
+    // Same gap-aware placement as the signs: each square is (100% - 5 gaps) / 6, gaps are 3px.
+    var at = function (n) { return "calc((100% - 15px) * " + (n / N) + " + " + (3 * n - 3) + "px)"; }, size = "calc((100% - 15px) / " + N + " + 6px)";
+    bandBox.innerHTML = out.map(function (b) {
+      var st = b[0] === "row" ? "left:-3px;right:-3px;top:" + at(b[1]) + ";height:" + size : "top:-3px;bottom:-3px;left:" + at(b[1]) + ";width:" + size;
+      return '<span class="err-band ' + b[0] + '" style="' + st + '"><i>' + b[2] + "</i></span>";
     }).join("");
   }
   // Light up the rule chip for each kind of break on show: too many of one cat in a line, three in a row, or a sign.
@@ -1642,7 +1722,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     }
     if ((changed != null || reveal) && shown.cells.size > before) Audio.sfx("oops");
     var full = play.board.every(function (v) { return v !== -1; });
-    if (changed != null && full && !res.solved) toast("Not quite! Look for the red squares");
+    if (changed != null && full && !res.solved) toast("Not quite! Check the lines in red");
     cells.forEach(function (el, i) {
       var v = play.board[i], given = play.givens[i] !== -1;
       el.classList.toggle("given", given);
@@ -1654,7 +1734,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
       el.classList.toggle("pop", i === changed);
     });
     marks.forEach(function (m, j) { m.classList.toggle("bad", shown.edges.has(j)); });
-    drawErrLines(res);
+    drawErrLines(res); drawBands();
     markBrokenRules(res);
     $("g-filled").firstChild.textContent = play.board.filter(function (v) { return v !== -1; }).length;
     $("undo").disabled = play.done || !play.history.length;

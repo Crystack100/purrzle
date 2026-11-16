@@ -1122,7 +1122,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
         <span class="tag"><svg><use href="#star"/></svg><span id="g-tag">0/8</span></span>
       </button>
       <div class="home-btns">
-        <button class="pillbtn" id="h-play" type="button"><span id="h-play-label">Play</span><small id="h-play-sub">Level 1 · easy</small></button>
+        <button class="pillbtn" id="h-play" type="button"><span id="h-play-label">Play</span><small id="h-play-sub">Level 1</small></button>
       </div>
     </div>
   </section>
@@ -1688,7 +1688,7 @@ if (typeof module !== "undefined") module.exports = TangoCore;
   function renderHome() {
     var n = nextLevel(), resume = play && !play.done && !play.daily, lv = resume ? play.level : n;
     $("h-play-label").textContent = resume ? "Continue" : "Play";
-    $("h-play-sub").textContent = "Level " + lv + " · " + T.levelDifficulty(lv);
+    $("h-play-sub").textContent = "Level " + lv;
     // Progress toward the cheapest theme not owned yet, previewed in its own colors.
     var goal = SKINS.filter(function (s) { return save.owned.indexOf(s.id) < 0; })[0], duo = $("g-duo");
     duo.style.cssText = "";

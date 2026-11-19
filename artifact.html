@@ -860,7 +860,7 @@ body.no-ads .ad-banner { display: none; }
 body.native .ad-banner, body.native #noads, body.native #s-noads, body.native .ad-x { display: none; }
 /* Game sites like CrazyGames show their own ads and do not allow outside purchases. */
 .portal-only { display: none !important; }
-body.portal .portal-only { display: flex !important; text-decoration: none; }
+body.portal .portal-only, body.native .portal-only { display: flex !important; text-decoration: none; }
 body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .ad-x { display: none; }
 .pop-card { align-self: center; border-radius: 20px; margin: 16px; width: calc(100% - 32px); text-align: center; }
 .pop-card h3 { justify-content: center; }
@@ -2288,7 +2288,7 @@ if (typeof module !== "undefined") module.exports = TangoCore;
     Notes.cancel({ notifications: [{ id: 1 }, { id: 2 }] }).catch(function () {}).then(function () {
       if (!save.remind) return;
       var list = [{ id: 1, title: "Sunny and Luna miss you \ud83d\udc31", body: "Your next level is waiting.",
-        schedule: { on: { hour: 9, minute: 0 }, allowWhileIdle: true } }];
+        schedule: { on: { hour: 9, minute: 0 }, allowWhileIdle: true }, isExactNotification: false }];
       return Notes.schedule({ notifications: list });
     }).catch(function () {});
   }

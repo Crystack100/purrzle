@@ -351,7 +351,6 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .node .ns svg { width: 20px; height: 20px; stroke: color-mix(in srgb, var(--star) 50%, #8a5200); stroke-width: 1.4; filter: drop-shadow(0 1.5px 0 rgb(0 0 0 / .2)); }
 .node .ns svg:nth-child(2) { translate: 0 -5px; width: 24px; height: 24px; }
 .node .ns svg:not(.on) { fill: var(--star-off); stroke: color-mix(in srgb, var(--star-off) 70%, #000); }
-.node-row:has(.current) { position: relative; z-index: 2; margin-top: 34px; }
 .node.current { width: 88px; height: 88px; font-size: 2.1rem; color: #fff; text-shadow: 0 2px 0 var(--acc-dk);
   background: radial-gradient(circle at 50% 30%, var(--acc-lt), var(--accent) 70%);
   box-shadow: inset 0 3px 0 rgb(255 255 255 / .4), 0 7px 0 var(--acc-dk), 0 0 0 7px color-mix(in srgb, var(--accent) 25%, transparent), 0 16px 22px -8px var(--acc-dk); animation: none; }
@@ -360,6 +359,32 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .node .peek { position: absolute; top: -50px; left: 50%; width: 58px; height: 58px; translate: -50% 0; filter: drop-shadow(0 4px 3px rgb(0 0 0 / .25)); animation: bob 2s ease-in-out infinite; }
 .node.locked { opacity: 1; background: color-mix(in srgb, var(--cell) 80%, var(--slab)); box-shadow: inset 0 3px 6px rgb(0 0 0 / .12), 0 4px 0 color-mix(in srgb, var(--slab) 85%, #000); }
 .node.locked svg.lock { width: 26px; height: 26px; fill: color-mix(in srgb, var(--muted) 80%, transparent); }
+
+/* Continuous level map: every bubble is placed on the road by the script, and only the part near the screen is built. */
+.map { display: block; gap: 0; padding: 0; margin-top: 4px; overflow: hidden; }
+.map .spot { position: absolute; z-index: 1; width: 0; height: 0; display: grid; place-items: center; }
+.map .spot .node { --x: 0px; position: absolute; }
+.map .spot:has(.current) { z-index: 3; }
+.map .trail { inset: auto; left: 0; width: 100%; }
+/* A sign across the road where each set of 100 levels starts. */
+.map-sign { position: absolute; left: 0; right: 0; z-index: 2; display: flex; justify-content: center; translate: 0 -50%; pointer-events: none; }
+.map-sign span { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 14px; color: #fff;
+  font: 700 1.05rem/1 var(--font-display); font-variant-numeric: tabular-nums; text-shadow: 0 1.5px 0 var(--acc-dk);
+  background: linear-gradient(var(--acc-lt), var(--accent)); box-shadow: inset 0 2px 0 rgb(255 255 255 / .4), 0 5px 0 var(--acc-dk), 0 14px 18px -10px var(--acc-dk); }
+.map-sign svg { width: 20px; height: 18px; fill: currentColor; filter: drop-shadow(0 1.5px 0 var(--acc-dk)); }
+/* The far end of the road: Luna waiting by the next levels. */
+.map-end { position: absolute; left: 0; right: 0; display: grid; justify-items: center; gap: 2px; text-align: center; color: var(--muted); }
+.map-end svg { width: 64px; height: 64px; margin-bottom: 4px; opacity: .9; animation: bob 2.4s ease-in-out infinite; filter: drop-shadow(0 4px 3px rgb(0 0 0 / .2)); }
+.map-end b { font: 700 1.15rem/1.2 var(--font-display); color: var(--brand); }
+.map-end small { font: 500 .85rem/1.3 var(--font-body); }
+/* Back to the current level after scrolling away from it. */
+.map-jump { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom, 0px)); z-index: 7; translate: -50% 0;
+  display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 999px; padding: 11px 20px 11px 16px; cursor: pointer; color: #fff;
+  font: 700 1rem/1 var(--font-display); text-shadow: 0 1.5px 0 var(--acc-dk); background: linear-gradient(var(--acc-lt), var(--accent));
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / .4), 0 4px 0 var(--acc-dk), 0 12px 20px -8px rgb(0 0 0 / .45); animation: pop .3s ease-out; }
+.map-jump svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.map-jump.down svg { rotate: 180deg; }
+.map-jump:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--acc-dk); }
 
 
 /* puzzle: chips up top, rule strip, a bright tiled board, round tool buttons */
@@ -925,26 +950,6 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
 /* Inside a framed line the red tiles are enough, so the "!" badges go away. */
 .board .cell.bad::after { content: none; }
 
-/* Level sets: a row of tabs that stays at the top while the road scrolls. */
-.chapters { position: sticky; top: 0; z-index: 5; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 10px 16px;
-  background: linear-gradient(var(--bg) 80%, transparent); }
-.chapters::-webkit-scrollbar { display: none; }
-.chap { flex: none; display: inline-flex; align-items: center; gap: 5px; border: 0; border-radius: 999px; padding: 9px 16px; cursor: pointer;
-  font: 700 .95rem/1 var(--font-display); font-variant-numeric: tabular-nums; color: var(--ink); background: var(--surface);
-  box-shadow: inset 0 0 0 1.5px var(--line), 0 3px 0 var(--slab); }
-.chap.on { color: #fff; background: linear-gradient(var(--acc-lt), var(--accent)); box-shadow: 0 3px 0 var(--acc-dk); text-shadow: 0 1px 0 var(--acc-dk); }
-.chap.locked { color: var(--muted); opacity: .7; cursor: default; box-shadow: inset 0 0 0 1.5px var(--line); }
-.chap .lock { width: 14px; height: 14px; fill: currentColor; }
-/* The gate at the top of the road. */
-.gate-row { margin-bottom: 6px; }
-.gate { display: flex; align-items: center; gap: 12px; border: 0; border-radius: 20px; padding: 14px 22px; cursor: pointer; color: #fff; text-align: left;
-  background: linear-gradient(var(--acc-lt), var(--accent)); box-shadow: inset 0 2px 0 rgb(255 255 255 / .4), 0 6px 0 var(--acc-dk), 0 16px 22px -10px var(--acc-dk); }
-.gate b { display: block; font: 700 1.25rem/1.1 var(--font-display); text-shadow: 0 2px 0 var(--acc-dk); }
-.gate small { display: block; font: 600 .85rem/1.3 var(--font-ui); opacity: .95; }
-.gate:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--acc-dk); }
-.gate.locked { color: var(--muted); background: var(--surface); box-shadow: inset 0 0 0 2px var(--line), 0 5px 0 var(--slab); cursor: default; }
-.gate.locked b { text-shadow: none; color: var(--ink); }
-.gate .lock { width: 26px; height: 26px; fill: var(--muted); flex: none; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1130,11 +1135,11 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   <!-- LEVEL MAP -->
   <section id="levels" class="screen" aria-label="Levels" hidden>
     <div class="status">
-      <h2 id="map-title">Levels 1–100</h2>
+      <h2 id="map-title">Levels</h2>
       <span class="pill" aria-label="Stars to spend"><svg><use href="#star"/></svg><span class="w-count">0</span></span>
     </div>
-    <div class="chapters" id="chapters" role="tablist" aria-label="Level sets"></div>
-    <div class="map-wrap"><svg class="trail" id="trail" aria-hidden="true"></svg><div class="map" id="map"></div></div>
+    <div class="map" id="map"></div>
+    <button class="map-jump" id="map-jump" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg>My level</button>
   </section>
 
   <!-- SHOP -->
@@ -1321,7 +1326,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
 </script>
 <script>
 (function () {
-  var T = TangoCore, N = T.N, PAGE = 100;
+  var T = TangoCore, N = T.N;
   var PUZZLE_V = 3; // bump when level generation changes so saved boards restart
   // Each skin's colors, so the shop can preview a look before it is equipped.
   var SKINS = [
@@ -1343,7 +1348,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   var CG = window.CrazyGames && window.CrazyGames.SDK, PORTAL = !!CG;
   function plugin(name) { return NATIVE && Cap.registerPlugin ? Cap.registerPlugin(name) : null; }
   var save = { best: {}, times: {}, wallet: 0, owned: ["cozy"], skin: "cozy", play: null, daily: {}, noAds: false, wins: 0, music: 40, sound: 70, theme: "light" };
-  var page = 0, play = null, cells = [], marks = [], tick = null, toastT = null;
+  var play = null, cells = [], marks = [], tick = null, toastT = null;
 
   function load() {
     try {
@@ -1453,75 +1458,102 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   $("h-play").onclick = function () { if (play && !play.done && !play.daily) resumeLevel(); else startLevel(nextLevel()); };
 
   /* ---------- level map ---------- */
+  // One long winding road, level 1 at the bottom, like a saga map. It opens on the current level;
+  // scroll up for new levels and down for old ones. Only the stretch near the screen is built, so
+  // the map stays light however far a player gets.
+  var MAP = { ROW: 100, LIFT: 34, SIGN: 120, BOT: 70, TOP: 190, CHUNK: 20, AHEAD: 15, SET: 100 },
+    map = { n: 1, last: 1, h: 0, w: 0, built: {}, raf: 0 };
+  var LOCK = '<svg class="lock" viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>';
+  // Height of the road below level i (level 1 sits MAP.BOT above the bottom edge).
+  function rise(i) {
+    return (i - 1) * MAP.ROW + (i > map.n ? MAP.LIFT : 0) + (i === map.n && i > 1 ? MAP.LIFT / 2 : 0) + Math.floor((i - 1) / MAP.SET) * MAP.SIGN;
+  }
+  function spotY(i) { return map.h - MAP.BOT - rise(i); }
+  function spotX(i) { return map.w / 2 + Math.sin((i - 1) * 0.9) * Math.min(80, map.w / 2 - 60); }
+  function mapScroller() { var sc = $("scroll"); return /auto|scroll/.test(getComputedStyle(sc).overflowY) && sc.scrollHeight > sc.clientHeight + 1 ? sc : null; }
+  function viewBox() { var sc = mapScroller(); if (!sc) return [0, window.innerHeight]; var r = sc.getBoundingClientRect(); return [r.top, r.bottom]; }
+
   function renderMap() {
     renderWallet();
-    var n = nextLevel(), from = page * PAGE + 1, box = $("map");
-    box.innerHTML = "";
-    for (var i = from; i < from + PAGE; i++) {
-      var row = document.createElement("div"), b = document.createElement("button"), open = unlocked(i);
-      row.className = "node-row";
-      b.type = "button"; b.className = "node" + (i === n ? " current" : "") + (open ? "" : " locked");
-      b.style.setProperty("--x", Math.round(Math.sin((i - 1) * 0.9) * 80) + "px");
-      b.disabled = !open;
-      b.innerHTML = open
-        ? i + (save.best[i] ? '<span class="ns">' + starSvgs(save.best[i]) + "</span>" : "") +
-          (i === n ? '<svg class="peek" viewBox="0 0 100 100" aria-hidden="true"><use href="#sun"/></svg>' : "")
-        : '<svg class="lock" viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>';
-      b.setAttribute("aria-label", "Level " + i + (save.best[i] ? ", " + save.best[i] + " stars" : open ? "" : ", locked"));
-      b.onclick = startLevel.bind(null, i);
-      row.appendChild(b); box.appendChild(row);
-    }
-    // The road ends at a gate to the next set of levels: open once its first level is reached.
-    var gate = document.createElement("div"), nextFrom = from + PAGE, gateOpen = unlocked(nextFrom);
-    gate.className = "node-row gate-row";
-    gate.innerHTML = '<button class="gate' + (gateOpen ? "" : " locked") + '" type="button"' + (gateOpen ? "" : " disabled") + ">" +
-      (gateOpen ? "" : '<svg class="lock" viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>') + "<span><b>Levels " + nextFrom + "–" + (nextFrom + PAGE - 1) + "</b><small>" +
-      (gateOpen ? "Tap to keep going" : "Finish level " + (nextFrom - 1) + " to open") + "</small></span></button>";
-    gate.firstChild.onclick = function () { page++; renderMap(); };
-    box.appendChild(gate);
-    $("map-title").textContent = "Levels " + from + "–" + (from + PAGE - 1);
-    renderChapters(n);
-    requestAnimationFrame(drawTrail);
-    var cur = box.querySelector(".current");
-    // A finished set opens at its first level, at the bottom of the road.
-    if (!cur) cur = box.querySelector(".node-row:first-child .node");
-    if (cur) setTimeout(function () {
-      // Scroll only the page's own scroller; scrollIntoView also shifted the phone frame on desktop.
-      var sc = $("scroll"), r = cur.getBoundingClientRect();
-      if (/auto|scroll/.test(getComputedStyle(sc).overflowY) && sc.scrollHeight > sc.clientHeight + 1) sc.scrollTop += r.top - sc.getBoundingClientRect().top - sc.clientHeight / 2 + r.height / 2;
-      else window.scrollTo(0, window.scrollY + r.top - window.innerHeight / 2 + r.height / 2);
-    }, 0);
+    var box = $("map");
+    map.n = nextLevel(); map.last = map.n + MAP.AHEAD; map.w = box.clientWidth || 360;
+    map.h = MAP.BOT + rise(map.last) + MAP.TOP;
+    box.style.height = map.h + "px";
+    box.innerHTML = '<div class="map-end" style="top:' + (spotY(map.last) - MAP.TOP + 18) + 'px">' +
+      '<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#moon"/></svg><b>More levels ahead</b><small>Each win opens the next one</small></div>';
+    map.built = {};
+    paintMap();
+    // Open on the current level, in the middle of the screen.
+    jumpToCurrent(false);
   }
-  // A winding road through the level bubbles, done part in color.
-  function drawTrail() {
-    var box = $("map"), svg = $("trail"), base = box.getBoundingClientRect(), pts = [], done = 0;
-    box.querySelectorAll(".node").forEach(function (b) {
-      var r = b.getBoundingClientRect(); pts.push([r.left + r.width / 2 - base.left, r.top + r.height / 2 - base.top]);
-      if (!b.classList.contains("locked")) done = pts.length;
-    });
-    if (pts.length < 2) return;
-    function path(list) {
-      var d = "M" + list[0][0] + " " + list[0][1];
-      for (var i = 1; i < list.length; i++) { var a = list[i - 1], c = list[i], my = (a[1] + c[1]) / 2; d += " C" + a[0] + " " + my + " " + c[0] + " " + my + " " + c[0] + " " + c[1]; }
-      return d;
-    }
-    svg.setAttribute("viewBox", "0 0 " + base.width + " " + base.height);
-    svg.innerHTML = '<path class="road" d="' + path(pts) + '"/><path class="road-in" d="' + path(pts) + '"/>' +
-      (done > 1 ? '<path class="road-done" d="' + path(pts.slice(0, done)) + '"/>' : "") + '<path class="road-dash" d="' + path(pts) + '"/>';
+  function jumpToCurrent(smooth) {
+    var box = $("map"), sc = mapScroller(), v = viewBox(), r = box.getBoundingClientRect(),
+      dy = r.top + spotY(map.n) - (v[0] + v[1]) / 2;
+    if (sc) sc.scrollTo({ top: sc.scrollTop + dy, behavior: smooth ? "smooth" : "auto" });
+    else window.scrollTo({ top: window.scrollY + dy, behavior: smooth ? "smooth" : "auto" });
+    paintMap();
   }
-  window.addEventListener("resize", function () { if (!$("levels").hidden) drawTrail(); });
-  // Tabs for each set of 100 levels: every set reached so far, plus the next one, locked.
-  function renderChapters(n) {
-    var box = $("chapters"), last = Math.floor((n - 1) / PAGE) + 1, html = "";
-    for (var p = 0; p <= last; p++) {
-      var a = p * PAGE + 1, open = p < last;
-      html += '<button type="button" role="tab" class="chap' + (p === page ? " on" : "") + (open ? "" : " locked") + '" data-p="' + p + '"' +
-        (p === page ? ' aria-selected="true"' : "") + (open ? "" : " disabled") + ">" + (open ? "" : '<svg class="lock" viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>') + a + "–" + (a + PAGE - 1) + "</button>";
+  // Build the stretches of road near the screen and drop the ones far away.
+  function paintMap() {
+    map.raf = 0;
+    if ($("levels").hidden) return;
+    var box = $("map"), r = box.getBoundingClientRect(), v = viewBox(), pad = 900,
+      lo = v[0] - r.top - pad, hi = v[1] - r.top + pad, keep = {};
+    for (var a = 1; a <= map.last; a += MAP.CHUNK) {
+      var b = Math.min(a + MAP.CHUNK - 1, map.last), top = spotY(b) - MAP.ROW, bot = spotY(a) + MAP.ROW;
+      if (bot < lo || top > hi) continue;
+      keep[a] = 1;
+      if (!map.built[a]) { map.built[a] = buildChunk(a, b); box.appendChild(map.built[a]); }
     }
-    box.innerHTML = html;
-    box.querySelectorAll(".chap:not(.locked)").forEach(function (b) { b.onclick = function () { page = +b.dataset.p; renderMap(); }; });
-    var on = box.querySelector(".on"); if (on) box.scrollLeft = on.offsetLeft - box.clientWidth / 2 + on.offsetWidth / 2;
+    Object.keys(map.built).forEach(function (k) { if (!keep[k]) { map.built[k].remove(); delete map.built[k]; } });
+    // The "back to my level" button shows once the current level is off screen.
+    var y = r.top + spotY(map.n);
+    $("map-jump").hidden = y > v[0] + 60 && y < v[1] - 60;
+    $("map-jump").classList.toggle("down", y > v[1] - 60);
   }
+  function queueMap() { if (!map.raf && !$("levels").hidden) map.raf = requestAnimationFrame(paintMap); }
+  function roadPath(from, to) {
+    var d = "M" + spotX(from) + " " + spotY(from);
+    for (var i = from + 1; i <= to; i++) {
+      var ax = spotX(i - 1), ay = spotY(i - 1), cx = spotX(i), cy = spotY(i), my = (ay + cy) / 2;
+      d += " C" + ax + " " + my + " " + cx + " " + my + " " + cx + " " + cy;
+    }
+    return d;
+  }
+  // One stretch of road: its levels, the road joining them to the next stretch, and a sign at each set of 100.
+  function buildChunk(a, b) {
+    var el = document.createElement("div"), n = map.n, end = Math.min(b + 1, map.last),
+      top = spotY(end) - 20, h = spotY(a) - top + 20, html = "", road = roadPath(a, end);
+    el.className = "map-chunk";
+    html += '<svg class="trail" style="top:' + top + "px;height:" + h + 'px" viewBox="0 ' + top + " " + map.w + " " + h + '" aria-hidden="true">' +
+      '<path class="road" d="' + road + '"/><path class="road-in" d="' + road + '"/>' +
+      (n > a ? '<path class="road-done" d="' + roadPath(a, Math.min(end, n)) + '"/>' : "") + '<path class="road-dash" d="' + road + '"/></svg>';
+    for (var i = a; i <= b; i++) {
+      if (i > 1 && (i - 1) % MAP.SET === 0) {
+        html += '<div class="map-sign" style="top:' + ((spotY(i - 1) + spotY(i)) / 2 - 10) + 'px"><span><svg viewBox="0 0 40 34" aria-hidden="true"><use href="#paw"/></svg>Levels ' + i + "–" + (i + MAP.SET - 1) + "</span></div>";
+      }
+      var open = i <= n, best = save.best[i];
+      html += '<div class="spot" style="left:' + spotX(i) + "px;top:" + spotY(i) + 'px"><button type="button" class="node' + (i === n ? " current" : "") + (open ? "" : " locked") + '" data-lv="' + i + '"' +
+        (open ? "" : " disabled") + ' aria-label="Level ' + i + (best ? ", " + best + " stars" : open ? "" : ", locked") + '">' +
+        (open ? i + (best ? '<span class="ns">' + starSvgs(best) + "</span>" : "") +
+          (i === n ? '<svg class="peek" viewBox="0 0 100 100" aria-hidden="true"><use href="#sun"/></svg>' : "") : LOCK) + "</button></div>";
+    }
+    el.innerHTML = html;
+    el.querySelectorAll(".node:not(.locked)").forEach(function (btn) { btn.onclick = function () { startLevel(+btn.dataset.lv); }; });
+    return el;
+  }
+  window.addEventListener("scroll", queueMap, { passive: true });
+  $("scroll").addEventListener("scroll", queueMap, { passive: true });
+  window.addEventListener("resize", function () {
+    if ($("levels").hidden || $("map").clientWidth === map.w) return queueMap();
+    // A new width moves every bubble: rebuild, keeping the same spot in the middle of the screen.
+    var v = viewBox(), r = $("map").getBoundingClientRect(), fromBottom = map.h - ((v[0] + v[1]) / 2 - r.top);
+    map.w = $("map").clientWidth; map.built = {}; $("map").querySelectorAll(".map-chunk").forEach(function (c) { c.remove(); });
+    var dy = (map.h - fromBottom) - ((v[0] + v[1]) / 2 - $("map").getBoundingClientRect().top);
+    if (dy) { var sc = mapScroller(); if (sc) sc.scrollTop += dy; else window.scrollBy(0, dy); }
+    paintMap();
+  });
+  $("map-jump").onclick = function () { jumpToCurrent(true); };
 
   /* ---------- puzzle ---------- */
 
@@ -2340,7 +2372,6 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     // Puzzles made by an older version may need guessing, so they're started fresh.
     if (play && play.v !== PUZZLE_V) play = save.play = null;
     buildTiles();
-    page = Math.floor((nextLevel() - 1) / PAGE);
     applySkin(); applyAds();
     document.body.classList.toggle("native", NATIVE); document.body.classList.toggle("portal", PORTAL);
     paintRemind(); if (save.remind) scheduleReminders();

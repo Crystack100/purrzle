@@ -1,7 +1,7 @@
 <title>Purrzle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500..800&display=swap">
 <style>
 /* Layout: a phone app shell. Top status bar, one screen at a time (home, level map, shop, puzzle),
    and a bottom tab bar. The cats on the board are the hero.
@@ -15,6 +15,7 @@
   --bad: #e8676b; --bad-soft: rgba(232, 103, 107, .16);
   --shadow: rgba(60, 50, 40, .14);
   --font-display: "Fredoka", "Avenir Next Rounded", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --font-ui: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-body: "Fredoka", "Avenir Next Rounded", system-ui, -apple-system, sans-serif;
 }
 /* Shop skins come after the system blocks so they win when equipped. */
@@ -350,7 +351,6 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .node .ns svg { width: 20px; height: 20px; stroke: color-mix(in srgb, var(--star) 50%, #8a5200); stroke-width: 1.4; filter: drop-shadow(0 1.5px 0 rgb(0 0 0 / .2)); }
 .node .ns svg:nth-child(2) { translate: 0 -5px; width: 24px; height: 24px; }
 .node .ns svg:not(.on) { fill: var(--star-off); stroke: color-mix(in srgb, var(--star-off) 70%, #000); }
-.node-row:has(.current) { position: relative; z-index: 2; margin-top: 34px; }
 .node.current { width: 88px; height: 88px; font-size: 2.1rem; color: #fff; text-shadow: 0 2px 0 var(--acc-dk);
   background: radial-gradient(circle at 50% 30%, var(--acc-lt), var(--accent) 70%);
   box-shadow: inset 0 3px 0 rgb(255 255 255 / .4), 0 7px 0 var(--acc-dk), 0 0 0 7px color-mix(in srgb, var(--accent) 25%, transparent), 0 16px 22px -8px var(--acc-dk); animation: none; }
@@ -359,6 +359,37 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .node .peek { position: absolute; top: -50px; left: 50%; width: 58px; height: 58px; translate: -50% 0; filter: drop-shadow(0 4px 3px rgb(0 0 0 / .25)); animation: bob 2s ease-in-out infinite; }
 .node.locked { opacity: 1; background: color-mix(in srgb, var(--cell) 80%, var(--slab)); box-shadow: inset 0 3px 6px rgb(0 0 0 / .12), 0 4px 0 color-mix(in srgb, var(--slab) 85%, #000); }
 .node.locked svg.lock { width: 26px; height: 26px; fill: color-mix(in srgb, var(--muted) 80%, transparent); }
+
+/* Continuous level map: every bubble is placed on the road by the script, and only the part near the screen is built. */
+.map { display: block; gap: 0; padding: 0; margin-top: 4px; overflow: hidden; }
+.map .spot { position: absolute; z-index: 1; width: 0; height: 0; display: grid; place-items: center; }
+.map .spot .node { --x: 0px; position: absolute; }
+.map .spot:has(.current) { z-index: 3; }
+.map .trail { inset: auto; left: 0; width: 100%; }
+/* Between each set of 100 levels the road passes through a bank of cloud, with the next set's name on it. */
+.map { margin-inline: -16px; }
+.map-sign { position: absolute; left: 0; right: 0; height: 170px; z-index: 2; display: grid; place-items: center; translate: 0 -50%; pointer-events: none; }
+.map-sign .clouds { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+.map-sign .cb { fill: color-mix(in srgb, #fff 72%, var(--accent)); opacity: .85; filter: drop-shadow(0 6px 8px color-mix(in srgb, var(--shadow) 60%, transparent)); }
+.map-sign .cf { fill: color-mix(in srgb, #fff 92%, var(--accent)); }
+.map-sign span { position: relative; display: inline-flex; align-items: center; gap: 7px;
+  font: 700 1.35rem/1 var(--font-display); font-variant-numeric: tabular-nums; letter-spacing: .01em; color: color-mix(in srgb, var(--accent) 55%, #2a1a10);
+  text-shadow: 0 1px 0 #fff, 0 0 10px #fff, 0 0 18px #fff; }
+.map-sign span svg { width: 22px; height: 20px; fill: currentColor; }
+/* The far end of the road: Luna waiting by the next levels. */
+.map-end { position: absolute; left: 0; right: 0; display: grid; justify-items: center; gap: 2px; text-align: center; color: var(--muted); }
+.map-end svg { width: 64px; height: 64px; margin-bottom: 4px; opacity: .9; animation: bob 2.4s ease-in-out infinite; filter: drop-shadow(0 4px 3px rgb(0 0 0 / .2)); }
+.map-end b { font: 700 1.15rem/1.2 var(--font-display); color: var(--brand); }
+.map-end small { font: 500 .85rem/1.3 var(--font-body); }
+/* Back to the current level after scrolling away from it. */
+.map-jump { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom, 0px)); z-index: 7; translate: -50% 0;
+  display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 999px; padding: 11px 20px 11px 16px; cursor: pointer; color: #fff;
+  font: 700 1rem/1 var(--font-display); text-shadow: 0 1.5px 0 var(--acc-dk); background: linear-gradient(var(--acc-lt), var(--accent));
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / .4), 0 4px 0 var(--acc-dk), 0 12px 20px -8px rgb(0 0 0 / .45); animation: pop .3s ease-out; }
+.map-jump svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.map-jump.down svg { rotate: 180deg; }
+.map-jump:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--acc-dk); }
 
 
 /* puzzle: chips up top, rule strip, a bright tiled board, round tool buttons */
@@ -858,11 +889,43 @@ body.no-ads .ad-banner { display: none; }
 .tut-go:not(:disabled) { animation: tutReady .5s cubic-bezier(.3, 1.8, .5, 1); }
 @keyframes tutReady { from { transform: scale(.94); } }
 /* rewarded videos */
-body.native .ad-banner, body.native #noads, body.native #s-noads, body.native .ad-x { display: none; }
+body.native .ad-banner, body.native .ad-x, body.native:not(.iap-ads) #noads, body.native:not(.iap-ads) #s-noads { display: none; }
+/* Purrzle Plus and Restore purchases: phone app only, once the app store has answered. */
+body:not(.iap) .iap-only { display: none !important; }
+.plus-btn { background: linear-gradient(135deg, #8a5cf0, #5b3cc4 70%); box-shadow: inset 0 2px 0 rgb(255 255 255 / .35), 0 5px 0 #3e2690, 0 14px 24px -12px #3e2690; }
+.plus-btn .na-txt b { text-shadow: 0 2px 0 #3e2690; }
+.plus-btn .na-ic::after { display: none; }
+.plus-btn .na-ic svg { width: 28px; height: 28px; }
+.plus-btn.owned .na-price { color: #2fa36b; }
+.noads.plus-card { background: linear-gradient(135deg, #8a5cf0, #5b3cc4 75%); color: #fff; }
+.noads.plus-card span { color: rgb(255 255 255 / .85); }
+.noads.plus-card .chunky { background: linear-gradient(#fff3b0, #ffc94a); color: #7a4300; box-shadow: 0 4px 0 #c9861a; }
+.plus-sheet { text-align: center; }
+.plus-sheet h3 { justify-content: center; }
+.plus-crown { width: 64px; height: 64px; justify-self: center; }
+.plus-perks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; }
+.plus-perks li { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--cell); font: 600 1rem/1.25 var(--font-display); }
+.plus-perks li::before { content: "\2713"; flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: #6c46dc; color: #fff; font-size: .9rem; }
+.plans { display: grid; gap: 8px; }
+.plan { position: relative; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 10px; padding: 12px 14px; border-radius: 14px; border: 2.5px solid var(--line);
+  background: var(--surface); color: var(--ink); text-align: left; cursor: pointer; font: inherit; }
+.plan b { font: 700 1.1rem/1.1 var(--font-display); }
+.plan small { grid-column: 1; color: var(--muted); font-weight: 600; font-size: .82rem; }
+.plan .plan-price { grid-column: 2; grid-row: 1 / span 2; font: 700 1.15rem/1 var(--font-display); }
+.plan[aria-pressed="true"] { border-color: #6c46dc; box-shadow: 0 0 0 3px color-mix(in srgb, #6c46dc 25%, transparent); }
+.plan .plan-tag { position: absolute; top: -10px; right: 12px; padding: 3px 8px; border-radius: 999px; background: #6c46dc; color: #fff; font: 700 .72rem/1 var(--font-display); letter-spacing: .03em; }
+#plus-go { background: linear-gradient(#9d74ff, #6c46dc); box-shadow: 0 5px 0 #3e2690; color: #fff; }
+.plus-legal { margin: 0; color: var(--muted); font-size: .72rem; line-height: 1.4; }
+.plus-links { display: flex; justify-content: center; gap: 16px; font-size: .8rem; font-weight: 700; }
+.plus-links a, .plus-links button { color: var(--muted); background: none; border: 0; padding: 4px; font: inherit; text-decoration: underline; cursor: pointer; }
 /* Game sites like CrazyGames show their own ads and do not allow outside purchases. */
 .portal-only { display: none !important; }
+/* The privacy policy link shows everywhere: App Store and Google Play require it inside the app. */
+a.how-btn { text-decoration: none; }
 body.portal .portal-only { display: flex !important; text-decoration: none; }
 body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .ad-x { display: none; }
+/* The plain web app has no real ads or payments, so it shows neither. */
+body.web .ad-banner, body.web #noads, body.web #s-noads, body.web .ad-x, body.web #freestars { display: none; }
 .pop-card { align-self: center; border-radius: 20px; margin: 16px; width: calc(100% - 32px); text-align: center; }
 .pop-card h3 { justify-content: center; }
 .pop-card .chunky, .pop-card .soft { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
@@ -880,6 +943,50 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
 .how-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-radius: 16px; cursor: pointer; text-align: left; color: var(--ink);
   background: var(--cell); box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--cell) 86%, #000); font: 600 1.05rem var(--font-display); }
 .how-btn svg { width: 40px; height: 40px; flex: none; padding: 9px; box-sizing: border-box; border-radius: 12px; color: #fff; background: linear-gradient(var(--acc-lt, #f8c08c), var(--accent)); box-shadow: 0 3px 0 color-mix(in srgb, var(--accent) 68%, #000); fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Sharper type for menus and instructions: Settings, How to play and the tutorial's sentences.
+   Fredoka stays for the logo, buttons and big headlines. */
+#sheet .sheet, #sheet .sheet *, #how-sheet .sheet, #how-sheet .sheet *, .tut-text, .tut-msg, .tut-rules li { font-family: var(--font-ui) !important; }
+.set-head { font: 800 1.45rem/1 var(--font-ui) !important; letter-spacing: -.01em; text-shadow: 0 1px 0 var(--acc-dk); }
+#sheet .slider label, #sheet .how-btn { font-weight: 700 !important; font-size: 1rem !important; letter-spacing: -.005em; }
+#sheet .slider output { font-weight: 600 !important; font-size: .9rem !important; font-variant-numeric: tabular-nums; }
+#sheet .na-txt b { font-weight: 800 !important; font-size: 1.12rem !important; letter-spacing: -.01em; text-shadow: 0 1px 0 var(--acc-dk); }
+#sheet .na-txt small { font-weight: 500 !important; }
+#sheet .na-price, #sheet .na-ic b { font-weight: 800 !important; }
+.tut-text { font-weight: 500; font-size: 1rem; letter-spacing: -.005em; }
+.tut-msg { font-weight: 600; font-size: .95rem; }
+.tut-rules li { font-weight: 500; font-size: .93rem; }
+
+/* How to play: a bold title line and a plain sentence under it, for each rule. */
+#how-sheet h3 { font: 800 1.45rem/1.1 var(--font-ui) !important; letter-spacing: -.015em; color: var(--ink); }
+#how-sheet .note { margin: -8px 0 0; font-weight: 500; font-size: .95rem; }
+.rule-strip.how-rules div { font: 500 .93rem/1.4 var(--font-ui); color: color-mix(in srgb, var(--ink) 82%, var(--muted)); }
+.rule-strip.how-rules span b { display: block; font: 800 1rem/1.3 var(--font-ui); color: var(--ink); letter-spacing: -.01em; margin-bottom: 1px; }
+#how-sheet .how-foot { margin: -2px 0 2px; text-align: center; font-size: .85rem; }
+
+/* A sign drawn like the ones on the board, so it can sit inside a sentence. */
+.sign { display: inline-grid; place-items: center; width: 1.45em; height: 1.45em; margin: 0 .08em; border-radius: 50%; vertical-align: -.38em;
+  background: var(--surface); box-shadow: 0 0 0 1.5px var(--line), 0 1px 3px rgb(0 0 0 / .14); }
+.sign svg { width: 62%; height: 62%; fill: none; stroke: currentColor; stroke-width: 3.6; stroke-linecap: round; }
+.sign.eq { color: #2f86d6; } .sign.op { color: #f07a2a; }
+.rule-strip.how-rules .sign { width: 1.3em; height: 1.3em; vertical-align: -.32em; }
+.rule-strip.how-rules .sign svg { width: 62%; height: 62%; flex: none; }
+.tut-sign { width: 74px; height: 74px; margin: -4px 0 0; font-size: 51px; vertical-align: 0; box-shadow: 0 0 0 3px var(--line), 0 6px 14px -6px var(--shadow); }
+.tut-sign[hidden] { display: none; }
+.tut-sign.bounce { animation: pop .4s cubic-bezier(.3, 1.8, .5, 1); }
+
+/* A broken row or column gets a red frame around the whole line and a tag saying what's wrong. */
+.err-bands { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.err-band { position: absolute; border-radius: 13px; box-shadow: inset 0 0 0 3px var(--bad), 0 0 0 3px color-mix(in srgb, var(--bad) 22%, transparent);
+  background: color-mix(in srgb, var(--bad) 9%, transparent); animation: bandIn .25s ease-out; }
+.err-band i { position: absolute; font: 800 .68rem/1 var(--font-ui); font-style: normal; color: #fff; background: var(--bad); padding: 4px 7px; border-radius: 999px;
+  white-space: nowrap; box-shadow: 0 0 0 2px var(--surface); }
+.err-band.row i { right: 6px; top: 0; translate: 0 -55%; }
+.err-band.col i { left: 50%; top: 0; translate: -50% -60%; }
+@keyframes bandIn { from { opacity: 0; scale: .97; } }
+/* Inside a framed line the red tiles are enough, so the "!" badges go away. */
+.board .cell.bad::after { content: none; }
+
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1057,7 +1164,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
         <span class="tag"><svg><use href="#star"/></svg><span id="g-tag">0/8</span></span>
       </button>
       <div class="home-btns">
-        <button class="pillbtn" id="h-play" type="button"><span id="h-play-label">Play</span><small id="h-play-sub">Level 1 · easy</small></button>
+        <button class="pillbtn" id="h-play" type="button"><span id="h-play-label">Play</span><small id="h-play-sub">Level 1</small></button>
       </div>
     </div>
   </section>
@@ -1065,14 +1172,11 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   <!-- LEVEL MAP -->
   <section id="levels" class="screen" aria-label="Levels" hidden>
     <div class="status">
-      <h2 id="map-title">Levels 1–20</h2>
+      <h2 id="map-title">Levels</h2>
       <span class="pill" aria-label="Stars to spend"><svg><use href="#star"/></svg><span class="w-count">0</span></span>
     </div>
-    <div class="pager">
-      <button class="soft" id="pg-prev" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Earlier</button>
-      <button class="soft" id="pg-next" type="button">Later<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
-    </div>
-    <div class="map-wrap"><svg class="trail" id="trail" aria-hidden="true"></svg><div class="map" id="map"></div></div>
+    <div class="map" id="map"></div>
+    <button class="map-jump" id="map-jump" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg>My level</button>
   </section>
 
   <!-- SHOP -->
@@ -1086,6 +1190,10 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     <div class="noads freestars" id="freestars" hidden>
       <div><b>Free stars</b><span id="fs-sub">Watch a short video for 3 stars</span></div>
       <button class="chunky" id="fs-go" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>+3</button>
+    </div>
+    <div class="noads plus-card iap-only" id="plus-card">
+      <div><b>Purrzle Plus</b><span id="plus-card-sub">No ads and every theme, while you're a member.</span></div>
+      <button class="chunky" id="plus-card-go" type="button">See plans</button>
     </div>
     <div class="noads" id="noads">
       <div><b>Remove ads</b><span id="noads-sub">No banners or ads between levels, forever.</span></div>
@@ -1182,14 +1290,36 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
 <div class="sheet-bg" id="how-sheet" hidden>
   <div class="sheet pop-card how-card" role="dialog" aria-modal="true" aria-labelledby="how-title">
     <h3 id="how-title">How to play</h3>
-    <p class="note">Fill every square with Sunny or Luna.</p>
+    <p class="note">Put a Sunny or a Luna in every square.</p>
     <div class="rule-strip how-rules">
-        <div><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1.0" y="8.0" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="0.0" y="6.5" width="15" height="15"/><rect x="15.3" y="8.0" width="13" height="13" rx="2.5" class="rt t1"/><use href="#moon" x="14.3" y="6.5" width="15" height="15"/><rect x="29.6" y="8.0" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="28.6" y="6.5" width="15" height="15"/><rect x="1.0" y="22.3" width="13" height="13" rx="2.5" class="rt t1"/><use href="#moon" x="0.0" y="20.8" width="15" height="15"/><rect x="15.3" y="22.3" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="14.3" y="20.8" width="15" height="15"/><rect x="29.6" y="22.3" width="13" height="13" rx="2.5" class="rt t1"/><use href="#moon" x="28.6" y="20.8" width="15" height="15"/></svg><span><b>3 of each.</b> Every row and column has 3 Sunnys and 3 Lunas.</span></div>
-        <div><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1.0" y="15.5" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="0.0" y="14.0" width="15" height="15"/><rect x="15.3" y="15.5" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="14.3" y="14.0" width="15" height="15"/><rect x="29.6" y="15.5" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="28.6" y="14.0" width="15" height="15"/><path d="M6 10 38 34M38 10 6 34" stroke="var(--bad)" stroke-width="2.6" opacity=".9" stroke-linecap="round"/></svg><span><b>No 3 in a row.</b> Never more than 2 of the same cat side by side.</span></div>
-        <div><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1" y="4" width="14" height="14" rx="2.5" class="rt t0"/><use href="#sun" x="0" y="2.5" width="16" height="16"/><rect x="29" y="4" width="14" height="14" rx="2.5" class="rt t0"/><use href="#sun" x="28" y="2.5" width="16" height="16"/><rect x="1" y="26" width="14" height="14" rx="2.5" class="rt t0"/><use href="#sun" x="0" y="24.5" width="16" height="16"/><rect x="29" y="26" width="14" height="14" rx="2.5" class="rt t1"/><use href="#moon" x="28" y="24.5" width="16" height="16"/><text x="22" y="15.5" class="rs">=</text><text x="22" y="37.5" class="rs">&#215;</text></svg><span><b>Signs.</b> = means the two cats match. &#215; means they are opposite.</span></div>
+        <div><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1.0" y="8.0" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="0.0" y="6.5" width="15" height="15"/><rect x="15.3" y="8.0" width="13" height="13" rx="2.5" class="rt t1"/><use href="#moon" x="14.3" y="6.5" width="15" height="15"/><rect x="29.6" y="8.0" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="28.6" y="6.5" width="15" height="15"/><rect x="1.0" y="22.3" width="13" height="13" rx="2.5" class="rt t1"/><use href="#moon" x="0.0" y="20.8" width="15" height="15"/><rect x="15.3" y="22.3" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="14.3" y="20.8" width="15" height="15"/><rect x="29.6" y="22.3" width="13" height="13" rx="2.5" class="rt t1"/><use href="#moon" x="28.6" y="20.8" width="15" height="15"/></svg><span><b>Half and half</b>Each row and column gets 3 Sunnys and 3 Lunas.</span></div>
+        <div><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1.0" y="15.5" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="0.0" y="14.0" width="15" height="15"/><rect x="15.3" y="15.5" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="14.3" y="14.0" width="15" height="15"/><rect x="29.6" y="15.5" width="13" height="13" rx="2.5" class="rt t0"/><use href="#sun" x="28.6" y="14.0" width="15" height="15"/><path d="M6 10 38 34M38 10 6 34" stroke="var(--bad)" stroke-width="2.6" opacity=".9" stroke-linecap="round"/></svg><span><b>Max two in a row</b>Three of the same cat can't sit side by side.</span></div>
+        <div><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="1" y="4" width="14" height="14" rx="2.5" class="rt t0"/><use href="#sun" x="0" y="2.5" width="16" height="16"/><rect x="29" y="4" width="14" height="14" rx="2.5" class="rt t0"/><use href="#sun" x="28" y="2.5" width="16" height="16"/><rect x="1" y="26" width="14" height="14" rx="2.5" class="rt t0"/><use href="#sun" x="0" y="24.5" width="16" height="16"/><rect x="29" y="26" width="14" height="14" rx="2.5" class="rt t1"/><use href="#moon" x="28" y="24.5" width="16" height="16"/><text x="22" y="15.5" class="rs">=</text><text x="22" y="37.5" class="rs">&#215;</text></svg><span><b>Follow the signs</b>Cats joined by <span class="sign eq"><svg viewBox="0 0 16 16"><path d="M3 5.2h10M3 10.8h10"/></svg></span> match. Cats joined by <span class="sign op"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></span> are different.</span></div>
     </div>
+    <p class="note how-foot">Every puzzle has one answer, so you never have to guess.</p>
     <button class="chunky" id="how-tut" type="button">Play the tutorial</button>
     <button class="soft" id="how-close" type="button">Got it</button>
+  </div>
+</div>
+
+<div class="sheet-bg" id="plus-sheet" hidden>
+  <div class="sheet pop-card plus-sheet" role="dialog" aria-modal="true" aria-labelledby="plus-title">
+    <svg class="plus-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="#ffc94a" stroke="#c9861a" stroke-width="1.2" stroke-linejoin="round"/></svg>
+    <h3 id="plus-title">Purrzle Plus</h3>
+    <ul class="plus-perks">
+      <li>No ads between levels</li>
+      <li>Every cat theme unlocked</li>
+      <li>Support two small cats and their maker</li>
+    </ul>
+    <div class="plans" id="plans"></div>
+    <button class="chunky" id="plus-go" type="button">Continue</button>
+    <button class="soft" id="plus-close" type="button">Not now</button>
+    <p class="plus-legal" id="plus-legal">Payment is charged to your account when you confirm. The subscription renews automatically at the same price unless you cancel at least 24 hours before the period ends. Manage or cancel it in your account settings.</p>
+    <div class="plus-links">
+      <button type="button" id="plus-restore">Restore</button>
+      <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Terms of use</a>
+      <a href="https://crystack100.github.io/tangodupe/privacy.html" target="_blank" rel="noopener">Privacy</a>
+    </div>
   </div>
 </div>
 
@@ -1213,13 +1343,14 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   <div class="tut-card">
     <div class="tut-top"><div class="tut-dots" id="tut-dots"></div><button class="tut-skip" id="tut-skip" type="button">Skip</button></div>
     <svg class="tut-cat" id="tut-cat" viewBox="0 0 100 100" aria-hidden="true"><use href="#sun"/></svg>
+    <span class="tut-sign sign" id="tut-sign" aria-hidden="true" hidden></span>
     <h3 id="tut-title">How to play</h3>
     <p class="tut-text" id="tut-text"></p>
     <div class="tut-row" id="tut-row"></div>
     <ul class="tut-rules" id="tut-rules" hidden>
       <li><b>1</b>No more than 2 of the same cat side by side</li>
       <li><b>2</b>Each row and column has 3 Sunny and 3 Luna</li>
-      <li><b>3</b><span><span class="tr-eq">=</span> means same cat, <span class="tr-op">×</span> means different</span></li>
+      <li><b>3</b><span>Squares joined by <span class="sign eq"><svg viewBox="0 0 16 16"><path d="M3 5.2h10M3 10.8h10"/></svg></span> match, and by <span class="sign op"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></span> are different</span></li>
     </ul>
     <p class="tut-msg" id="tut-msg" aria-live="polite"></p>
     <button class="tut-go" id="tut-go" type="button">Next</button>
@@ -1243,7 +1374,13 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     <button class="how-btn" id="s-how" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 .9c0 1.8-2.5 2.2-2.5 3.8"/><circle cx="12" cy="17.2" r=".6" fill="currentColor"/></svg>How to play</button>
     <button class="how-btn" id="s-remind" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></svg><span>Daily reminder</span><b class="onoff" id="s-remind-v">Off</b></button>
     <button class="how-btn" id="s-privacy" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Privacy choices</button>
-    <a class="how-btn portal-only" id="s-policy" href="https://crystack100.github.io/tangodupe/privacy.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Privacy policy</a>
+    <button class="how-btn iap-only" id="s-restore" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></svg>Restore purchases</button>
+    <a class="how-btn" id="s-policy" href="https://crystack100.github.io/tangodupe/privacy.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Privacy policy</a>
+    <button class="noads-btn plus-btn iap-only" id="s-plus" type="button">
+      <span class="na-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="#ffc94a" stroke="#c9861a" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+      <span class="na-txt"><b id="sp-title">Purrzle Plus</b><small id="sp-sub">No ads and every theme</small></span>
+      <span class="na-price" id="sp-price">Try</span>
+    </button>
     <button class="noads-btn" id="s-noads" type="button">
       <span class="na-ic" aria-hidden="true"><b>AD</b></span>
       <span class="na-txt"><b id="na-title">Remove ads</b><small id="na-sub">No banners or pop-ups, forever</small></span>
@@ -1257,7 +1394,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
 </script>
 <script>
 (function () {
-  var T = TangoCore, N = T.N, PAGE = 20;
+  var T = TangoCore, N = T.N;
   var PUZZLE_V = 3; // bump when level generation changes so saved boards restart
   // Each skin's colors, so the shop can preview a look before it is equipped.
   var SKINS = [
@@ -1277,9 +1414,11 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   var Cap = window.Capacitor, NATIVE = !!(Cap && Cap.isNativePlatform && Cap.isNativePlatform());
   // Set on the CrazyGames build, which loads their SDK before the game.
   var CG = window.CrazyGames && window.CrazyGames.SDK, PORTAL = !!CG;
+  // The plain web app (GitHub Pages): no ads and no purchases.
+  var WEB = !NATIVE && !PORTAL;
   function plugin(name) { return NATIVE && Cap.registerPlugin ? Cap.registerPlugin(name) : null; }
   var save = { best: {}, times: {}, wallet: 0, owned: ["cozy"], skin: "cozy", play: null, daily: {}, noAds: false, wins: 0, music: 40, sound: 70, theme: "light" };
-  var page = 0, play = null, cells = [], marks = [], tick = null, toastT = null;
+  var play = null, cells = [], marks = [], tick = null, toastT = null;
 
   function load() {
     try {
@@ -1355,7 +1494,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   function renderHome() {
     var n = nextLevel(), resume = play && !play.done && !play.daily, lv = resume ? play.level : n;
     $("h-play-label").textContent = resume ? "Continue" : "Play";
-    $("h-play-sub").textContent = "Level " + lv + " · " + T.levelDifficulty(lv);
+    $("h-play-sub").textContent = "Level " + lv;
     // Progress toward the cheapest theme not owned yet, previewed in its own colors.
     var goal = SKINS.filter(function (s) { return save.owned.indexOf(s.id) < 0; })[0], duo = $("g-duo");
     duo.style.cssText = "";
@@ -1389,71 +1528,119 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   $("h-play").onclick = function () { if (play && !play.done && !play.daily) resumeLevel(); else startLevel(nextLevel()); };
 
   /* ---------- level map ---------- */
+  // One long winding road, level 1 at the bottom, like a saga map. It opens on the current level;
+  // scroll up for new levels and down for old ones. Only the stretch near the screen is built, so
+  // the map stays light however far a player gets.
+  var MAP = { ROW: 100, LIFT: 34, SIGN: 200, BOT: 70, TOP: 190, CHUNK: 20, AHEAD: 15, SET: 100 },
+    map = { n: 1, last: 1, h: 0, w: 0, built: {}, raf: 0 };
+  // A bank of cloud across the road between each set of 100 levels.
+  var CLOUDS = '<svg class="clouds" viewBox="0 0 480 170" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g class="cb"><circle cx="-20" cy="52" r="35"/><circle cx="3.0" cy="118" r="41"/><circle cx="26" cy="48" r="45"/><circle cx="49.0" cy="114" r="41"/><circle cx="72" cy="52" r="45"/><circle cx="95.0" cy="118" r="36"/><circle cx="118" cy="52" r="45"/><circle cx="141.0" cy="114" r="31"/><circle cx="164" cy="56" r="30"/><circle cx="187.0" cy="122" r="31"/><circle cx="210" cy="48" r="45"/><circle cx="233.0" cy="122" r="26"/><circle cx="256" cy="52" r="40"/><circle cx="279.0" cy="118" r="26"/><circle cx="302" cy="56" r="30"/><circle cx="325.0" cy="122" r="26"/><circle cx="348" cy="52" r="30"/><circle cx="371.0" cy="118" r="31"/><circle cx="394" cy="56" r="40"/><circle cx="417.0" cy="122" r="36"/><circle cx="440" cy="48" r="45"/><circle cx="463.0" cy="122" r="41"/><circle cx="486" cy="56" r="30"/><circle cx="509.0" cy="114" r="41"/><rect x="-20" y="48" width="540" height="74"/></g><g class="cf"><circle cx="-20" cy="66" r="46"/><circle cx="0.0" cy="100" r="22"/><circle cx="20" cy="62" r="46"/><circle cx="40.0" cy="104" r="27"/><circle cx="60" cy="66" r="31"/><circle cx="80.0" cy="100" r="22"/><circle cx="100" cy="62" r="36"/><circle cx="120.0" cy="108" r="32"/><circle cx="140" cy="62" r="36"/><circle cx="160.0" cy="100" r="27"/><circle cx="180" cy="70" r="31"/><circle cx="200.0" cy="104" r="32"/><circle cx="220" cy="66" r="46"/><circle cx="240.0" cy="108" r="37"/><circle cx="260" cy="70" r="46"/><circle cx="280.0" cy="104" r="32"/><circle cx="300" cy="66" r="36"/><circle cx="320.0" cy="104" r="22"/><circle cx="340" cy="70" r="31"/><circle cx="360.0" cy="100" r="27"/><circle cx="380" cy="62" r="41"/><circle cx="400.0" cy="108" r="32"/><circle cx="420" cy="62" r="36"/><circle cx="440.0" cy="104" r="27"/><circle cx="460" cy="66" r="46"/><circle cx="480.0" cy="100" r="22"/><circle cx="500" cy="62" r="46"/><circle cx="520.0" cy="104" r="27"/><rect x="-20" y="62" width="540" height="46"/></g></svg>';
+  var LOCK = '<svg class="lock" viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>';
+  // Height of the road below level i (level 1 sits MAP.BOT above the bottom edge).
+  function rise(i) {
+    return (i - 1) * MAP.ROW + (i > map.n ? MAP.LIFT : 0) + (i === map.n && i > 1 ? MAP.LIFT / 2 : 0) + Math.floor((i - 1) / MAP.SET) * MAP.SIGN;
+  }
+  function spotY(i) { return map.h - MAP.BOT - rise(i); }
+  function spotX(i) { return map.w / 2 + Math.sin((i - 1) * 0.9) * Math.min(80, map.w / 2 - 60); }
+  function mapScroller() { var sc = $("scroll"); return /auto|scroll/.test(getComputedStyle(sc).overflowY) && sc.scrollHeight > sc.clientHeight + 1 ? sc : null; }
+  function viewBox() { var sc = mapScroller(); if (!sc) return [0, window.innerHeight]; var r = sc.getBoundingClientRect(); return [r.top, r.bottom]; }
+
   function renderMap() {
     renderWallet();
-    var n = nextLevel(), from = page * PAGE + 1, box = $("map");
-    box.innerHTML = "";
-    for (var i = from; i < from + PAGE; i++) {
-      var row = document.createElement("div"), b = document.createElement("button"), open = unlocked(i);
-      row.className = "node-row";
-      b.type = "button"; b.className = "node" + (i === n ? " current" : "") + (open ? "" : " locked");
-      b.style.setProperty("--x", Math.round(Math.sin((i - 1) * 0.9) * 80) + "px");
-      b.disabled = !open;
-      b.innerHTML = open
-        ? i + (save.best[i] ? '<span class="ns">' + starSvgs(save.best[i]) + "</span>" : "") +
-          (i === n ? '<svg class="peek" viewBox="0 0 100 100" aria-hidden="true"><use href="#sun"/></svg>' : "")
-        : '<svg class="lock" viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>';
-      b.setAttribute("aria-label", "Level " + i + (save.best[i] ? ", " + save.best[i] + " stars" : open ? "" : ", locked"));
-      b.onclick = startLevel.bind(null, i);
-      row.appendChild(b); box.appendChild(row);
-    }
-    $("map-title").textContent = "Levels " + from + "–" + (from + PAGE - 1);
-    $("pg-prev").disabled = page === 0;
-    $("pg-next").disabled = from + PAGE > n;
-    requestAnimationFrame(drawTrail);
-    var cur = box.querySelector(".current");
-    if (cur) setTimeout(function () {
-      // Scroll only the page's own scroller; scrollIntoView also shifted the phone frame on desktop.
-      var sc = $("scroll"), r = cur.getBoundingClientRect();
-      if (sc.scrollHeight > sc.clientHeight + 1) sc.scrollTop += r.top - sc.getBoundingClientRect().top - sc.clientHeight / 2 + r.height / 2;
-      else window.scrollTo(0, window.scrollY + r.top - window.innerHeight / 2 + r.height / 2);
-    }, 0);
+    var box = $("map");
+    map.n = nextLevel(); map.last = map.n + MAP.AHEAD; map.w = box.clientWidth || 360;
+    map.h = MAP.BOT + rise(map.last) + MAP.TOP;
+    box.style.height = map.h + "px";
+    box.innerHTML = '<div class="map-end" style="top:' + (spotY(map.last) - MAP.TOP + 18) + 'px">' +
+      '<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#moon"/></svg><b>More levels ahead</b><small>Each win opens the next one</small></div>';
+    map.built = {};
+    paintMap();
+    // Open on the current level, in the middle of the screen.
+    jumpToCurrent(false);
   }
-  // A winding road through the level bubbles, done part in color.
-  function drawTrail() {
-    var box = $("map"), svg = $("trail"), base = box.getBoundingClientRect(), pts = [], done = 0;
-    box.querySelectorAll(".node").forEach(function (b) {
-      var r = b.getBoundingClientRect(); pts.push([r.left + r.width / 2 - base.left, r.top + r.height / 2 - base.top]);
-      if (!b.classList.contains("locked")) done = pts.length;
-    });
-    if (pts.length < 2) return;
-    function path(list) {
-      var d = "M" + list[0][0] + " " + list[0][1];
-      for (var i = 1; i < list.length; i++) { var a = list[i - 1], c = list[i], my = (a[1] + c[1]) / 2; d += " C" + a[0] + " " + my + " " + c[0] + " " + my + " " + c[0] + " " + c[1]; }
-      return d;
-    }
-    svg.setAttribute("viewBox", "0 0 " + base.width + " " + base.height);
-    svg.innerHTML = '<path class="road" d="' + path(pts) + '"/><path class="road-in" d="' + path(pts) + '"/>' +
-      (done > 1 ? '<path class="road-done" d="' + path(pts.slice(0, done)) + '"/>' : "") + '<path class="road-dash" d="' + path(pts) + '"/>';
+  function jumpToCurrent(smooth) {
+    var box = $("map"), sc = mapScroller(), v = viewBox(), r = box.getBoundingClientRect(),
+      dy = r.top + spotY(map.n) - (v[0] + v[1]) / 2;
+    if (sc) sc.scrollTo({ top: sc.scrollTop + dy, behavior: smooth ? "smooth" : "auto" });
+    else window.scrollTo({ top: window.scrollY + dy, behavior: smooth ? "smooth" : "auto" });
+    paintMap();
   }
-  window.addEventListener("resize", function () { if (!$("levels").hidden) drawTrail(); });
-  $("pg-prev").onclick = function () { page = Math.max(0, page - 1); renderMap(); };
-  $("pg-next").onclick = function () { page++; renderMap(); };
+  // Build the stretches of road near the screen and drop the ones far away.
+  function paintMap() {
+    map.raf = 0;
+    if ($("levels").hidden) return;
+    var box = $("map"), r = box.getBoundingClientRect(), v = viewBox(), pad = 900,
+      lo = v[0] - r.top - pad, hi = v[1] - r.top + pad, keep = {};
+    for (var a = 1; a <= map.last; a += MAP.CHUNK) {
+      var b = Math.min(a + MAP.CHUNK - 1, map.last), top = spotY(b) - MAP.ROW, bot = spotY(a) + MAP.ROW;
+      if (bot < lo || top > hi) continue;
+      keep[a] = 1;
+      if (!map.built[a]) { map.built[a] = buildChunk(a, b); box.appendChild(map.built[a]); }
+    }
+    Object.keys(map.built).forEach(function (k) { if (!keep[k]) { map.built[k].remove(); delete map.built[k]; } });
+    // The "back to my level" button shows once the current level is off screen.
+    var y = r.top + spotY(map.n);
+    $("map-jump").hidden = y > v[0] + 60 && y < v[1] - 60;
+    $("map-jump").classList.toggle("down", y > v[1] - 60);
+  }
+  function queueMap() { if (!map.raf && !$("levels").hidden) map.raf = requestAnimationFrame(paintMap); }
+  function roadPath(from, to) {
+    var d = "M" + spotX(from) + " " + spotY(from);
+    for (var i = from + 1; i <= to; i++) {
+      var ax = spotX(i - 1), ay = spotY(i - 1), cx = spotX(i), cy = spotY(i), my = (ay + cy) / 2;
+      d += " C" + ax + " " + my + " " + cx + " " + my + " " + cx + " " + cy;
+    }
+    return d;
+  }
+  // One stretch of road: its levels, the road joining them to the next stretch, and a sign at each set of 100.
+  function buildChunk(a, b) {
+    var el = document.createElement("div"), n = map.n, end = Math.min(b + 1, map.last),
+      top = spotY(end) - 20, h = spotY(a) - top + 20, html = "", road = roadPath(a, end);
+    el.className = "map-chunk";
+    html += '<svg class="trail" style="top:' + top + "px;height:" + h + 'px" viewBox="0 ' + top + " " + map.w + " " + h + '" aria-hidden="true">' +
+      '<path class="road" d="' + road + '"/><path class="road-in" d="' + road + '"/>' +
+      (n > a ? '<path class="road-done" d="' + roadPath(a, Math.min(end, n)) + '"/>' : "") + '<path class="road-dash" d="' + road + '"/></svg>';
+    for (var i = a; i <= b; i++) {
+      if (i > 1 && (i - 1) % MAP.SET === 0) {
+        html += '<div class="map-sign" style="top:' + (spotY(i - 1) + spotY(i)) / 2 + 'px">' + CLOUDS + '<span><svg viewBox="0 0 40 34" aria-hidden="true"><use href="#paw"/></svg>Levels ' + i + "–" + (i + MAP.SET - 1) + "</span></div>";
+      }
+      var open = i <= n, best = save.best[i];
+      html += '<div class="spot" style="left:' + spotX(i) + "px;top:" + spotY(i) + 'px"><button type="button" class="node' + (i === n ? " current" : "") + (open ? "" : " locked") + '" data-lv="' + i + '"' +
+        (open ? "" : " disabled") + ' aria-label="Level ' + i + (best ? ", " + best + " stars" : open ? "" : ", locked") + '">' +
+        (open ? i + (best ? '<span class="ns">' + starSvgs(best) + "</span>" : "") +
+          (i === n ? '<svg class="peek" viewBox="0 0 100 100" aria-hidden="true"><use href="#sun"/></svg>' : "") : LOCK) + "</button></div>";
+    }
+    el.innerHTML = html;
+    el.querySelectorAll(".node:not(.locked)").forEach(function (btn) { btn.onclick = function () { startLevel(+btn.dataset.lv); }; });
+    return el;
+  }
+  window.addEventListener("scroll", queueMap, { passive: true });
+  $("scroll").addEventListener("scroll", queueMap, { passive: true });
+  window.addEventListener("resize", function () {
+    if ($("levels").hidden || $("map").clientWidth === map.w) return queueMap();
+    // A new width moves every bubble: rebuild, keeping the same spot in the middle of the screen.
+    var v = viewBox(), r = $("map").getBoundingClientRect(), fromBottom = map.h - ((v[0] + v[1]) / 2 - r.top);
+    map.w = $("map").clientWidth; map.built = {}; $("map").querySelectorAll(".map-chunk").forEach(function (c) { c.remove(); });
+    var dy = (map.h - fromBottom) - ((v[0] + v[1]) / 2 - $("map").getBoundingClientRect().top);
+    if (dy) { var sc = mapScroller(); if (sc) sc.scrollTop += dy; else window.scrollBy(0, dy); }
+    paintMap();
+  });
+  $("map-jump").onclick = function () { jumpToCurrent(true); };
 
   /* ---------- puzzle ---------- */
 
   // First-time tutorial: five tiny lessons, each solved by tapping the glowing square.
   var TUT = [
     { title: "Meet Sunny and Luna", text: "Tap the glowing square to place Sunny. Tap it again for Luna.", row: [-1], goal: 0, answer: 1, cat: "sun",
-      say: { 0: "That's Sunny! Tap again for Luna.", 1: "And that's Luna! A third tap clears the square." } },
+      say: { 0: "That's Sunny! Tap again for Luna.", 1: "And that's Luna! Tap again to switch back to Sunny." } },
     { title: "No three in a row", text: "Never put 3 of the same cat side by side.", row: [0, 0, -1, 1], goal: 2, answer: 1, cat: "sun",
       bad: { 0: { msg: "Three Sunnys in a row! Tap again to swap.", cells: [0, 1, 2] } } },
     { title: "Three of each", text: "Every row and column holds 3 Sunny and 3 Luna.", row: [1, 0, 0, 1, 0, -1], goal: 5, answer: 1, cat: "moon",
       bad: { 0: { msg: "That's 4 Sunnys. Only 3 of each fit in a row.", cells: [1, 2, 4, 5] } } },
-    { title: "= means the same", text: "Cats joined by = must be the same.", row: [-1, 1], edges: [{ a: 0, type: "=" }], goal: 0, answer: 1, cat: "moon",
-      bad: { 0: { msg: "The = wants matching cats. Try Luna.", edge: 0 } } },
-    { title: "× means different", text: "Cats joined by × must be different.", row: [0, -1], edges: [{ a: 0, type: "×" }], goal: 1, answer: 1, cat: "sun",
-      bad: { 0: { msg: "The × wants different cats. Try Luna.", edge: 0 } } },
+    { title: "Matching pair", sign: "eq", text: "Two squares joined by <span class=\"sign eq\"><svg viewBox=\"0 0 16 16\"><path d=\"M3 5.2h10M3 10.8h10\"/></svg></span> always hold the same cat.", row: [-1, 1], edges: [{ a: 0, type: "=" }], goal: 0, answer: 1, cat: "moon",
+      bad: { 0: { msg: "These two have to match. Try Luna.", edge: 0 } } },
+    { title: "Opposite pair", sign: "op", text: "Two squares joined by <span class=\"sign op\"><svg viewBox=\"0 0 16 16\"><path d=\"M4 4l8 8M12 4l-8 8\"/></svg></span> always hold different cats.", row: [0, -1], edges: [{ a: 0, type: "×" }], goal: 1, answer: 1, cat: "sun",
+      bad: { 0: { msg: "These two can't be the same. Try Luna.", edge: 0 } } },
     { title: "You're ready!", text: "Fill every square so all the rules hold. Each puzzle has exactly one answer, so you never need to guess.", rules: true, cat: "sun" }
   ];
   var tut = null;
@@ -1470,7 +1657,10 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   function tutStep() {
     var L = TUT[tut.step], cat = $("tut-cat");
     tut.row = (L.row || []).slice();
-    $("tut-title").textContent = L.title; $("tut-text").textContent = L.text;
+    $("tut-title").textContent = L.title; $("tut-text").innerHTML = L.text;
+    // Sign lessons show the sign itself as the picture, so the sentence never has to open with a symbol.
+    $("tut-sign").innerHTML = L.sign ? (L.sign === "eq" ? '<svg viewBox="0 0 16 16"><path d="M3 5.2h10M3 10.8h10"/></svg>' : '<svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg>') : "";
+    $("tut-sign").className = "tut-sign sign " + (L.sign || ""); $("tut-sign").hidden = !L.sign; cat.style.display = L.sign ? "none" : "";
     cat.innerHTML = '<use href="#' + L.cat + '"/>'; cat.classList.remove("bounce");
     $("tut-dots").querySelectorAll("i").forEach(function (d, k) { d.className = k === tut.step ? "on" : k < tut.step ? "done" : ""; });
     $("tut-rules").hidden = !L.rules; $("tut-row").hidden = !!L.rules;
@@ -1508,7 +1698,8 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   function tutTap(i) {
     var L = TUT[tut.step];
     if (tut.solved && tut.step > 0) return;
-    var v = tut.row[i] === -1 ? 0 : tut.row[i] === 0 ? 1 : -1;
+    // In the tutorial a tap only swaps Sunny and Luna; squares never go back to empty.
+    var v = tut.row[i] === 0 ? 1 : 0;
     tut.row[i] = v; tut.changed = i;
     Audio.sfx(v === -1 ? "clear" : "place" + v);
     var bad = L.bad && L.bad[v];
@@ -1528,7 +1719,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     else tutMsg("", "");
     if (v === L.answer && !tut.solved) {
       tut.solved = true; $("tut-go").disabled = false; Audio.sfx("star", 1);
-      var cat = $("tut-cat"); cat.classList.remove("bounce"); void cat.offsetWidth; cat.classList.add("bounce");
+      var cat = $("tut-cat").style.display === "none" ? $("tut-sign") : $("tut-cat"); cat.classList.remove("bounce"); void cat.offsetWidth; cat.classList.add("bounce");
     }
     tutRow();
   }
@@ -1578,11 +1769,13 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     });
     errSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); errSvg.setAttribute("class", "err-lines"); errSvg.setAttribute("aria-hidden", "true");
     boardEl.appendChild(errSvg); errKey = "";
+    bandBox = document.createElement("div"); bandBox.className = "err-bands"; bandBox.setAttribute("aria-hidden", "true");
+    boardEl.appendChild(bandBox); bandKey = "";
   }
   // Three alike in a row turns red at once. Other broken rules (= or ×, more than 3 of a cat in a line)
   // wait until the player pauses, so tapping through Sunny to reach Luna never flashes red.
   // A cat that is wrong but breaks no rule stays quiet; a full board that isn't the answer gets a nudge.
-  var ERROR_DELAY = 1200, shown = { cells: new Set(), edges: new Set() }, errT = null, errSvg = null, errKey = "";
+  var bandBox = null, bandKey = "", ERROR_DELAY = 1200, shown = { cells: new Set(), edges: new Set() }, errT = null, errSvg = null, errKey = "";
   // Red lines: through three-in-a-row, and across a broken = or ×. Drawn only for breaks already shown.
   function drawErrLines(res) {
     if (!errSvg) return;
@@ -1602,6 +1795,34 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
       var x1 = a[0] - ux * cw, y1 = a[1] - uy * cw, x2 = b[0] + ux * cw, y2 = b[1] + uy * cw;
       var d = "M" + x1.toFixed(1) + " " + y1.toFixed(1) + "L" + x2.toFixed(1) + " " + y2.toFixed(1), L = (len + 2 * cw).toFixed(0);
       return '<path class="halo" d="' + d + '"/><path class="ln" style="--len:' + L + '" d="' + d + '"/>';
+    }).join("");
+  }
+  // Frame every row or column that breaks a rule (too many of one cat, or three alike in a row),
+  // so it's obvious which line is wrong. Only breaks already showing are framed.
+  function drawBands() {
+    if (!bandBox) return;
+    var out = [], k;
+    function line(get, isRow, n) {
+      var cnt = [0, 0], idx = [], label = "";
+      for (k = 0; k < N; k++) { idx.push(get(k)); if (play.board[get(k)] !== -1) cnt[play.board[get(k)]]++; }
+      [0, 1].forEach(function (v) {
+        if (cnt[v] > N / 2 && idx.some(function (i) { return play.board[i] === v && shown.cells.has(i); })) label = cnt[v] + " " + (v ? "Lunas" : "Sunnys");
+      });
+      for (k = 0; !label && k + 2 < N; k++) {
+        var a = idx[k], b = idx[k + 1], c = idx[k + 2];
+        if (play.board[a] !== -1 && play.board[a] === play.board[b] && play.board[a] === play.board[c] &&
+            shown.cells.has(a) && shown.cells.has(b) && shown.cells.has(c)) label = "3 in a row";
+      }
+      if (label) out.push([isRow ? "row" : "col", n, label]);
+    }
+    for (var r = 0; r < N; r++) line(function (k) { return r * N + k; }, true, r);
+    for (var c = 0; c < N; c++) line(function (k) { return k * N + c; }, false, c);
+    var key = out.join("|"); if (key === bandKey) return; bandKey = key;
+    // Same gap-aware placement as the signs: each square is (100% - 5 gaps) / 6, gaps are 3px.
+    var at = function (n) { return "calc((100% - 15px) * " + (n / N) + " + " + (3 * n - 3) + "px)"; }, size = "calc((100% - 15px) / " + N + " + 6px)";
+    bandBox.innerHTML = out.map(function (b) {
+      var st = b[0] === "row" ? "left:-3px;right:-3px;top:" + at(b[1]) + ";height:" + size : "top:-3px;bottom:-3px;left:" + at(b[1]) + ";width:" + size;
+      return '<span class="err-band ' + b[0] + '" style="' + st + '"><i>' + b[2] + "</i></span>";
     }).join("");
   }
   // Light up the rule chip for each kind of break on show: too many of one cat in a line, three in a row, or a sign.
@@ -1642,7 +1863,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     }
     if ((changed != null || reveal) && shown.cells.size > before) Audio.sfx("oops");
     var full = play.board.every(function (v) { return v !== -1; });
-    if (changed != null && full && !res.solved) toast("Not quite! Look for the red squares");
+    if (changed != null && full && !res.solved) toast("Not quite! Check the lines in red");
     cells.forEach(function (el, i) {
       var v = play.board[i], given = play.givens[i] !== -1;
       el.classList.toggle("given", given);
@@ -1654,7 +1875,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
       el.classList.toggle("pop", i === changed);
     });
     marks.forEach(function (m, j) { m.classList.toggle("bad", shown.edges.has(j)); });
-    drawErrLines(res);
+    drawErrLines(res); drawBands();
     markBrokenRules(res);
     $("g-filled").firstChild.textContent = play.board.filter(function (v) { return v !== -1; }).length;
     $("undo").disabled = play.done || !play.history.length;
@@ -1860,29 +2081,40 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   $("g-back").onclick = function () { persist(); show(play.done && !play.daily ? "levels" : "home"); };
   $("win-next").onclick = function () {
     var go = function () { if (play.daily) show("home"); else startLevel(play.level + 1); };
-    // An ad between levels every third win, unless ads were removed or the player just watched a bonus video.
-    if (!save.noAds && save.wins % 3 === 0 && !(play.result && play.result.bonus)) Ads.interstitial(go); else go();
+    // An ad between levels after every win from the third on, unless ads were removed (Plus or Remove ads)
+    // or the player just watched a bonus video. Every few ads, the Plus offer follows the ad.
+    if (!adFree() && save.wins >= 3 && !(play.result && play.result.bonus)) {
+      save.adsSeen = (save.adsSeen || 0) + 1; persist();
+      Ads.interstitial(function () { if (Shop.on() && save.adsSeen % PLUS_EVERY === 0) openPlus(go); else go(); });
+    } else go();
   };
 
   /* ---------- ads ----------
-     In the phone app these are Google AdMob ads: a full-screen ad after every third win, and
-     reward videos the player chooses to watch (bonus stars).
-     The web build fakes both with a 5 second card. "Remove ads" is web-only for now; in the
-     app it becomes a one-time in-app purchase later. */
+     In the phone app these are Google AdMob ads: a full-screen ad after every win (from the third),
+     and reward videos the player chooses to watch (bonus stars).
+     Players stop the ads with Purrzle Plus (a subscription) or Remove ads (a one-time purchase),
+     both sold through the app store (see Shop below). */
+  var PLUS_EVERY = 6; // show the Plus offer after every 6th ad
+  function adFree() { return !!(save.noAds || save.plus); }
   function applyAds() {
-    document.body.classList.toggle("no-ads", !!save.noAds);
-    $("noads-buy").textContent = save.noAds ? "Owned" : "$2.99"; $("noads-buy").disabled = !!save.noAds;
-    $("noads-sub").textContent = save.noAds ? "Thanks for supporting Purrzle!" : "No banners or ads between levels, forever.";
+    var off = adFree(), price = Shop.price("remove_ads") || "$2.99";
+    document.body.classList.toggle("no-ads", off);
+    $("noads-buy").textContent = save.noAds ? "Owned" : price; $("noads-buy").disabled = !!save.noAds;
+    $("noads-sub").textContent = save.noAds ? "Thanks for supporting Purrzle!" : "No ads between levels, forever. One payment.";
     $("s-noads").classList.toggle("owned", !!save.noAds);
     $("na-title").textContent = save.noAds ? "Ads removed" : "Remove ads";
-    $("na-sub").textContent = save.noAds ? "Thanks! Tap to bring them back (testing)" : "No banners or pop-ups, forever";
-    $("na-price").textContent = save.noAds ? "\u2713" : "$2.99";
+    $("na-sub").textContent = save.noAds ? "Thanks for supporting Purrzle!" : "No ads between levels, forever";
+    $("na-price").textContent = save.noAds ? "\u2713" : price;
+    $("s-plus").classList.toggle("owned", !!save.plus);
+    $("sp-title").textContent = save.plus ? "You're a Plus member" : "Purrzle Plus";
+    $("sp-sub").textContent = save.plus ? "No ads and every theme. Thank you!" : "No ads and every theme";
+    $("sp-price").textContent = save.plus ? "\u2713" : "Try";
+    $("plus-card-sub").textContent = save.plus ? "You're a member: no ads and every theme. Thank you!" : "No ads and every theme, while you're a member.";
+    $("plus-card-go").textContent = save.plus ? "Manage" : "See plans";
   }
   function removeAds() {
-    // Web test build: no real payment, this just flips the switch.
-    save.noAds = true; persist(); applyAds(); $("ad-full").hidden = true;
-    toast("Ads removed");
-    if (adDone) { var f = adDone; adDone = null; f(); }
+    if (save.noAds) return;
+    Shop.buy("remove_ads");
   }
   var adDone = null, adT = null;
   function showAd(done, reward) {
@@ -1899,8 +2131,114 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     }, 1000);
   }
   $("ad-close").onclick = function () { $("ad-full").hidden = true; clearInterval(adT); if (adDone) { var f = adDone; adDone = null; f(); } };
-  $("ad-full-x").onclick = $("ad-banner-x").onclick = $("noads-buy").onclick = removeAds;
-  $("s-noads").onclick = function () { if (save.noAds) { save.noAds = false; persist(); applyAds(); } else removeAds(); };
+  $("ad-full-x").onclick = $("ad-banner-x").onclick = $("noads-buy").onclick = $("s-noads").onclick = removeAds;
+
+  /* ---------- purchases (phone app only) ----------
+     Sold through the App Store and Google Play using RevenueCat, which checks receipts and tracks
+     renewals. Set up in RevenueCat (see mobile/README.md):
+       entitlement "plus"     <- the three Plus subscriptions
+       entitlement "no_ads"   <- the one-time Remove ads purchase
+       current offering       <- packages Weekly, Monthly, Annual and a custom package "remove_ads"
+     Until the API keys below are filled in, the store stays off and no purchase buttons show. */
+  var RC_KEYS = { ios: "", android: "" };
+  var PLANS = [
+    { pkg: "WEEKLY", name: "Weekly", per: "week" },
+    { pkg: "ANNUAL", name: "Yearly", per: "year", tag: "BEST VALUE" },
+    { pkg: "MONTHLY", name: "Monthly", per: "month" }
+  ];
+  var Shop = (function () {
+    var RC = plugin("Purchases"), os = NATIVE ? Cap.getPlatform() : "web", on = false, pkgs = {}, busy = false;
+    function apply(info) {
+      if (!info || !info.entitlements) return;
+      var act = info.entitlements.active || {};
+      var plus = !!act.plus, noAds = !!act.no_ads;
+      if (plus === !!save.plus && noAds === !!save.noAds) return;
+      save.plus = plus; save.noAds = noAds;
+      // Themes borrowed from Plus go back when it ends.
+      if (!plus && save.owned.indexOf(save.skin) < 0) { save.skin = "cozy"; applySkin(); }
+      persist(); applyAds(); if (!$("store").hidden) renderStore(); renderHome();
+    }
+    function start() {
+      var key = RC_KEYS[os];
+      if (!RC || !key) return;
+      RC.configure({ apiKey: key }).then(function () {
+        RC.addCustomerInfoUpdateListener(apply);
+        RC.getCustomerInfo().then(function (r) { apply(r.customerInfo); }).catch(function () {});
+        return RC.getOfferings();
+      }).then(function (o) {
+        var cur = o && o.current; if (!cur) return;
+        cur.availablePackages.forEach(function (p) { pkgs[p.packageType === "CUSTOM" ? p.identifier : p.packageType] = p; });
+        on = PLANS.some(function (pl) { return pkgs[pl.pkg]; });
+        document.body.classList.toggle("iap", on);
+        document.body.classList.toggle("iap-ads", !!pkgs.remove_ads);
+        applyAds(); if (!$("store").hidden) renderStore();
+      }).catch(function () {});
+    }
+    function buy(id, done) {
+      var p = pkgs[id];
+      if (!p) { toast("The store isn't available right now"); return; }
+      if (busy) return; busy = true;
+      RC.purchasePackage({ aPackage: p }).then(function (r) {
+        busy = false; apply(r.customerInfo); Audio.sfx("coin");
+        toast(id === "remove_ads" ? "Ads removed. Thank you!" : "Welcome to Purrzle Plus!");
+        if (done) done(true);
+      }).catch(function (e) {
+        busy = false;
+        if (!(e && (e.userCancelled || e.code === "1" || e.code === 1))) toast("The purchase didn't go through");
+        if (done) done(false);
+      });
+    }
+    function restore() {
+      if (!RC || !RC_KEYS[os]) return;
+      RC.restorePurchases().then(function (r) {
+        apply(r.customerInfo);
+        toast(save.plus || save.noAds ? "Purchases restored" : "No purchases to restore");
+      }).catch(function () { toast("Couldn't reach the store. Try again later"); });
+    }
+    return {
+      start: start, buy: buy, restore: restore,
+      on: function () { return on; },
+      price: function (id) { return pkgs[id] && pkgs[id].product.priceString; },
+      plan: function (id) { return pkgs[id] && pkgs[id].product; },
+      os: function () { return os; }
+    };
+  })();
+
+  // The Plus offer. `after` runs once it closes (used when it follows an ad).
+  var plusAfter = null, plusPick = "ANNUAL";
+  function openPlus(after) {
+    plusAfter = after || null;
+    if (save.plus) { closePlus(); toast("Manage your membership in your app store account"); return; }
+    if (!Shop.plan(plusPick)) plusPick = PLANS.filter(function (pl) { return Shop.plan(pl.pkg); }).map(function (pl) { return pl.pkg; })[0];
+    var box = $("plans"); box.innerHTML = "";
+    var week = Shop.plan("WEEKLY");
+    PLANS.forEach(function (pl) {
+      var pr = Shop.plan(pl.pkg); if (!pr) return;
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "plan"; b.setAttribute("aria-pressed", pl.pkg === plusPick);
+      var sub = "Renews every " + pl.per;
+      if (pl.pkg === "ANNUAL" && week && pr.price) {
+        var save52 = Math.round(100 - pr.price / (week.price * 52) * 100);
+        if (save52 > 0) sub = "Save " + save52 + "% vs weekly";
+      }
+      b.innerHTML = (pl.tag ? '<span class="plan-tag">' + pl.tag + "</span>" : "") + "<b>" + pl.name + "</b><small>" + sub +
+        '</small><span class="plan-price">' + pr.priceString + "</span>";
+      b.onclick = function () { plusPick = pl.pkg; box.querySelectorAll(".plan").forEach(function (x) { x.setAttribute("aria-pressed", x === b); }); };
+      box.appendChild(b);
+    });
+    // Apple's standard terms apply to App Store subscriptions; Google Play has its own.
+    document.querySelector('.plus-links a[href*="apple.com"]').hidden = Shop.os() !== "ios";
+    $("plus-sheet").hidden = false;
+  }
+  function closePlus() {
+    $("plus-sheet").hidden = true;
+    var f = plusAfter; plusAfter = null; if (f) f();
+  }
+  $("plus-go").onclick = function () { if (plusPick) Shop.buy(plusPick, function (ok) { if (ok) closePlus(); }); };
+  $("plus-close").onclick = closePlus;
+  $("plus-restore").onclick = $("s-restore").onclick = function () { Shop.restore(); };
+  $("s-plus").onclick = function () { $("sheet").hidden = true; openPlus(); };
+  $("plus-card-go").onclick = function () { openPlus(); };
   // AdMob ad unit IDs from admob.google.com. Test builds (and any ID left empty) show Google's test ads,
   // so tapping ads while testing can't get the AdMob account in trouble.
   var AD_UNITS = {
@@ -1963,7 +2301,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
         } catch (e) { end(kind !== "rewarded"); }
         return;
       }
-      if (!NATIVE) { open = true; return showAd(function () { open = false; done(true); }, kind === "rewarded"); }
+      if (!NATIVE) return done(false);
       if (!ready[kind]) return done(false);
       after = done; earned = false; open = true; ready[kind] = false; Audio.hold(true);
       (kind === "rewarded" ? AdMob.showRewardVideoAd() : AdMob.showInterstitial())
@@ -1973,7 +2311,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     return {
       start: start,
       busy: function () { return open; },
-      canReward: function () { return !NATIVE || ready.rewarded; },
+      canReward: function () { return PORTAL || (NATIVE && ready.rewarded); },
       interstitial: function (done) { show("interstitial", function () { done(); }); },
       reward: function (done) {
         show("rewarded", function (ok) { if (ok) done(); else toast("Watch the whole video to get the reward"); });
@@ -2000,7 +2338,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
   function freeLeft() { var f = save.free || {}; return FREE_PER_DAY - (f.day === dayKey() ? f.n : 0); }
   function paintFree() {
     var left = freeLeft();
-    $("freestars").hidden = !Ads.canReward() && left > 0;
+    $("freestars").hidden = WEB || (!Ads.canReward() && left > 0);
     $("fs-go").disabled = left <= 0;
     $("fs-sub").textContent = left > 0 ? "Watch a short video for " + BONUS + " stars (" + left + " left today)" : "That's all for today. Come back tomorrow!";
   }
@@ -2020,7 +2358,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     Notes.cancel({ notifications: [{ id: 1 }, { id: 2 }] }).catch(function () {}).then(function () {
       if (!save.remind) return;
       var list = [{ id: 1, title: "Sunny and Luna miss you \ud83d\udc31", body: "Your next level is waiting.",
-        schedule: { on: { hour: 9, minute: 0 }, allowWhileIdle: true } }];
+        schedule: { on: { hour: 9, minute: 0 }, allowWhileIdle: true }, isExactNotification: false }];
       return Notes.schedule({ notifications: list });
     }).catch(function () {});
   }
@@ -2059,7 +2397,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     renderWallet(); paintFree();
     var box = $("skins"); box.innerHTML = "";
     SKINS.forEach(function (s) {
-      var owned = save.owned.indexOf(s.id) >= 0, on = save.skin === s.id, css = "";
+      var owned = save.owned.indexOf(s.id) >= 0 || !!save.plus, on = save.skin === s.id, css = "";
       for (var k in s.v) css += "--" + k + ":" + s.v[k] + ";";
       var card = document.createElement("div");
       card.className = "skin sk-" + s.id + (on ? " equipped" : "");
@@ -2223,9 +2561,8 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     // Puzzles made by an older version may need guessing, so they're started fresh.
     if (play && play.v !== PUZZLE_V) play = save.play = null;
     buildTiles();
-    page = Math.floor((nextLevel() - 1) / PAGE);
     applySkin(); applyAds();
-    document.body.classList.toggle("native", NATIVE); document.body.classList.toggle("portal", PORTAL);
+    document.body.classList.toggle("native", NATIVE); document.body.classList.toggle("portal", PORTAL); document.body.classList.toggle("web", WEB);
     paintRemind(); if (save.remind) scheduleReminders();
     var screen = data && data.screen;
     if (screen === "game" && play) resumeLevel(); else show(screen || "home");
@@ -2233,6 +2570,7 @@ body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .a
     if (screen) splash.hidden = true;
     else setTimeout(function () { splash.classList.add("out"); setTimeout(function () { splash.hidden = true; }, 400); }, 1250);
     setTimeout(Ads.start, screen ? 0 : 1700);
+    setTimeout(Shop.start, screen ? 0 : 1700);
   }
   if (window.claude && window.claude.hot) window.claude.hot.snapshot(function () {
     var cur = ["game", "levels", "store", "home"].filter(function (s) { return !$(s).hidden; })[0];

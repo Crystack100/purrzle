@@ -11,11 +11,12 @@
   "license": "ISC",
   "dependencies": {
     "@capacitor-community/admob": "^8.2.1",
-    "@capacitor/android": "^8.5.2",
-    "@capacitor/cli": "^8.5.2",
-    "@capacitor/core": "^8.5.2",
-    "@capacitor/ios": "^8.5.2",
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/ios": "^8.6.0",
     "@capacitor/local-notifications": "^8.3.1",
-    "@capacitor/share": "^8.0.3"
+    "@capacitor/share": "^8.0.3",
+    "@revenuecat/purchases-capacitor": "13.7.6"
   }
 }

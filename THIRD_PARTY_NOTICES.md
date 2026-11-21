@@ -13,6 +13,6 @@ Purrzle includes or depends on the following third-party software. All of these 
 | Google Mobile Ads SDK and User Messaging Platform | Ads and consent form in the phone app | Google terms (https://developers.google.com/admob/terms) |
 | CrazyGames HTML5 SDK v3 (CrazyGames build only) | Ads and saves on CrazyGames | CrazyGames developer terms |
 
-The Fredoka and Plus Jakarta Sans fonts are embedded in the game and may not be sold on its own. The OFL text: https://openfontlicense.org/open-font-license-official-text/
+The Fredoka and Plus Jakarta Sans fonts are embedded in the game and may not be sold on their own. The OFL text: https://openfontlicense.org/open-font-license-official-text/
 
 Cat artwork (Sunny and Luna), icons and sounds are original to Purrzle. Sounds are generated in code at runtime.

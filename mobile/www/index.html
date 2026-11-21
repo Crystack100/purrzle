@@ -1026,6 +1026,12 @@ body.web .ad-banner, body.web #noads, body.web #s-noads, body.web .ad-x, body.we
    clear of the Undo, Hint and Clear buttons. */
 .toast { white-space: normal; width: max-content; max-width: calc(100% - 32px); text-align: center; }
 body.playing .toast { bottom: calc(22px + env(safe-area-inset-bottom, 0px)); }
+/* Solved: the cats hop in a wave across the board and the frame glows before the results appear. */
+.board.solved .cell svg { animation: solvedHop .55s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: calc(var(--wave, 0) * 45ms + 120ms); }
+@keyframes solvedHop { 40% { transform: translateY(-14%) scale(1.08); } }
+.board.solved .cell.v0, .board.solved .cell.v1 { transition: filter .3s; }
+html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star), 0 0 28px 4px color-mix(in srgb, var(--star) 60%, transparent), 0 10px 28px -16px var(--shadow); transition: box-shadow .3s; }
+.board.solved .mark { opacity: 0; transition: opacity .3s; }
 /* Gold accents (Midnight, Royal) are too light for white lettering: buttons and banners use the skin's dark ink there. */
 :root:is([data-skin="midnight"], [data-skin="royal"]) :is(.pillbtn:not(.alt), .set-head, .node.current, .map-jump, .win-ribbon, .lg-rows li.me, .win-btns .chunky, .why-ok, .tut-rules b, .tut-go, .noads-btn:not(.plus-btn):not(.owned), .noads-btn:not(.plus-btn):not(.owned) .na-txt b) {
   color: var(--on-accent); text-shadow: 0 1px 0 rgb(255 255 255 / .35); }
@@ -1780,7 +1786,7 @@ if (typeof module !== "undefined") module.exports = TangoCore;
     try { if (on) CG.game.gameplayStart(); else CG.game.gameplayStop(); } catch (e) {}
   }
   function show(screen) {
-    if (screen !== "game") $("win").hidden = true;
+    if (screen !== "game") { $("win").hidden = true; if (celebrating) { celebrating = null; clearTimeout(celebrateT); $("board").classList.remove("solved"); } }
     $("why").hidden = true;
     ["home", "levels", "store", "game"].forEach(function (s) { $(s).hidden = s !== screen; });
     var inGame = screen === "game";
@@ -2092,7 +2098,7 @@ if (typeof module !== "undefined") module.exports = TangoCore;
     boardEl.innerHTML = ""; cells = []; marks = [];
     for (var i = 0; i < N * N; i++) {
       var b = document.createElement("button");
-      b.type = "button"; b.className = "cell"; b.id = "c" + i;
+      b.type = "button"; b.className = "cell"; b.id = "c" + i; b.style.setProperty("--wave", Math.floor(i / N) + i % N);
       b.addEventListener("click", tap.bind(null, i));
       b.addEventListener("keydown", key.bind(null, i));
       boardEl.appendChild(b); cells.push(b);
@@ -2220,9 +2226,9 @@ if (typeof module !== "undefined") module.exports = TangoCore;
     $("g-filled").firstChild.textContent = play.board.filter(function (v) { return v !== -1; }).length;
     $("undo").disabled = play.done || !play.history.length;
     $("hint").disabled = $("clear").disabled = play.done;
-    $("win").hidden = !play.done;
+    $("win").hidden = !play.done || !!celebrating;
     // Reopened on a finished puzzle (reload): fill the results page from what was saved.
-    if (play.done && !$("win").dataset.filled) {
+    if (play.done && !celebrating && !$("win").dataset.filled) {
       var got = T.stars(play.difficulty, play.elapsed);
       fillWin(play.result || { got: got, gain: 0, prev: got, best: 0 });
     }
@@ -2273,13 +2279,29 @@ if (typeof module !== "undefined") module.exports = TangoCore;
     if (!save.times[tkey] || play.elapsed < save.times[tkey]) save.times[tkey] = play.elapsed;
     save.wallet += gain;
     play.result = { got: got, gain: gain, prev: prev, best: oldBest || 0 };
-    fillWin(play.result);
-    // After the second win, offer the daily reminder once.
-    if (Notes && save.wins === 2 && save.remind == null) setTimeout(function () { askReminders(false); }, 2500);
-    for (var q = 0; q < got; q++) setTimeout(Audio.sfx.bind(null, "star", q), 450 + q * 200);
     if (navigator.vibrate) try { navigator.vibrate([20, 40, 20]); } catch (e) {}
     persist();
+    // Let the finished board sit for a moment: the cats do a little wave, then the results come in.
+    // A tap on the board skips the wait.
+    var mine = play;
+    celebrating = mine; celebrateFrom = Date.now();
+    $("board").classList.add("solved");
+    clearTimeout(celebrateT);
+    celebrateT = setTimeout(function () { revealWin(mine); }, WIN_DELAY);
   }
+  var WIN_DELAY = 1600, celebrating = null, celebrateT = null, celebrateFrom = 0;
+  function revealWin(mine) {
+    if (celebrating !== mine) return;
+    celebrating = null; clearTimeout(celebrateT);
+    $("board").classList.remove("solved");
+    if (play !== mine || $("game").hidden) return; // left the puzzle: the win is saved, no results page
+    fillWin(play.result); $("win").hidden = false;
+    for (var q = 0; q < play.result.got; q++) setTimeout(Audio.sfx.bind(null, "star", q), 450 + q * 200);
+    // After the second win, offer the daily reminder once.
+    if (Notes && save.wins === 2 && save.remind == null) setTimeout(function () { askReminders(false); }, 2500);
+  }
+  // (Not the very tap that finished the puzzle: that click is still bubbling up when the wave starts.)
+  $("board").addEventListener("click", function () { if (celebrating && Date.now() - celebrateFrom > 350) revealWin(celebrating); });
   function fillWin(r) {
     var got = r.got, gain = r.gain, prev = r.prev, oldBest = r.best, tkey = play.daily ? "d" + play.daily : play.level;
     $("win").dataset.filled = "1";

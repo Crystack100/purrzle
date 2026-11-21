@@ -1987,8 +1987,8 @@ body.web .ad-banner, body.web #noads, body.web #s-noads, body.web .ad-x, body.we
       for (var v in goal.v) duo.style.setProperty("--" + v, goal.v[v]);
       duo.className = "duo skin-preview sk-" + goal.id;
       duo.style.setProperty("--g-bg", goal.v.cell);
-      $("g-tag").textContent = Math.min(save.wallet, BOX.price) + "/" + BOX.price;
       var len = 2 * Math.PI * 33, frac = Math.min(1, save.wallet / BOX.price);
+      $("g-tag").textContent = frac >= 1 ? "Open!" : save.wallet + "/" + BOX.price;
       $("g-arc").setAttribute("stroke-dasharray", (len * frac).toFixed(1) + " 999");
       $("g-arc").style.opacity = frac > 0 ? 1 : 0;
       $("h-goal").classList.toggle("ready", frac >= 1);

@@ -1648,7 +1648,7 @@ body.web .ad-banner, body.web #noads, body.web #s-noads, body.web .ad-x, body.we
           <button class="chunky" id="bc-open" type="button"></button>
         </div>
       </div>
-      <ul class="odds" id="odds" aria-label="Chances in each box"></ul>
+      <ul class="odds" id="odds" aria-label="Base odds per box"></ul>
       <p class="bc-note" id="bc-note"></p>
     </div>
     <div class="coll-head"><b>Your collection</b><span id="coll-n"></span></div>
@@ -3212,7 +3212,10 @@ if (typeof module !== "undefined") module.exports = TangoCore;
       return '<li style="--rc: var(--r-' + r + ')"><b>' + RAR[r].odds + "%</b><i></i>" + RAR[r].name + "</li>";
     }).join("");
     var toGo = BOX.pity - b.dry;
-    $("bc-note").textContent = (toGo <= 1 ? "Your next box is guaranteed Epic or better. " : "Epic or better guaranteed within " + toGo + " boxes. ") +
+    // Base odds are in the chips above. The guarantee raises Epic and Legendary over many boxes, so the overall rates are stated too
+    // (measured by running rollBox 200,000 times; update them if the odds or the guarantee change).
+    $("bc-note").textContent = "Base odds per box. Every 10th box in a row without an Epic or Legendary is guaranteed one, so over many boxes the chances are about " +
+      "Common 57%, Rare 26%, Epic 13%, Legendary 4%. " + (toGo <= 1 ? "Your next box is guaranteed Epic or better. " : "Epic or better guaranteed within " + toGo + " boxes. ") +
       "No repeats until you own every look of that rarity, then repeats give stars back.";
     $("coll-n").textContent = (SKINS.length - left.length) + "/" + SKINS.length;
     var box = $("skins"); box.innerHTML = "";

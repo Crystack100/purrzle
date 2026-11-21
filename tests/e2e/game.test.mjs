@@ -102,7 +102,8 @@ test("solving a level opens the results with the next level focused", async t =>
   for (let k = 0; k < 40 && await page.isHidden("#win"); k++) await page.click("#hint", { force: true }).catch(() => page.evaluate(() => document.getElementById("hint").click()));
   await page.waitForFunction(() => !document.getElementById("win").hidden);
   await page.waitForFunction(() => document.activeElement && document.activeElement.id === "win-next");
-  assert.match(await page.textContent("#sr"), /Level 3 solved in .* stars?\./);
+  // The announcement is written a moment after the results open, so screen readers notice the change.
+  await page.waitForFunction(() => /Level 3 solved in .* stars?\./.test(document.getElementById("sr").textContent));
   assert.equal(await page.evaluate(() => document.getElementById("scroll").inert), true);
   // The win is saved straight away, not on the next batch.
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("tango:v2")).best[3]);

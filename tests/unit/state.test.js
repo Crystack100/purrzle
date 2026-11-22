@@ -14,7 +14,7 @@ function playing(n) {
 
 test("a good save comes back unchanged", () => {
   const raw = { best: { 1: 3, 2: 1 }, times: { 1: 30, 2: 95, d20250101: 40 }, wallet: 12, owned: ["cozy", "midnight"], skin: "midnight", play: playing(3),
-    daily: {}, noAds: true, wins: 2, music: 0, sound: 55, theme: "light", tutDone: true, remind: false, free: { day: 20261121, n: 2 }, adsSeen: 4 };
+    daily: {}, noAds: true, wins: 2, music: 0, sound: 55, theme: "light", tutDone: true, free: { day: 20261121, n: 2 }, adsSeen: 4 };
   const out = clean(JSON.parse(JSON.stringify(raw)));
   assert.deepEqual(out.best, raw.best);
   assert.deepEqual(out.times, raw.times);
@@ -24,7 +24,6 @@ test("a good save comes back unchanged", () => {
   assert.deepEqual(out.play, raw.play);
   assert.equal(out.noAds, true);
   assert.equal(out.tutDone, true);
-  assert.equal(out.remind, false);
   assert.deepEqual(out.free, raw.free);
   assert.equal(out.adsSeen, 4);
 });
@@ -85,12 +84,11 @@ test("the undo step for Clear survives a reload", () => {
   assert.equal(out.history[1][0], "all");
 });
 
-test("gifts, badges, stats and vibration are kept", () => {
-  const base = Object.assign({}, BASE, { gift: null, badges: {}, stats: {}, buzz: true });
-  const out = S.clean({ gift: 20, badges: { first: 1763800000000, bad: "x" }, stats: { solves: 31, time: 4200, run: "oops" }, buzz: false, theme: "dark" }, base, SKINS);
+test("gifts and vibration are kept; removed features are dropped", () => {
+  const base = Object.assign({}, BASE, { gift: null, buzz: true });
+  const out = S.clean({ gift: 20, badges: { first: 1763800000000 }, stats: { solves: 31 }, calm: true, marks: true, remind: true, buzz: false, theme: "dark" }, base, SKINS);
   assert.equal(out.gift, 20);
-  assert.deepEqual(out.badges, { first: 1763800000000 });
-  assert.deepEqual(out.stats, { solves: 31, time: 4200 });
+  for (const gone of ["badges", "stats", "calm", "marks", "remind"]) assert.equal(gone in out, false, gone);
   assert.equal(out.buzz, false);
   assert.equal(out.theme, "dark");
   const fresh = S.clean({ best: { 1: 3 } }, base, SKINS);

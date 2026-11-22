@@ -56,6 +56,8 @@ var PurrzleState = (function () {
     if (!raw) return out;
     // Unknown fields are kept as they are, so a newer version's data survives a trip through an older one.
     for (k in raw) if (!(k in base)) out[k] = raw[k];
+    // Features that were taken out (Trophies, the reminder, marks and reduce motion): drop what they saved.
+    ["badges", "stats", "calm", "marks", "remind"].forEach(function (f) { delete out[f]; });
     out.best = counts(raw.best, levelKey, 1, 3);
     out.daily = counts(raw.daily, levelKey, 1, 3);
     out.times = counts(raw.times, timeKey, 1, 86400 * 365);
@@ -70,14 +72,10 @@ var PurrzleState = (function () {
     out.owned = owned;
     var skin = raw.skin === "daybreak" ? "cozy" : raw.skin;
     out.skin = typeof skin === "string" && (!skins || skins.indexOf(skin) >= 0) && (owned.indexOf(skin) >= 0 || raw.plus) ? skin : "cozy";
-    // Gifts, badges and lifetime stats (Trophies). gift stays null when missing so the game can work it out.
+    // Gifts every 10 levels: gift stays null when missing so the game can work it out.
     out.gift = raw.gift == null ? null : int(raw.gift, 0, 1e9, null);
-    function idKey(k) { return /^[A-Za-z0-9_-]{1,40}$/.test(k); }
-    out.badges = counts(raw.badges, idKey, 1, 1e14);
-    out.stats = counts(raw.stats, idKey, 0, 1e12);
     if (typeof raw.theme === "string") out.theme = raw.theme;
-    ["noAds", "plus", "tutDone", "calm", "marks", "buzz"].forEach(function (f) { if (f in raw) out[f] = !!raw[f]; });
-    if ("remind" in raw) out.remind = raw.remind == null ? raw.remind : !!raw.remind;
+    ["noAds", "plus", "tutDone", "buzz"].forEach(function (f) { if (f in raw) out[f] = !!raw[f]; });
     out.play = cleanPlay(raw.play);
     var free = obj(raw.free);
     if (free) out.free = { day: int(free.day, 0, 99991231, 0), n: int(free.n, 0, 1000, 0) };

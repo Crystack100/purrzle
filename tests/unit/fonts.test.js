@@ -9,8 +9,7 @@ const src = p => fs.readFileSync(path.join(__dirname, "../../src", p), "utf8");
 const cfg = JSON.parse(src("font-subset.json"));
 const inSubset = cp => cfg.ranges.some(([lo, hi]) => cp >= parseInt(lo, 16) && cp <= parseInt(hi, 16));
 // Symbols and emoji the game deliberately draws with the system's own fonts.
-// (🎁 and 🏆 only appear in reminder notifications, which the phone draws.)
-const SYSTEM = ["★", "✓", "⭐", "🐱", "🎁", "🏆"];
+const SYSTEM = ["★", "✓", "⭐", "🐱"];
 
 test("every character in the game is in the font subset", () => {
   let text = src("game.html") + src("core.js") + src("state.js");

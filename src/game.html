@@ -646,43 +646,6 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .wg-top b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .wg-bar { height: 10px; border-radius: 5px; background: var(--cell); overflow: hidden; }
 .wg-bar i { display: block; height: 100%; width: 0; border-radius: 5px; background: linear-gradient(90deg, var(--star), var(--accent)); transition: width .9s 1s cubic-bezier(.3, 1, .4, 1); }
-.league {
-  width: 100%; border: 0; cursor: pointer; text-align: left; color: var(--ink); background: var(--surface); border-radius: 12px;
-  box-shadow: 0 12px 30px -16px var(--shadow); padding: 12px 14px; display: grid; gap: 8px; animation: rise .45s .7s ease-out both;
-}
-.lg-head { display: flex; align-items: center; gap: 8px; }
-.lg-head span { flex: 1; display: flex; align-items: center; gap: 6px; font: 700 1rem var(--font-display); }
-.lg-head svg { width: 20px; height: 20px; fill: none; stroke: var(--star); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.lg-head b { font: 800 1.3rem var(--font-display); font-variant-numeric: tabular-nums; }
-.lg-head i { font: 700 .8rem var(--font-display); font-style: normal; color: #fff; background: #4caf6a; padding: 3px 7px; border-radius: 6px; animation: pop .4s 1.4s cubic-bezier(.3, 1.8, .5, 1) both; }
-.lg-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; overflow: hidden; }
-.lg-rows li { display: grid; grid-template-columns: 34px 28px 1fr auto; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; background: var(--cell); font: 600 .9rem var(--font-display); }
-.lg-rows li .n { color: var(--muted); font-variant-numeric: tabular-nums; }
-.lg-rows li svg.av { width: 28px; height: 28px; }
-.lg-rows li .sc { display: flex; align-items: center; gap: 3px; font-variant-numeric: tabular-nums; }
-.lg-rows li .sc svg { width: 14px; height: 14px; fill: var(--star); }
-.lg-rows li.me { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); box-shadow: inset 0 0 0 2px var(--accent); }
-.lg-rows li.me .n { color: var(--ink); }
-.lg-rows li.medal .n { color: #d39a12; font-weight: 800; }
-.league .lg-rows { overflow: visible; }
-/* Your row lifts off its old spot, slides up over the players you passed, then drops into place. */
-.league .lg-rows li.me { position: relative; z-index: 2; animation: climb 1.7s 1.2s cubic-bezier(.5, 0, .25, 1) both; }
-.league .lg-rows li.passed { animation: sink 1.7s 1.2s cubic-bezier(.5, 0, .25, 1) both; }
-@keyframes climb {
-  0% { transform: translateY(var(--from, 0)); }
-  18% { transform: translateY(var(--from, 0)) scale(1.06); box-shadow: 0 14px 22px -8px rgb(0 0 0 / .35), 0 3px 0 var(--acc-dk); }
-  78% { transform: translateY(0) scale(1.06); box-shadow: 0 14px 22px -8px rgb(0 0 0 / .35), 0 3px 0 var(--acc-dk); }
-  90% { transform: translateY(0) scale(.98); }
-  100% { transform: none; }
-}
-@keyframes sink { 0%, 22% { transform: translateY(calc(-100% - 4px)); } 75%, 100% { transform: none; } }
-.lg-rank-pop { animation: pop .35s cubic-bezier(.3, 1.8, .5, 1); }
-.lg-more { font: 600 .8rem var(--font-display); color: var(--accent); text-align: center; }
-#board-sheet { z-index: 27; }
-.lg-rows li { grid-template-columns: 28px 1fr auto; }
-.lg-rows li.empty { display: block; color: var(--muted); text-align: center; }
-.lb-sheet .lb-all { position: relative; max-height: 62svh; overflow-y: auto; }
-.lb-sheet, .league { --acc-dk: color-mix(in srgb, var(--accent) 68%, #000); --acc-lt: color-mix(in srgb, var(--accent) 70%, #fff); }
 .win-tip { margin: 0; color: var(--muted); font: 600 .95rem var(--font-display); min-height: 1.4em; }
 .win-btns { margin-top: auto; width: 100%; display: grid; gap: 10px; padding-top: 6px; }
 .win-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -727,7 +690,7 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
   text-shadow: 2px 0 0 var(--acc-dk), -2px 0 0 var(--acc-dk), 0 2px 0 var(--acc-dk), 0 -2px 0 var(--acc-dk),
     2px 2px 0 var(--acc-dk), -2px 2px 0 var(--acc-dk), 2px -2px 0 var(--acc-dk), -2px -2px 0 var(--acc-dk),
     0 5px 0 var(--acc-dk), 0 7px 0 color-mix(in srgb, var(--acc-dk) 80%, #000), 0 12px 18px rgb(0 0 0 / .3); }
-.win-card, .league { background: linear-gradient(color-mix(in srgb, var(--surface) 94%, #fff), var(--surface));
+.win-card { background: linear-gradient(color-mix(in srgb, var(--surface) 94%, #fff), var(--surface));
   box-shadow: inset 0 1.5px 0 rgb(255 255 255 / .5), 0 5px 0 var(--slab), 0 16px 28px -14px rgb(0 0 0 / .5); }
 .win-stats { gap: 8px; }
 .win-stats div + div { border-left: 0; }
@@ -744,11 +707,6 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .wg-bar i { border-radius: 5px; background: repeating-linear-gradient(-45deg, rgb(255 255 255 / .22) 0 6px, transparent 6px 12px), linear-gradient(var(--acc-lt), var(--accent));
   background-size: 17px 100%, auto; box-shadow: inset 0 2px 0 rgb(255 255 255 / .45); animation: stripes .8s linear infinite; min-width: 10px; }
 @keyframes stripes { to { background-position: 17px 0, 0 0; } }
-.lg-head svg { width: 30px; height: 30px; padding: 6px; border-radius: 50%; stroke: #fff; box-sizing: border-box; background: linear-gradient(#ffd977, #f0a01c); box-shadow: 0 3px 0 var(--gold-dk); }
-.lg-head i { box-shadow: 0 2px 0 #2f7d47; }
-.lg-rows li { box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--cell) 88%, #000); }
-.lg-rows li.me { background: linear-gradient(var(--acc-lt), var(--accent)); color: #fff; box-shadow: 0 3px 0 var(--acc-dk); text-shadow: 0 1px 0 var(--acc-dk); }
-.lg-rows li.me .n, .lg-rows li.me .sc { color: #fff; } .lg-rows li.me .sc svg { fill: #fff; }
 .win-btns .chunky, .win-btns .soft { position: relative; overflow: hidden; transition: transform .08s, box-shadow .08s; }
 .win-btns .chunky { background: linear-gradient(var(--acc-lt), var(--accent) 60%); color: #fff; text-shadow: 0 2px 0 var(--acc-dk); font-weight: 800; letter-spacing: .02em;
   box-shadow: inset 0 2px 0 rgb(255 255 255 / .5), 0 6px 0 var(--acc-dk), 0 16px 24px -10px var(--acc-dk); animation: nudge 2.4s 2.2s ease-in-out infinite; }
@@ -1190,15 +1148,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 [role="dialog"]:focus, .win:focus { outline: none; }
 .how-btn .hb-sub { display: block; margin-top: 2px; font: 500 .8rem/1.25 var(--font-ui); color: var(--muted); }
 .why-ok { min-height: 40px; }
-/* Sun and moon marks (Settings): a small sun or moon badge on every cat, so the two never depend on color. */
-html.marks .cell.v0::before, html.marks .cell.v1::before {
-  content: ""; position: absolute; z-index: 2; left: 3px; bottom: 3px; width: 34%; height: 34%; max-width: 24px; max-height: 24px; border-radius: 50%; pointer-events: none;
-  background: #fff center / 76% no-repeat; box-shadow: 0 0 0 1.5px rgb(0 0 0 / .35), 0 1px 2px rgb(0 0 0 / .3); }
-html.marks .cell.v0::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='5' fill='%23b55200'/%3E%3Cpath d='M12 1.6v2.6M12 19.8v2.6M1.6 12h2.6M19.8 12h2.6M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8' stroke='%23b55200' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E"); }
-html.marks .cell.v1::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15.6 2.6A9.6 9.6 0 1 0 21.4 18 7.6 7.6 0 0 1 15.6 2.6z' fill='%23233f6e'/%3E%3C/svg%3E"); }
-/* Reduce motion (Settings, or the phone's own setting): no movement, and anything that animates in just appears. */
-html.calm *, html.calm *::before, html.calm *::after { animation: none !important; transition: none !important; }
-html.calm .err-lines .ln { stroke-dashoffset: 0; }
 @media (prefers-reduced-motion: reduce) { .err-lines .ln { stroke-dashoffset: 0; } }
 
 /* A tall lesson on a short screen (a phone on its side) scrolls instead of being cut off. */
@@ -1234,7 +1183,7 @@ body.playing .toast { bottom: calc(22px + env(safe-area-inset-bottom, 0px)); }
 html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star), 0 0 28px 4px color-mix(in srgb, var(--star) 60%, transparent), 0 10px 28px -16px var(--shadow); transition: box-shadow .3s; }
 .board.solved .mark { opacity: 0; transition: opacity .3s; }
 /* Gold accents (Midnight, Royal) are too light for white lettering: buttons and banners use the skin's dark ink there. */
-:root:is([data-skin="midnight"], [data-skin="royal"]) :is(.pillbtn:not(.alt), .set-head, .node.current, .map-jump, .win-ribbon, .lg-rows li.me, .win-btns .chunky, .why-ok, .tut-rules b, .tut-go, .noads-btn:not(.plus-btn):not(.owned), .noads-btn:not(.plus-btn):not(.owned) .na-txt b) {
+:root:is([data-skin="midnight"], [data-skin="royal"]) :is(.pillbtn:not(.alt), .set-head, .node.current, .map-jump, .win-ribbon, .win-btns .chunky, .why-ok, .tut-rules b, .tut-go, .noads-btn:not(.plus-btn):not(.owned), .noads-btn:not(.plus-btn):not(.owned) .na-txt b) {
   color: var(--on-accent); text-shadow: 0 1px 0 rgb(255 255 255 / .35); }
 :root:is([data-skin="midnight"], [data-skin="royal"]) :is(.set-x svg) { stroke: var(--on-accent); }
 :root:is([data-skin="midnight"], [data-skin="royal"]) :is(#sheet .slider svg, .how-btn svg) { color: var(--on-accent); }
@@ -1247,16 +1196,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   html.on-game .mark { width: 30px; height: 30px; margin: -15px 0 0 -15px; }
   html.on-game .mark svg { width: 18px; height: 18px; }
 }
-/* ---------- Reasons to come back: trophies, badges, gifts every 10 levels ---------- */
-.trophy-btn { position: relative; width: 48px; height: 48px; border-radius: 50%;
-  box-shadow: inset 0 1.5px 0 rgb(255 255 255 / .5), 0 4px 0 color-mix(in srgb, var(--surface) 80%, #000), 0 10px 18px -8px var(--shadow); }
-.trophy-btn svg { width: 32px; height: 32px; stroke: none; fill: initial; }
-.trophy-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 color-mix(in srgb, var(--surface) 80%, #000); }
-.dot { position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: #e5484d; color: #fff;
-  font: 700 .72rem/20px var(--font-display); font-style: normal; text-align: center; box-shadow: 0 0 0 2px var(--surface); animation: dotIn .4s cubic-bezier(.3, 1.8, .5, 1); }
-@keyframes dotIn { from { scale: 0; } }
-.trophy-btn .dot { animation: dotIn .4s cubic-bezier(.3, 1.8, .5, 1), wiggle 2.4s 1s ease-in-out infinite; }
-@keyframes wiggle { 0%, 80%, 100% { rotate: 0deg; } 85% { rotate: -14deg; } 90% { rotate: 12deg; } 95% { rotate: -6deg; } }
+/* ---------- Gifts every 10 levels ---------- */
 
 .gift-badge { left: auto; right: 0; }
 .gift-badge .gift-ic { position: absolute; inset: 13px 12px 15px; width: auto; height: auto; overflow: visible; animation: giftBob 2.6s ease-in-out infinite; }
@@ -1299,55 +1239,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
 @keyframes lidOff { to { transform: translate(8px, -16px) rotate(22deg); opacity: 0; } }
 @keyframes burst { 0% { opacity: 0; scale: .4; } 30% { opacity: 1; } 100% { opacity: .55; scale: 1; } }
 
-/* Badges: a row per badge with its medal, progress and reward. */
-.badge-card { flex: none; gap: 10px; text-align: left; }
-.bc-head { display: flex; align-items: center; gap: 8px; font: 700 1.1rem var(--font-display); }
-.bc-head svg { width: 28px; height: 28px; }
-.badge-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.badge-list li { display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; background: var(--cell);
-  box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--cell) 88%, #000); }
-.badge-list li.ready { background: color-mix(in srgb, var(--star) 22%, var(--surface)); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--star) 80%, #c9861a), inset 0 -3px 0 color-mix(in srgb, var(--star) 60%, #c9861a); }
-.badge-card .badge-list li { animation: rise .45s calc(.9s + var(--k, 0) * .15s) ease-out both; }
-.medal { position: relative; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; --m: #d9925b; --m2: #a8622f;
-  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--m) 55%, #fff), var(--m) 60%); box-shadow: inset 0 -3px 0 var(--m2), 0 0 0 3px color-mix(in srgb, var(--m) 40%, #fff), 0 4px 8px -4px rgb(0 0 0 / .35); }
-.medal.t1 { --m: #a9bccf; --m2: #6f8499; } .medal.t2 { --m: #f5bf3c; --m2: #c4861a; } .medal.t3 { --m: #b48cff; --m2: #7a50d1; }
-.medal svg { width: 26px; height: 26px; fill: #fff; stroke: none; filter: drop-shadow(0 1.5px 0 var(--m2)); }
-.medal svg.ln { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.badge-list li.locked .medal { --m: color-mix(in srgb, var(--muted) 45%, var(--cell)); --m2: color-mix(in srgb, var(--muted) 70%, var(--cell)); }
-.badge-list li.locked .medal svg { opacity: .8; }
-.bd-txt { display: grid; min-width: 0; gap: 1px; }
-.bd-txt b { font: 700 1rem/1.2 var(--font-display); }
-.bd-txt small { font: 500 .8rem/1.3 var(--font-display); color: var(--muted); }
-.bd-bar { display: flex; align-items: center; gap: 6px; margin-top: 3px; font: 600 .72rem var(--font-display); color: var(--muted); font-variant-numeric: tabular-nums; }
-.bd-bar span { flex: 1; height: 7px; border-radius: 4px; background: color-mix(in srgb, var(--line) 80%, var(--cell)); overflow: hidden; }
-.bd-bar span i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--star), var(--accent)); }
-.bd-rw { display: inline-flex; align-items: center; gap: 2px; font: 700 .9rem/1 var(--font-display); color: var(--muted); font-variant-numeric: tabular-nums; }
-.bd-rw svg { width: 15px; height: 15px; fill: var(--star); }
-.claim { display: inline-flex; align-items: center; gap: 3px; border: 0; cursor: pointer; padding: 8px 12px 8px 10px; border-radius: 999px;
-  background: linear-gradient(#fff3b0, #ffc94a); color: #7a4300; font: 700 .95rem/1 var(--font-display); box-shadow: 0 3px 0 #c9861a; animation: claimPulse 1.4s ease-in-out infinite; }
-.claim svg { width: 16px; height: 16px; fill: #fff; filter: drop-shadow(0 1px 0 #c9861a); }
-.claim:active { transform: translateY(2px); box-shadow: 0 1px 0 #c9861a; }
-@keyframes claimPulse { 50% { scale: 1.06; } }
-.bd-done { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: #4caf6a; box-shadow: 0 2px 0 #2f8a4d; }
-.bd-done svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
-.badge-list li.just { animation: claimed .6s cubic-bezier(.3, 1.6, .5, 1); }
-@keyframes claimed { 40% { scale: 1.04; } }
-
-/* Trophies sheet: Badges, Stats and Levels tabs. */
-#board-sheet .lb-sheet { padding-top: 0; padding-inline: 18px; gap: 12px; }
-#board-sheet .set-head { margin: 0 -18px 0 !important; padding: 16px 18px; border-radius: 12px 12px 0 0; font: 700 1.5rem/1 var(--font-display) !important; }
-.tro-tabs { position: relative; }
-.tro-tabs button { position: relative; }
-.tro-tabs .dot { top: -6px; right: 2px; }
-.tro-pane { display: grid; gap: 10px; }
-.tro-pane .note { margin: 0; }
-#tro-badges { max-height: 58svh; overflow-y: auto; padding: 2px; margin: -2px; }
-.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.stat-grid div { display: grid; gap: 2px; padding: 12px; border-radius: 14px; background: var(--cell); box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--cell) 88%, #000); }
-.stat-grid b { font: 700 1.55rem/1.1 var(--font-display); font-variant-numeric: tabular-nums; color: var(--ink); display: flex; align-items: center; gap: 4px; }
-.stat-grid b svg { width: 20px; height: 20px; fill: var(--star); }
-.stat-grid span { font: 600 .8rem/1.25 var(--font-display); color: var(--muted); }
-.stat-grid .wide { grid-column: 1 / -1; }
 
 /* A row or column filled with no broken rule gives a quick golden shimmer. */
 .board .cell.line-done { animation: lineGlow .7s calc(var(--k, 0) * 45ms) ease-out; }
@@ -1355,7 +1246,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   35% { scale: 1.06; box-shadow: inset 0 0 0 3px var(--star), 0 0 16px 3px color-mix(in srgb, var(--star) 70%, transparent); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .board .cell.line-done, .gift-card.open .gc-box svg, .gift-badge .gift-ic, .map-gift svg, .claim, .trophy-btn .dot { animation: none !important; }
+  .board .cell.line-done, .gift-card.open .gc-box svg, .gift-badge .gift-ic, .map-gift svg { animation: none !important; }
   .gift-card.open .gift-lid { animation: none; opacity: 0; }
   .gift-card.open .gc-burst { animation: none; opacity: .55; }
   .gift-card.open .gc-star { animation: none; opacity: 1; translate: 0 -10px; }
@@ -1761,14 +1652,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
         <path d="M9 18h30" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".45"/>
       </g>
     </symbol>
-    <symbol id="trophy" viewBox="0 0 48 48">
-      <path d="M14 9h20v11a10 10 0 0 1-20 0z" fill="#ffc94a" stroke="#c9861a" stroke-width="2"/>
-      <path d="M14 12H8a6 6 0 0 0 7 8M34 12h6a6 6 0 0 1-7 8" fill="none" stroke="#c9861a" stroke-width="3" stroke-linecap="round"/>
-      <path d="M21 29.5h6l1 6h-8z" fill="#e0a22c"/>
-      <rect x="14" y="35" width="20" height="6" rx="2" fill="#a0673a"/>
-      <path d="M18.5 12.5v6.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>
-      <path d="M24 14.2l1.4 2.8 3 .4-2.2 2.1.5 3-2.7-1.4-2.7 1.4.5-3-2.2-2.1 3-.4z" fill="#fff4c4"/>
-    </symbol>
   </defs>
 </svg>
 
@@ -1788,7 +1671,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   <!-- HOME -->
   <section id="home" class="screen" aria-label="Home">
     <div class="top3">
-      <button class="round trophy-btn" id="t-trophies" type="button" aria-label="Trophies"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="#trophy"/></svg><i class="dot" id="t-dot" hidden></i></button>
+      <span></span>
       <span class="pill"><svg aria-hidden="true"><use href="#star"/></svg><span class="w-count">0</span><span class="sr-only"> stars to spend</span></span>
       <button class="round gear" id="t-settings" type="button" aria-label="Settings"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.48.48 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61zM12 15.6a3.6 3.6 0 1 1 0-7.2 3.6 3.6 0 0 1 0 7.2z"/></svg></button>
     </div>
@@ -1932,15 +1815,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       <span class="gc-amt" id="gc-amt"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg><span>+5</span></span>
       <div class="gc-bar" id="gc-bar" hidden><i></i></div>
     </div>
-    <div class="win-card badge-card" id="win-badges" hidden>
-      <div class="bc-head"><svg viewBox="0 0 48 48" aria-hidden="true"><use href="#trophy"/></svg><b id="bc-title">New badge!</b></div>
-      <ul class="badge-list" id="bc-list"></ul>
-    </div>
-    <button class="league" id="league" type="button" hidden aria-label="Open your records">
-      <div class="lg-head"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v4M8 21h8"/></svg>Your record</span><b id="lg-rank">0★</b><i id="lg-up" hidden></i></div>
-      <ol class="lg-rows" id="lg-rows"></ol>
-      <span class="lg-more">See all your records</span>
-    </button>
     <div class="win-btns">
       <button class="bonus-btn" id="win-bonus" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Watch a video for <b>+3</b><svg class="st" viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg></button>
       <button class="chunky" id="win-next" type="button">Next level</button>
@@ -1952,28 +1826,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     </div>
   </div>
 </section>
-
-<div class="sheet-bg" id="board-sheet" hidden>
-  <div class="sheet lb-sheet" role="dialog" aria-modal="true" aria-labelledby="lb-title">
-    <h3 class="set-head" aria-level="2"><span id="lb-title">Trophies</span><button class="round set-x" id="lb-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h3>
-    <div class="seg3 tro-tabs" role="group" aria-label="Trophies">
-      <button type="button" data-tab="badges" aria-pressed="true">Badges<i class="dot" id="tab-dot" hidden></i></button>
-      <button type="button" data-tab="stats" aria-pressed="false">Stats</button>
-      <button type="button" data-tab="levels" aria-pressed="false">Levels</button>
-    </div>
-    <div class="tro-pane" data-pane="badges">
-      <p class="note" id="tro-badge-note">Earn badges as you play. Each one pays out stars.</p>
-      <ul class="badge-list" id="tro-badges"></ul>
-    </div>
-    <div class="tro-pane" data-pane="stats" hidden>
-      <div class="stat-grid" id="tro-stats"></div>
-    </div>
-    <div class="tro-pane" data-pane="levels" hidden>
-      <p class="note">Your best stars and times on every level you have solved.</p>
-      <ol class="lg-rows lb-all" id="lb-all"></ol>
-    </div>
-  </div>
-</div>
 
 <div class="ad-full" id="ad-full" hidden>
   <div class="ad-card" role="dialog" aria-modal="true" aria-label="Advertisement">
@@ -2085,9 +1937,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     </div>
     <button class="how-btn" id="s-how" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 .9c0 1.8-2.5 2.2-2.5 3.8"/><circle cx="12" cy="17.2" r=".6" fill="currentColor"/></svg>How to play</button>
     <button class="how-btn" id="s-buzz" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7.5" y="3" width="9" height="18" rx="2.2"/><path d="M3.5 9v6M20.5 9v6"/></svg><span>Vibration</span><b class="onoff" id="s-buzz-v">On</b></button>
-    <button class="how-btn" id="s-remind" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></svg><span>Daily reminder</span><b class="onoff" id="s-remind-v">Off</b></button>
-    <button class="how-btn" id="s-marks" type="button" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="3.2"/><path d="M8 5.5v1.3M8 17.2v1.3M1.5 12h1.3M13.2 12h1.3M3.4 7.4l.9.9M11.7 15.7l.9.9M3.4 16.6l.9-.9M11.7 8.3l.9-.9"/><path d="M19.8 8a4.4 4.4 0 1 0 2 7.6A5.2 5.2 0 0 1 19.8 8z"/></svg><span>Sun and moon marks<small class="hb-sub">Tells the cats apart without color</small></span><b class="onoff" id="s-marks-v">Off</b></button>
-    <button class="how-btn" id="s-calm" type="button" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg><span>Reduce motion<small class="hb-sub">Fewer bounces, sparkles and slides</small></span><b class="onoff" id="s-calm-v">Off</b></button>
     <button class="how-btn" id="s-privacy" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Privacy choices</button>
     <button class="how-btn iap-only" id="s-restore" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></svg>Restore purchases</button>
     <a class="how-btn" id="s-policy" href="https://crystack100.github.io/purrzle/privacy.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Privacy policy</a>
@@ -2148,7 +1997,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   var WEB = !NATIVE && !PORTAL;
   function plugin(name) { return NATIVE && Cap.registerPlugin ? Cap.registerPlugin(name) : null; }
   var save = { best: {}, times: {}, wallet: 0, owned: ["cozy"], skin: "cozy", play: null, daily: {}, noAds: false, wins: 0, music: 40, sound: 70, theme: "light",
-    gift: null, badges: {}, stats: {}, buzz: true };
+    gift: null, buzz: true };
   var play = null, cells = [], marks = [], tick = null, toastT = null;
 
   function load() {
@@ -2204,7 +2053,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     var el = $("sr"); clearTimeout(sayT); el.textContent = "";
     sayT = setTimeout(function () { el.textContent = text; }, 50);
   }
-  function calm() { return !!save.calm || !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches); }
+  function calm() { return !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches); }
   // CrazyGames wants to know when the player is actually playing a puzzle.
   var cgPlaying = false;
   function gameplay(on) {
@@ -2277,7 +2126,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     $("gift-tag").textContent = left + " to go";
     $("h-gift").classList.toggle("soon", left <= 2);
     $("h-gift").setAttribute("aria-label", "Next gift at level " + (save.gift + GIFT_EVERY) + ", " + left + (left === 1 ? " level" : " levels") + " to go");
-    paintTrophyDot();
     renderWallet();
   }
   $("h-goal").onclick = function () { show("store"); };
@@ -2491,7 +2339,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       tut.badTimer = setTimeout(function () {
         if (!tut || TUT[tut.step] !== L || tut.row[i] !== v) return;
         tutMsg(bad.msg, "bad"); Audio.sfx("oops"); tutRow(bad.cells, bad.edge);
-      }, 600);
+      }, 450);
       return;
     }
     if (L.say && L.say[v] != null) tutMsg(L.say[v], v === L.answer ? "good" : "");
@@ -2575,7 +2423,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   // Three alike in a row turns red at once. Other broken rules (= or ×, more than 3 of a cat in a line)
   // wait until the player pauses, so tapping through Sunny to reach Luna never flashes red.
   // A cat that is wrong but breaks no rule stays quiet; a full board that isn't the answer gets a nudge.
-  var bandBox = null, bandKey = "", ERROR_DELAY = 1200, shown = { cells: new Set(), edges: new Set() }, errT = null, errSvg = null, errKey = "";
+  var bandBox = null, bandKey = "", ERROR_DELAY = 900, shown = { cells: new Set(), edges: new Set() }, errT = null, errSvg = null, errKey = "";
   // Red lines: through three-in-a-row, and across a broken = or ×. Drawn only for breaks already shown.
   function drawErrLines(res) {
     if (!errSvg) return;
@@ -2766,7 +2614,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     if (to !== null) cells[to].focus();
   }
   function win() {
-    var readyBefore = readyBadges().map(function (b) { return b.id; });
     play.done = true; stopClock(); gameplay(false); Audio.sfx("win");
     var book = play.daily ? save.daily : save.best, n = play.daily ? play.daily : play.level, tkey = play.daily ? "d" + n : n;
     var got = T.stars(play.difficulty, play.elapsed), prev = book[n] || 0;
@@ -2776,27 +2623,15 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     var oldBest = save.times[tkey];
     if (!save.times[tkey] || play.elapsed < save.times[tkey]) save.times[tkey] = play.elapsed;
     save.wallet += gain;
-    // Lifetime numbers for the Stats tab and the badges.
-    var S = save.stats, hints = play.hints || 0, hr = new Date().getHours();
-    function inc(k) { S[k] = (S[k] || 0) + 1; }
-    inc("solves"); S.time = (S.time || 0) + play.elapsed;
-    if (!hints) inc("hintFree");
-    if (!hints && !play.oops) inc("flawless");
-    if (got === 3) { inc("run"); S.bestRun = Math.max(S.bestRun || 0, S.run); } else S.run = 0;
-    if (play.elapsed < 30) inc("zoom");
-    if (play.difficulty === "hard" && play.elapsed < 60) inc("pounce");
-    if (hr < 5) inc("owl"); else if (hr < 8) inc("early");
-    if (oldBest && play.elapsed < oldBest) inc("pb");
     // A gift every 10 levels, opened the first time that level is solved.
     var gift = null;
     if (!play.daily) {
       while (save.gift + GIFT_EVERY <= nextLevel() - 1) {
         save.gift += GIFT_EVERY; var amt = giftValue(save.gift);
-        gift = { lv: save.gift, amt: (gift ? gift.amt : 0) + amt }; save.wallet += amt; inc("gifts");
+        gift = { lv: save.gift, amt: (gift ? gift.amt : 0) + amt }; save.wallet += amt;
       }
     }
-    var fresh = readyBadges().filter(function (b) { return readyBefore.indexOf(b.id) < 0; }).map(function (b) { return b.id; });
-    play.result = { got: got, gain: gain, prev: prev, best: oldBest || 0, gift: gift, adv: !play.daily && !prev, badges: fresh };
+    play.result = { got: got, gain: gain, prev: prev, best: oldBest || 0, gift: gift, adv: !play.daily && !prev };
     Haptic.go("win");
     persist(true);
     // Let the finished board sit for a moment: the cats do a little wave, then the results come in.
@@ -2815,9 +2650,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     if (play !== mine || $("game").hidden) return; // left the puzzle: the win is saved, no results page
     fillWin(play.result, true); $("win").hidden = false;
     for (var q = 0; q < play.result.got; q++) setTimeout(Audio.sfx.bind(null, "star", q), 450 + q * 200);
-    // After the second win, offer the daily reminder once.
-    if (Notes && save.wins === 2 && save.remind == null) setTimeout(function () { askReminders(false); }, 2500);
-    else if (save.remind) scheduleReminders();
   }
   // (Not the very tap that finished the puzzle: that click is still bubbling up when the wave starts.)
   $("board").addEventListener("click", function () { if (celebrating && Date.now() - celebrateFrom > 350) revealWin(celebrating); });
@@ -2833,40 +2665,8 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       (gain ? " You earned " + gain + (gain === 1 ? " star." : " stars.") : ""));
     starTrack(got);
     confetti(got);
-    var total = totalStars(); showLeague(total - gain, total);
-    paintBonus(); paintWinGift(r, live); paintWinBadges(r);
-
+    paintBonus(); paintWinGift(r, live);
   }
-  /* Your record: real numbers from this device only. A shared leaderboard needs accounts
-     (CrazyGames, Game Center or Google Play Games), so until then nothing here is made up. */
-  function recRow(icon, label, value, extra) {
-    return '<li class="' + (extra || "") + '"><svg class="av" viewBox="0 0 100 100"><use href="#' + icon + '"/></svg><span>' + label +
-      '</span><span class="sc">' + value + '</span></li>';
-  }
-  var STAR = '<svg viewBox="0 0 24 24"><use href="#star"/></svg>';
-  function showLeague(before, after) {
-    var tkey = play.daily ? "d" + play.daily : play.level, solved = 0, three = 0, k;
-    for (k in save.best) { solved++; if (save.best[k] >= 3) three++; }
-    for (k in save.daily || {}) { solved++; if (save.daily[k] >= 3) three++; }
-    $("lg-rank").textContent = after + "\u2605";
-    $("lg-up").hidden = after <= before; $("lg-up").textContent = "+" + (after - before);
-    $("lg-rows").innerHTML =
-      recRow("sun", "Best time here", save.times[tkey] ? fmt(save.times[tkey]) : "-", "me") +
-      recRow("moon", "Puzzles solved", solved) +
-      recRow("sun", "3-star puzzles", three + STAR);
-  }
-  $("league").onclick = function () { openTrophies("levels"); };
-  function paintLevels() {
-    var rows = [], k;
-    for (k in save.best) rows.push({ name: "Level " + k, n: +k, stars: save.best[k], time: save.times[k] });
-    for (k in save.daily || {}) rows.push({ name: "Daily #" + k, n: 1e6 + +k, stars: save.daily[k], time: save.times["d" + k] });
-    rows.sort(function (a, b) { return a.n - b.n; });
-    $("lb-all").innerHTML = rows.length ? rows.map(function (r, i) {
-      return recRow(i % 2 ? "moon" : "sun", r.name, (r.time ? fmt(r.time) + " \u00b7 " : "") + r.stars + STAR);
-    }).join("") : '<li class="empty">Solve a puzzle to start your records.</li>';
-  }
-  $("lb-close").onclick = function () { $("board-sheet").hidden = true; };
-  $("board-sheet").onclick = function (e) { if (e.target === this) this.hidden = true; };
   // The timeline: 3-star zone, 2-star zone, 1-star zone, with a cat pin at your time.
   function starTrack(got) {
     var t = T.STAR_TIMES[play.difficulty], end = t[1] + (t[1] - t[0]) * .7, e = play.elapsed;
@@ -2990,8 +2790,8 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     } else go();
   };
 
-  /* ---------- gifts, badges and trophies ----------
-     Everything here is counted on this device; nothing needs an account. */
+  /* ---------- gifts ----------
+     A present of bonus stars every 10 levels, counted on this device. */
   var GIFT_EVERY = 10;
   // Bigger gifts at every 50th and 100th level.
   function giftValue(lv) { return lv % 100 === 0 ? 20 : lv % 50 === 0 ? 10 : 5; }
@@ -3014,128 +2814,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       fill.style.transition = ""; requestAnimationFrame(function () { fill.style.width = done / GIFT_EVERY * 100 + "%"; });
     } else card.hidden = true;
   }
-  var ICONS = {
-    paw: '<svg viewBox="0 0 40 34"><use href="#paw"/></svg>',
-    star: '<svg viewBox="0 0 24 24"><use href="#star"/></svg>',
-    bulb: '<svg class="ln" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3zM9.5 19.5h5"/><path d="M4 4l16 16"/></svg>',
-    spark: '<svg viewBox="0 0 24 24"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z"/><circle cx="19" cy="4.5" r="1.6"/><circle cx="5" cy="19" r="1.3"/></svg>',
-    flame: '<svg viewBox="0 0 24 24"><path d="M12.5 2c.8 4 5.5 5.6 5.5 11a6 6 0 0 1-12 0c0-3 1.8-4.6 2.4-6.6.9 1.2 1.2 2.4 1.2 3.4 1.6-2 2.9-4.6 2.9-7.8z"/></svg>',
-    bolt: '<svg viewBox="0 0 24 24"><path d="M13.5 2L4.5 13.5h6.5L10 22l9.5-12H13z"/></svg>',
-    clock: '<svg class="ln" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 2.5h4"/></svg>',
-    gift: '<svg viewBox="0 0 24 24"><path d="M3.5 8.5h17v4h-17zM5 12.5h14V21H5z"/><path d="M12 8.5C10 4 6 3.6 6 6s3.6 2.5 6 2.5zm0 0c2-4.5 6-4.9 6-2.5s-3.6 2.5-6 2.5z"/></svg>',
-    palette: '<svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 3a9 9 0 0 0 0 18c1.4 0 2-.9 2-1.9 0-1.2-1-1.6-1-2.6s.8-1.5 1.8-1.5h2.4A3.8 3.8 0 0 0 21 11.2C21 6.6 17 3 12 3zM7.5 12.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm3-4a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm4.5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg>',
-    moon: '<svg viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>',
-    sun: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.6"/><path stroke="#fff" d="M12 1.8v3M12 19.2v3M1.8 12h3M19.2 12h3M4.8 4.8l2.1 2.1M17.1 17.1l2.1 2.1M4.8 19.2l2.1-2.1M17.1 6.9l2.1-2.1" stroke-width="2.4" stroke-linecap="round"/></svg>'
-  };
-  // stat: what counts toward the badge. tier: 0 bronze, 1 silver, 2 gold, 3 purple. reward: stars.
-  var BADGES = [
-    { id: "solve1", stat: "solved", goal: 1, tier: 0, icon: "paw", name: "First purr", desc: "Solve your first level", reward: 2 },
-    { id: "solve10", stat: "solved", goal: 10, tier: 0, icon: "paw", name: "Curious kitten", desc: "Solve 10 levels", reward: 5 },
-    { id: "solve25", stat: "solved", goal: 25, tier: 1, icon: "paw", name: "Playful paws", desc: "Solve 25 levels", reward: 8 },
-    { id: "solve50", stat: "solved", goal: 50, tier: 1, icon: "paw", name: "House cat", desc: "Solve 50 levels", reward: 10 },
-    { id: "solve100", stat: "solved", goal: 100, tier: 2, icon: "paw", name: "Top cat", desc: "Solve 100 levels", reward: 20 },
-    { id: "solve250", stat: "solved", goal: 250, tier: 2, icon: "paw", name: "Alley legend", desc: "Solve 250 levels", reward: 30 },
-    { id: "solve500", stat: "solved", goal: 500, tier: 3, icon: "paw", name: "Cat whisperer", desc: "Solve 500 levels", reward: 50 },
-    { id: "solve1000", stat: "solved", goal: 1000, tier: 3, icon: "paw", name: "Nine lives", desc: "Solve 1,000 levels", reward: 75 },
-    { id: "three10", stat: "three", goal: 10, tier: 0, icon: "star", name: "Quick paws", desc: "Get 3 stars on 10 levels", reward: 5 },
-    { id: "three50", stat: "three", goal: 50, tier: 1, icon: "star", name: "Swift whiskers", desc: "Get 3 stars on 50 levels", reward: 15 },
-    { id: "three150", stat: "three", goal: 150, tier: 2, icon: "star", name: "Lightning tail", desc: "Get 3 stars on 150 levels", reward: 30 },
-    { id: "run5", stat: "bestRun", goal: 5, tier: 1, icon: "flame", name: "On a roll", desc: "Get 3 stars on 5 levels in a row", reward: 8 },
-    { id: "run20", stat: "bestRun", goal: 20, tier: 2, icon: "flame", name: "Unstoppable", desc: "Get 3 stars on 20 levels in a row", reward: 25 },
-    { id: "nohint10", stat: "hintFree", goal: 10, tier: 0, icon: "bulb", name: "Clever cat", desc: "Solve 10 levels without a hint", reward: 5 },
-    { id: "nohint100", stat: "hintFree", goal: 100, tier: 2, icon: "bulb", name: "Big brain", desc: "Solve 100 levels without a hint", reward: 20 },
-    { id: "clean1", stat: "flawless", goal: 1, tier: 0, icon: "spark", name: "Clean paws", desc: "Solve a level with no hints and no red marks", reward: 3 },
-    { id: "clean25", stat: "flawless", goal: 25, tier: 1, icon: "spark", name: "Spotless", desc: "Solve 25 levels with no hints and no red marks", reward: 12 },
-    { id: "zoom", stat: "zoom", goal: 1, tier: 1, icon: "bolt", name: "Zoomies", desc: "Solve a level in under 30 seconds", reward: 5 },
-    { id: "pounce", stat: "pounce", goal: 1, tier: 2, icon: "bolt", name: "Pounce", desc: "Solve a hard level in under 1 minute", reward: 10 },
-    { id: "pb", stat: "pb", goal: 1, tier: 0, icon: "clock", name: "Personal best", desc: "Replay a level and beat your time", reward: 3 },
-    { id: "gift5", stat: "gifts", goal: 5, tier: 1, icon: "gift", name: "Gift hunter", desc: "Open 5 gifts on the level map", reward: 8 },
-    { id: "theme3", stat: "themes", goal: 3, tier: 1, icon: "palette", name: "Dressed up", desc: "Own 3 themes", reward: 5 },
-    { id: "themeAll", stat: "themes", goal: SKINS.length, tier: 3, icon: "palette", name: "Fashion icon", desc: "Own every theme", reward: 30 },
-    { id: "owl", stat: "owl", goal: 1, tier: 0, icon: "moon", name: "Night owl", desc: "Solve a level between midnight and 5 AM", reward: 3 },
-    { id: "early", stat: "early", goal: 1, tier: 0, icon: "sun", name: "Early bird", desc: "Solve a level between 5 and 8 AM", reward: 3 }
-  ];
-  function statValues() {
-    var v = {}, k, S = save.stats;
-    for (k in S) v[k] = S[k];
-    v.solved = 0; v.three = 0;
-    [save.best, save.daily || {}].forEach(function (book) { for (k in book) { v.solved++; if (book[k] >= 3) v.three++; } });
-    v.themes = save.owned.length;
-    return v;
-  }
-  function readyBadges(v) {
-    v = v || statValues();
-    return BADGES.filter(function (b) { return !save.badges[b.id] && (v[b.stat] || 0) >= b.goal; });
-  }
-  function paintTrophyDot() {
-    var n = readyBadges().length;
-    $("t-dot").hidden = !n; $("t-dot").textContent = n;
-    $("tab-dot").hidden = !n; $("tab-dot").textContent = n;
-    $("t-trophies").setAttribute("aria-label", "Trophies" + (n ? ", " + n + " to claim" : ""));
-  }
-  var STAR_SM = '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg>';
-  function badgeRow(b, v, k) {
-    var have = Math.min(b.goal, v[b.stat] || 0), claimed = !!save.badges[b.id], ready = !claimed && have >= b.goal;
-    var li = document.createElement("li");
-    li.className = claimed ? "claimed" : ready ? "ready" : "locked"; li.style.setProperty("--k", k || 0);
-    li.innerHTML = '<span class="medal t' + b.tier + '" aria-hidden="true">' + ICONS[b.icon] + '</span><span class="bd-txt"><b>' + b.name + "</b><small>" + b.desc + "</small>" +
-      (!claimed && !ready && b.goal > 1 ? '<span class="bd-bar"><span><i style="width:' + (have / b.goal * 100) + '%"></i></span>' + have + "/" + b.goal + "</span>" : "") + "</span>" +
-      (ready ? '<button class="claim" type="button">Claim +' + b.reward + STAR_SM + "</button>"
-        : claimed ? '<span class="bd-done" aria-label="Claimed"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>'
-        : '<span class="bd-rw" aria-label="' + b.reward + ' stars">+' + b.reward + STAR_SM + "</span>");
-    if (ready) li.querySelector(".claim").onclick = function () { claimBadge(b, li); };
-    return li;
-  }
-  function claimBadge(b, li) {
-    if (save.badges[b.id]) return;
-    save.badges[b.id] = Date.now(); save.wallet += b.reward; persist(true);
-    Audio.sfx("coin"); Haptic.go("gift"); toast(b.name + ": +" + b.reward + " stars!");
-    var fresh = badgeRow(b, statValues()); fresh.classList.add("just"); li.replaceWith(fresh);
-    renderWallet(); paintTrophyDot(); paintBadgeNote();
-    if (!$("home").hidden) renderHome();
-    if (save.remind) scheduleReminders();
-  }
-  function paintWinBadges(r) {
-    var ids = r.badges || [], v = statValues(), box = $("bc-list");
-    var list = BADGES.filter(function (b) { return ids.indexOf(b.id) >= 0; });
-    $("win-badges").hidden = !list.length;
-    if (!list.length) return;
-    $("bc-title").textContent = list.length > 1 ? list.length + " new badges!" : "New badge!";
-    box.innerHTML = ""; list.forEach(function (b, k) { box.appendChild(badgeRow(b, v, k)); });
-  }
-  function paintBadgeNote() {
-    var got = BADGES.filter(function (b) { return save.badges[b.id]; }).length;
-    $("tro-badge-note").textContent = got ? got + " of " + BADGES.length + " badges earned. Each one pays out stars." : "Earn badges as you play. Each one pays out stars.";
-  }
-  function paintTrophies() {
-    var v = statValues(), box = $("tro-badges"), S = save.stats;
-    // Ready to claim first, then the ones still to earn, then the ones already claimed.
-    var order = function (b) { return save.badges[b.id] ? 2 : (v[b.stat] || 0) >= b.goal ? 0 : 1; };
-    box.innerHTML = "";
-    BADGES.slice().sort(function (a, b) { return order(a) - order(b) || BADGES.indexOf(a) - BADGES.indexOf(b); })
-      .forEach(function (b) { box.appendChild(badgeRow(b, v)); });
-    paintBadgeNote();
-    var times = Object.keys(save.times).map(function (k) { return save.times[k]; }).filter(Boolean);
-    var fastest = times.length ? Math.min.apply(null, times) : 0;
-    var avg = times.length ? Math.round(times.reduce(function (a, b) { return a + b; }, 0) / times.length) : 0;
-    var mins = Math.round((S.time || 0) / 60), played = mins >= 60 ? Math.floor(mins / 60) + "h " + (mins % 60) + "m" : mins + "m";
-    var tile = function (val, label, wide) { return '<div' + (wide ? ' class="wide"' : "") + "><b>" + val + "</b><span>" + label + "</span></div>"; };
-    $("tro-stats").innerHTML =
-      tile(v.solved, "Levels solved") + tile(totalStars() + STAR_SM, "Stars earned") +
-      tile(v.three, "3-star levels") + tile(S.bestRun || 0, "Best 3-star run") +
-      tile(v.hintFree || 0, "Solved without hints") + tile(v.flawless || 0, "Perfect solves") +
-      tile(fastest ? fmt(fastest) : "-", "Fastest solve") + tile(avg ? fmt(avg) : "-", "Average best time") +
-      tile(S.gifts || 0, "Gifts opened") + tile(BADGES.filter(function (b) { return save.badges[b.id]; }).length + "/" + BADGES.length, "Badges") +
-      tile(played, "Time spent solving", true);
-    paintLevels();
-  }
-  function trophyTab(t) {
-    document.querySelectorAll(".tro-tabs button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.tab === t); });
-    document.querySelectorAll(".tro-pane").forEach(function (p) { p.hidden = p.dataset.pane !== t; });
-  }
-  function openTrophies(tab) { paintTrophies(); trophyTab(tab || "badges"); $("board-sheet").hidden = false; }
-  document.querySelectorAll(".tro-tabs button").forEach(function (b) { b.onclick = function () { trophyTab(b.dataset.tab); }; });
-  $("t-trophies").onclick = function () { openTrophies(); };
 
   /* ---------- vibration ----------
      A light tap for each cat, a buzz for a mistake, a bump for a finished line and a cheer for a win.
@@ -3448,45 +3126,11 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     });
   };
 
-  /* ---------- reminders (phone app only) ----------
-     A local notification every morning. */
+  /* ---------- old reminders ----------
+     Earlier versions could schedule a morning notification (id 1) or a streak one (id 2).
+     The reminder is gone, so cancel any that are still set on the phone. */
   var Notes = plugin("LocalNotifications");
-  function scheduleReminders() {
-    if (!Notes) return;
-    // id 2 was the old streak reminder; cancelling it clears any left from earlier versions.
-    Notes.cancel({ notifications: [{ id: 1 }, { id: 2 }] }).catch(function () {}).then(function () {
-      if (!save.remind) return;
-      var left = GIFT_EVERY - (nextLevel() - 1 - save.gift), body = "Your next level is waiting.";
-      if (left <= 3) body = (left === 1 ? "Just 1 level" : left + " levels") + " to your next gift \ud83c\udf81";
-      else if (readyBadges().length) body = "You have a badge to claim \ud83c\udfc6";
-      var list = [{ id: 1, title: "Sunny and Luna miss you \ud83d\udc31", body: body,
-        schedule: { on: { hour: 9, minute: 0 }, allowWhileIdle: true }, isExactNotification: false }];
-      return Notes.schedule({ notifications: list });
-    }).catch(function () {});
-  }
-  function askReminders(fromSettings) {
-    if (!Notes) return;
-    Notes.requestPermissions().then(function (r) {
-      save.remind = r.display === "granted"; persist(); paintRemind(); scheduleReminders();
-      if (save.remind) toast("Daily reminder on");
-      else if (fromSettings) toast("Allow notifications for Purrzle in your phone's Settings");
-    }).catch(function () {});
-  }
-  function paintRemind() {
-    $("s-remind").hidden = !Notes;
-    $("s-remind-v").textContent = save.remind ? "On" : "Off"; $("s-remind-v").classList.toggle("on", !!save.remind);
-  }
-  // Accessibility switches in Settings.
-  function applyA11y() {
-    document.documentElement.classList.toggle("calm", !!save.calm);
-    document.documentElement.classList.toggle("marks", !!save.marks);
-    [["s-calm", save.calm], ["s-marks", save.marks]].forEach(function (x) {
-      $(x[0]).setAttribute("aria-checked", !!x[1]);
-      var v = $(x[0] + "-v"); v.textContent = x[1] ? "On" : "Off"; v.classList.toggle("on", !!x[1]);
-    });
-  }
-  $("s-calm").onclick = function () { save.calm = !save.calm; persist(true); applyA11y(); };
-  $("s-marks").onclick = function () { save.marks = !save.marks; persist(true); applyA11y(); };
+  function clearReminders() { if (Notes) Notes.cancel({ notifications: [{ id: 1 }, { id: 2 }] }).catch(function () {}); }
   // Bigger text: on iPhone and iPad the system text size (Dynamic Type) reaches the page through
   // -apple-system-body. Everything sized in rem grows with it, up to 25% so the board still fits.
   function textSize() {
@@ -3500,9 +3144,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     document.documentElement.style.fontSize = k > 1 ? (16 * k).toFixed(1) + "px" : "";
   }
   document.addEventListener("visibilitychange", function () { if (!document.hidden) textSize(); });
-  $("s-remind").onclick = function () {
-    if (save.remind) { save.remind = false; persist(); paintRemind(); scheduleReminders(); } else askReminders(true);
-  };
 
   /* ---------- Android back button ----------
      Closes whatever is on top first, then steps back toward Home. On Home it sends the app to the
@@ -3511,8 +3152,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   if (AppPlugin && Cap.getPlatform() === "android") AppPlugin.addListener("backButton", function () {
     if (Ads.busy()) return;
     var shown = function (id) { return !$(id).hidden; };
-    var close = [["tut", "tut-skip"], ["plus-sheet", "plus-close"], ["how-sheet", "how-close"], ["board-sheet", "lb-close"],
-                 ["sheet", "sheet-close"], ["why", "why-ok"], ["win", "win-x"], ["game", "g-back"]];
+    var close = [["tut", "tut-skip"], ["plus-sheet", "plus-close"], ["how-sheet", "how-close"], ["sheet", "sheet-close"], ["why", "why-ok"], ["win", "win-x"], ["game", "g-back"]];
     for (var i = 0; i < close.length; i++) if (shown(close[i][0])) return $(close[i][1]).click();
     if (!shown("home")) return show("home");
     AppPlugin.minimizeApp();
@@ -3925,7 +3565,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   document.addEventListener("keydown", function (e) {
     if (e.key !== "Escape") return;
     if (!$("tut").hidden) return closeTut();
-    var top = ["plus-sheet", "board-sheet", "how-sheet", "sheet"].filter(function (id) { return !$(id).hidden; })[0];
+    var top = ["plus-sheet", "how-sheet", "sheet"].filter(function (id) { return !$(id).hidden; })[0];
     if (top === "plus-sheet") return closePlus();
     if (top) { $(top).hidden = true; return; }
     if (!$("why").hidden) return hideWhy();
@@ -3941,11 +3581,11 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   }
 
   /* ---------- dialogs ----------
-     Settings, How to play, the tutorial, Plus, records, ads and the results page open over the game.
+     Settings, How to play, the tutorial, Plus, ads and the results page open over the game.
      While one is open: focus moves into it, everything behind it is inert (no taps, Tab or screen
      reader reaching it), Escape closes it, and focus returns to where it was when it closes. */
-  var MODALS = ["win", "sheet", "how-sheet", "plus-sheet", "board-sheet", "ad-full", "tut"],
-    ESCAPE = { sheet: "sheet-close", "how-sheet": "how-close", "plus-sheet": "plus-close", "board-sheet": "lb-close", tut: "tut-skip", "ad-full": "ad-close" },
+  var MODALS = ["win", "sheet", "how-sheet", "plus-sheet", "ad-full", "tut"],
+    ESCAPE = { sheet: "sheet-close", "how-sheet": "how-close", "plus-sheet": "plus-close", tut: "tut-skip", "ad-full": "ad-close" },
     modals = [];
   function modalChanged(el) {
     var at = -1;
@@ -3986,7 +3626,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     load();
     if (data && data.save) save = data.save;
     booted = true;
-    save.badges = save.badges || {}; save.stats = save.stats || {};
     if (!save.tutDone && (save.wins || Object.keys(save.best).length)) save.tutDone = true;
     play = save.play && save.play.board ? save.play : null;
     if (play && play.daily) play = save.play = null; // daily puzzles were removed
@@ -3995,9 +3634,9 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     // Gifts start at the next 10th level for players who were already further along.
     if (save.gift == null) save.gift = Math.floor((nextLevel() - 1) / GIFT_EVERY) * GIFT_EVERY;
     buildTiles();
-    applySkin(); applyAds(); applyA11y(); textSize();
+    applySkin(); applyAds(); textSize();
     document.body.classList.toggle("native", NATIVE); document.body.classList.toggle("portal", PORTAL); document.body.classList.toggle("web", WEB);
-    paintRemind(); paintBuzz(); if (save.remind) scheduleReminders();
+    paintBuzz(); clearReminders();
     var screen = data && data.screen;
     if (screen === "game" && play) resumeLevel(); else show(screen || "home");
     var splash = $("splash");

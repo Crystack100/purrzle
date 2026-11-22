@@ -110,14 +110,11 @@ test("solving a level opens the results with the next level focused", async t =>
   assert.ok(saved >= 1);
 });
 
-test("sun and moon marks and reduce motion can be switched on in Settings", async t => {
+test("Settings has no reminder, marks or reduce motion, and home has no trophies", async t => {
   const page = await open(t, PLAYER);
+  for (const id of ["t-trophies", "board-sheet", "s-remind", "s-marks", "s-calm", "win-badges"]) assert.equal(await page.$("#" + id), null, id);
   await page.click("#t-settings");
-  await page.click("#s-marks"); await page.click("#s-calm");
-  assert.equal(await page.getAttribute("#s-marks", "aria-checked"), "true");
-  assert.deepEqual(await page.evaluate(() => ["calm", "marks"].map(c => document.documentElement.classList.contains(c))), [true, true]);
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("tango:v2")));
-  assert.equal(saved.marks, true); assert.equal(saved.calm, true);
+  assert.equal(await page.isVisible("#s-how"), true);
 });
 
 test("a damaged save keeps what is still good and the game still starts", async t => {
@@ -166,7 +163,6 @@ test("no accessibility problems found by axe on the main screens", async t => {
   };
   await audit("home");
   await page.click("#t-settings"); await audit("settings"); await page.keyboard.press("Escape");
-  await page.click("#t-trophies"); await audit("trophies"); await page.keyboard.press("Escape");
   await page.click('.tab[data-to="levels"]'); await audit("levels");
   await page.click('.tab[data-to="store"]'); await audit("shop");
   await page.click('.tab[data-to="home"]'); await page.click("#h-play"); await audit("puzzle");

@@ -166,6 +166,7 @@ test("no accessibility problems found by axe on the main screens", async t => {
   };
   await audit("home");
   await page.click("#t-settings"); await audit("settings"); await page.keyboard.press("Escape");
+  await page.click("#t-trophies"); await audit("trophies"); await page.keyboard.press("Escape");
   await page.click('.tab[data-to="levels"]'); await audit("levels");
   await page.click('.tab[data-to="store"]'); await audit("shop");
   await page.click('.tab[data-to="home"]'); await page.click("#h-play"); await audit("puzzle");

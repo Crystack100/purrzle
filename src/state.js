@@ -40,6 +40,8 @@ var PurrzleState = (function () {
     for (var k in p) out[k] = p[k];
     out.elapsed = int(p.elapsed, 0, 86400 * 365, 0);
     out.history = Array.isArray(p.history) ? p.history.filter(function (h) {
+      // ["all", board] is the undo step for Clear.
+      if (Array.isArray(h) && h.length === 2 && h[0] === "all") return cellsOk(h[1], true);
       return Array.isArray(h) && h.length === 2 && int(h[0], 0, CELLS - 1, -1) === h[0] && (h[1] === -1 || h[1] === 0 || h[1] === 1);
     }) : [];
     out.done = !!p.done;
@@ -68,7 +70,13 @@ var PurrzleState = (function () {
     out.owned = owned;
     var skin = raw.skin === "daybreak" ? "cozy" : raw.skin;
     out.skin = typeof skin === "string" && (!skins || skins.indexOf(skin) >= 0) && (owned.indexOf(skin) >= 0 || raw.plus) ? skin : "cozy";
-    ["noAds", "plus", "tutDone", "calm", "marks"].forEach(function (f) { if (f in raw) out[f] = !!raw[f]; });
+    // Gifts, badges and lifetime stats (Trophies). gift stays null when missing so the game can work it out.
+    out.gift = raw.gift == null ? null : int(raw.gift, 0, 1e9, null);
+    function idKey(k) { return /^[A-Za-z0-9_-]{1,40}$/.test(k); }
+    out.badges = counts(raw.badges, idKey, 1, 1e14);
+    out.stats = counts(raw.stats, idKey, 0, 1e12);
+    if (typeof raw.theme === "string") out.theme = raw.theme;
+    ["noAds", "plus", "tutDone", "calm", "marks", "buzz"].forEach(function (f) { if (f in raw) out[f] = !!raw[f]; });
     if ("remind" in raw) out.remind = raw.remind == null ? raw.remind : !!raw.remind;
     out.play = cleanPlay(raw.play);
     var free = obj(raw.free);

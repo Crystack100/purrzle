@@ -77,3 +77,23 @@ test("puzzle in progress: bad history and time are repaired", () => {
 test("fields from a newer version are kept", () => {
   assert.equal(clean({ somethingNew: { a: 1 } }).somethingNew.a, 1);
 });
+
+test("the undo step for Clear survives a reload", () => {
+  const p = playing(2);
+  const out = clean({ play: Object.assign(p, { history: [[3, 0], ["all", p.board.slice()], ["all", [1, 2]]] }) }).play;
+  assert.equal(out.history.length, 2);
+  assert.equal(out.history[1][0], "all");
+});
+
+test("gifts, badges, stats and vibration are kept", () => {
+  const base = Object.assign({}, BASE, { gift: null, badges: {}, stats: {}, buzz: true });
+  const out = S.clean({ gift: 20, badges: { first: 1763800000000, bad: "x" }, stats: { solves: 31, time: 4200, run: "oops" }, buzz: false, theme: "dark" }, base, SKINS);
+  assert.equal(out.gift, 20);
+  assert.deepEqual(out.badges, { first: 1763800000000 });
+  assert.deepEqual(out.stats, { solves: 31, time: 4200 });
+  assert.equal(out.buzz, false);
+  assert.equal(out.theme, "dark");
+  const fresh = S.clean({ best: { 1: 3 } }, base, SKINS);
+  assert.equal(fresh.gift, null);
+  assert.equal(fresh.buzz, true);
+});

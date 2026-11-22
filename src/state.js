@@ -81,6 +81,10 @@ var PurrzleState = (function () {
     out.play = cleanPlay(raw.play);
     var free = obj(raw.free);
     if (free) out.free = { day: int(free.day, 0, 99991231, 0), n: int(free.n, 0, 1000, 0) };
+    // Mystery Box counters: boxes opened, and opens since the last Epic or better (the guarantee).
+    var box = obj(raw.box);
+    if ("box" in raw) out.box = box ? { n: int(box.n, 0, 1e9, 0), dry: int(box.dry, 0, 1e9, 0) } : undefined;
+    if (!out.box) delete out.box;
     if ("adsSeen" in raw) out.adsSeen = int(raw.adsSeen, 0, 1e9, 0);
     return out;
   }

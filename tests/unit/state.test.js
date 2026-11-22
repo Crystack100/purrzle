@@ -97,3 +97,9 @@ test("gifts, badges, stats and vibration are kept", () => {
   assert.equal(fresh.gift, null);
   assert.equal(fresh.buzz, true);
 });
+
+test("Mystery Box counters are kept, and a damaged one is dropped", () => {
+  assert.deepEqual(clean({ box: { n: 7, dry: 3 } }).box, { n: 7, dry: 3 });
+  assert.deepEqual(clean({ box: { n: "x" } }).box, { n: 0, dry: 0 });
+  assert.equal("box" in clean({ box: "broken" }), false);
+});

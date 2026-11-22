@@ -1,6 +1,6 @@
 # Purrzle
 
-A cozy cat logic puzzle for phones: fill the grid with sun and moon cats so every row and column balances. Unlimited levels, 1-3 stars per level based on solve time, and a theme store paid for with stars.
+A cozy cat logic puzzle for phones: fill the grid with sun and moon cats so every row and column balances. Unlimited levels, 1-3 stars per level based on solve time, and Mystery Boxes bought with stars that hold 22 collectible cat looks in four rarities (odds shown in the shop).
 
 Reasons to come back, all counted on the device with no account: a gift of bonus stars every 10 levels (bigger at 50 and 100), 25 badges that pay out stars, a Trophies screen (badges, lifetime stats, every level's best), a golden shimmer when a row or column is finished, phone vibration (Settings > Vibration), and a morning reminder that says how close the next gift is.
 

@@ -6,6 +6,8 @@ game = (root / "src/game.html").read_text().replace("/*CORE*/", (root / "src/cor
 for kind in ("sun", "moon"):
     game = game.replace("/*CAT_" + kind.upper() + "*/", "data:image/webp;base64," + base64.b64encode((root / f"src/cat-{kind}.webp").read_bytes()).decode())
     game = game.replace("/*CAT_" + kind.upper() + "_MASK*/", "data:image/webp;base64," + base64.b64encode((root / f"src/cat-{kind}-mask.webp").read_bytes()).decode())
+# The meow for placing a cat, inlined the same way.
+game = game.replace("/*MEOW*/", "data:audio/mpeg;base64," + base64.b64encode((root / "src/meow.mp3").read_bytes()).decode())
 # Bundle the font so the app works offline and does not wait on Google Fonts.
 import base64
 # The fonts are cut down to the characters and weights the game uses (tools/subset-fonts.py).

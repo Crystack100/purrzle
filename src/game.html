@@ -2142,7 +2142,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   ["music", "sound"].forEach(function (k) {
     var el = $("s-" + k);
     el.oninput = function () { save[k] = +el.value; paintSlider(el); Audio.volumes(); };
-    el.onchange = function () { persist(); if (k === "sound") Audio.sfx("place0"); };
+    el.onchange = function () { persist(); if (k === "sound") Audio.sfx("meow"); };
   });
   // Home's button carries on with the puzzle in hand, unless it's an old level that was only opened and left untouched.
   function playOn() { return !!(play && !play.done && !play.daily && (play.level === nextLevel() || started(play))); }
@@ -2273,7 +2273,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   ];
   var tut = null;
   function openTut(then) {
-    tut = { step: 0, then: then };
+    tut = { step: 0, then: then }; if (Audio) Audio.restart();
     $("tut-dots").innerHTML = TUT.map(function () { return "<i></i>"; }).join("");
     $("tut").hidden = false; tutStep();
   }
@@ -2329,7 +2329,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     // In the tutorial a tap only swaps Sunny and Luna; squares never go back to empty.
     var v = tut.row[i] === 0 ? 1 : 0;
     tut.row[i] = v; tut.changed = i;
-    Audio.sfx(v === -1 ? "clear" : "place" + v);
+    Audio.place(i, L.answer == null || v === L.answer);
     var bad = L.bad && L.bad[v];
     // A wrong cat waits a moment before it's flagged, so double-tapping
     // straight to Luna passes through Sunny without flashing an error.
@@ -2380,7 +2380,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     resumeLevel();
   }
   function resumeLevel() {
-    show("game");
+    show("game"); if (Audio) Audio.restart();
     $("g-title").textContent = play.daily ? "Daily Puzzle" : "Level " + play.level;
     $("win-next").textContent = play.daily ? "Back home" : "Next: Level " + (play.level + 1);
     build(); render(); if (!play.done) startClock();
@@ -2565,7 +2565,8 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     if (play.done || play.givens[i] !== -1 || play.board[i] === v) return;
     play.history.push([i, play.board[i]]);
     play.board[i] = v;
-    Audio.sfx(v === -1 ? "clear" : "place" + v); Haptic.go("tap");
+    if (v === -1) Audio.sfx("clear"); else Audio.place(i, v === play.solution[i]);
+    Haptic.go("tap");
     render(i); persist();
     if (v !== -1) lineSparkle(i);
   }
@@ -3348,7 +3349,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     }
   }
   /* ---------- sound and music ----------
-     Everything is synthesized with Web Audio, so there are no files to load.
+     Everything is synthesized with Web Audio except the placing meow, a short clip inlined at build time.
      iOS only allows audio after a tap, so the context starts on the first touch. */
   var Audio = (function () {
     var ctx = null, muted = false, master, musicBus, sfxBus, noiseBuf, nextBeat = 0, step = 0, timer = null;
@@ -3364,7 +3365,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
         musicBus.connect(verb); sfxBus.connect(verb); verb.connect(wet); wet.connect(master);
         noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * .5), ctx.sampleRate);
         var nd = noiseBuf.getChannelData(0); for (n = 0; n < nd.length; n++) nd[n] = Math.random() * 2 - 1;
-        volumes();
+        volumes(); loadMeow();
       }
       if (ctx.state === "suspended") ctx.resume();
       return ctx;
@@ -3418,19 +3419,42 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       o.connect(f1); o.connect(f2); f2.connect(g2); f1.connect(g); g2.connect(g); g.connect(sfxBus);
       o.start(t); lfo.start(t); o.stop(t + len + .05); lfo.stop(t + len + .05);
     }
-    // Placing cats climbs a pentatonic scale, one note per placement, so a quick run of taps plays a rising
-    // tune. After a pause in placing it starts again from the bottom. Sunny sits a few notes above Luna.
-    var RUN_SCALE = [523.3, 587.3, 659.3, 784, 880, 1046.5, 1174.7, 1318.5, 1568, 1760, 2093], RUN_TOP = 7, RUN_RESET = 1.5;
-    var run = 0, runAt = -1e9;
-    function runNote(offset) {
-      var now = ctx.currentTime;
-      run = now - runAt > RUN_RESET ? 0 : Math.min(run + 1, RUN_TOP);
-      runAt = now;
-      return RUN_SCALE[run + offset];
+    // Placing a cat meows (a real recording, src/meow.mp3). Each right cat sings one note higher up a D major
+    // pentatonic scale, D5 to D6, and stays on the top note after that. A wrong cat drops back to the bottom
+    // note and the climb starts again, unless the very next tap fixes that same square (tapping through Sunny
+    // to reach Luna), which carries the climb on. The clip is an F#5, so each note is a shift in semitones.
+    var MEOW_SRC = "/*MEOW*/", MEOW_STEPS = [-4, -2, 0, 3, 5, 8], meowBuf = null, climb = -1, slip = null;
+    function loadMeow() {
+      if (meowBuf || MEOW_SRC.indexOf("data:") !== 0) return;
+      meowBuf = true;
+      try {
+        var bin = atob(MEOW_SRC.slice(MEOW_SRC.indexOf(",") + 1)), bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        ctx.decodeAudioData(bytes.buffer, function (b) { meowBuf = b; }, function () { meowBuf = null; });
+      } catch (e) { meowBuf = null; }
     }
+    function meowNote(t, step) {
+      var rate = Math.pow(2, MEOW_STEPS[step] / 12);
+      if (!meowBuf || meowBuf === true) { meow(t, 740 * rate, .4, .45, "happy"); return; }
+      var src = ctx.createBufferSource(), g = ctx.createGain();
+      src.buffer = meowBuf; src.playbackRate.value = rate; g.gain.value = .6;
+      src.connect(g); g.connect(sfxBus); src.start(t);
+    }
+    function place(cell, right) {
+      if (slip && slip.cell !== cell) slip = null;
+      var step;
+      if (right) {
+        if (slip) { climb = slip.climb; slip = null; }
+        step = climb = Math.min(climb + 1, MEOW_STEPS.length - 1);
+      } else {
+        slip = { cell: cell, climb: climb }; step = climb = 0;
+      }
+      if (save.sound && ensure()) meowNote(ctx.currentTime + .01, step);
+    }
+    // A new puzzle starts the climb from the bottom.
+    function restart() { climb = -1; slip = null; }
     var SFX = {
-      place0: function (t) { var f = runNote(3); pluck(sfxBus, f, t, .3, .6); pluck(sfxBus, f * 1.5, t + .05, .1, .4); },
-      place1: function (t) { var f = runNote(0); pluck(sfxBus, f, t, .3, .8); pluck(sfxBus, f * .75, t + .06, .1, .6); },
+      meow: function (t, step) { meowNote(t, step || 0); },
       clear: function (t) { noise(sfxBus, t, .06, .25, 900, 2); },
       tap: function (t) { noise(sfxBus, t, .04, .3, 2400, 1.5); },
       oops: function (t) { meow(t, 420, .38, .5, "grumpy"); },
@@ -3558,7 +3582,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     function hold(on) { if (on) stopMusic(); else if (ctx && save.music) startMusic(); }
     // CrazyGames' own mute button.
     function mute(on) { muted = !!on; if (master) master.gain.value = muted ? 0 : 1; }
-    return { sfx: sfx, volumes: volumes, hold: hold, mute: mute };
+    return { sfx: sfx, place: place, restart: restart, volumes: volumes, hold: hold, mute: mute };
   })();
 
   // Escape (keyboard or a game site's back key) closes whatever is on top.

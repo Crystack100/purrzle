@@ -2080,7 +2080,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     if (screen === "store") renderStore();
   }
   document.querySelectorAll(".tab[data-to]").forEach(function (t) { t.onclick = function () { show(t.dataset.to); }; });
-  $("t-settings").onclick = function () { openSheet(); };
+  $("t-settings").onclick = function () { Audio.sfx("pop"); openSheet(); };
   function applyTheme() {
     // One look only: the light theme (dark mode was removed).
     document.documentElement.setAttribute("data-theme", "light");
@@ -3349,15 +3349,17 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     }
   }
   /* ---------- sound and music ----------
-     Everything is synthesized with Web Audio except the placing meow, a short clip inlined at build time.
+     Everything is synthesized with Web Audio except the placing meow and the Settings pop, short clips inlined at build time.
      iOS only allows audio after a tap, so the context starts on the first touch. */
   var Audio = (function () {
-    var ctx = null, muted = false, master, musicBus, sfxBus, noiseBuf, nextBeat = 0, step = 0, timer = null;
+    var ctx = null, muted = false, master, musicBus, sfxBus, dryBus, noiseBuf, nextBeat = 0, step = 0, timer = null;
     function ensure() {
       if (!ctx) {
         var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
         ctx = new AC(); master = ctx.createGain(); master.connect(ctx.destination); master.gain.value = muted ? 0 : 1;
         musicBus = ctx.createGain(); sfxBus = ctx.createGain(); musicBus.connect(master); sfxBus.connect(master);
+        // The recorded clips skip the room reverb: they already sound like a real room, and on top of it they echoed.
+        dryBus = ctx.createGain(); dryBus.connect(master);
         // A soft room reverb under everything makes the plucks and meows sound warm instead of beepy.
         var len = Math.floor(ctx.sampleRate * 1.6), ir = ctx.createBuffer(2, len, ctx.sampleRate);
         for (var ch = 0; ch < 2; ch++) { var d = ir.getChannelData(ch); for (var n = 0; n < len; n++) d[n] = (Math.random() * 2 - 1) * Math.pow(1 - n / len, 3); }
@@ -3365,7 +3367,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
         musicBus.connect(verb); sfxBus.connect(verb); verb.connect(wet); wet.connect(master);
         noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * .5), ctx.sampleRate);
         var nd = noiseBuf.getChannelData(0); for (n = 0; n < nd.length; n++) nd[n] = Math.random() * 2 - 1;
-        volumes(); loadMeow();
+        volumes(); loadClips();
       }
       if (ctx.state === "suspended") ctx.resume();
       return ctx;
@@ -3375,6 +3377,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       var m = (save.music || 0) / 100, f = (save.sound || 0) / 100;
       musicBus.gain.setTargetAtTime(m * m * .5, ctx.currentTime, .05);
       sfxBus.gain.setTargetAtTime(f * f * .9, ctx.currentTime, .02);
+      dryBus.gain.setTargetAtTime(f * f * .9, ctx.currentTime, .02);
       if (m > 0) startMusic(); else stopMusic();
     }
     function note(bus, freq, t, dur, type, vol, glideTo) {
@@ -3423,22 +3426,30 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     // pentatonic scale, D5 to D6, and stays on the top note after that. A wrong cat drops back to the bottom
     // note and the climb starts again, unless the very next tap fixes that same square (tapping through Sunny
     // to reach Luna), which carries the climb on. The clip is an F#5, so each note is a shift in semitones.
-    var MEOW_SRC = "/*MEOW*/", MEOW_STEPS = [-4, -2, 0, 3, 5, 8], meowBuf = null, climb = -1, slip = null;
-    function loadMeow() {
-      if (meowBuf || MEOW_SRC.indexOf("data:") !== 0) return;
-      meowBuf = true;
-      try {
-        var bin = atob(MEOW_SRC.slice(MEOW_SRC.indexOf(",") + 1)), bytes = new Uint8Array(bin.length);
-        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-        ctx.decodeAudioData(bytes.buffer, function (b) { meowBuf = b; }, function () { meowBuf = null; });
-      } catch (e) { meowBuf = null; }
+    var MEOW_STEPS = [-4, -2, 0, 3, 5, 8], climb = -1, slip = null;
+    // Recorded clips, inlined by build.py and decoded once the audio has started.
+    var CLIPS = { meow: "/*MEOW*/", pop: "/*POP*/" }, bufs = {};
+    function loadClips() {
+      Object.keys(CLIPS).forEach(function (k) {
+        var src = CLIPS[k]; if (bufs[k] || src.indexOf("data:") !== 0) return;
+        bufs[k] = true;
+        try {
+          var bin = atob(src.slice(src.indexOf(",") + 1)), bytes = new Uint8Array(bin.length);
+          for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+          ctx.decodeAudioData(bytes.buffer, function (buf) { bufs[k] = buf; }, function () { bufs[k] = null; });
+        } catch (e) { bufs[k] = null; }
+      });
+    }
+    function clip(k, t, rate, vol) {
+      var buf = bufs[k]; if (!buf || buf === true) return false;
+      var src = ctx.createBufferSource(), g = ctx.createGain();
+      src.buffer = buf; src.playbackRate.value = rate || 1; g.gain.value = vol;
+      src.connect(g); g.connect(dryBus); src.start(t);
+      return true;
     }
     function meowNote(t, step) {
       var rate = Math.pow(2, MEOW_STEPS[step] / 12);
-      if (!meowBuf || meowBuf === true) { meow(t, 740 * rate, .4, .45, "happy"); return; }
-      var src = ctx.createBufferSource(), g = ctx.createGain();
-      src.buffer = meowBuf; src.playbackRate.value = rate; g.gain.value = .6;
-      src.connect(g); g.connect(sfxBus); src.start(t);
+      if (!clip("meow", t, rate, .6)) meow(t, 740 * rate, .4, .45, "happy");
     }
     function place(cell, right) {
       if (slip && slip.cell !== cell) slip = null;
@@ -3455,6 +3466,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     function restart() { climb = -1; slip = null; }
     var SFX = {
       meow: function (t, step) { meowNote(t, step || 0); },
+      pop: function (t) { if (!clip("pop", t, 1, .5)) noise(sfxBus, t, .04, .3, 2400, 1.5); },
       clear: function (t) { noise(sfxBus, t, .06, .25, 900, 2); },
       tap: function (t) { noise(sfxBus, t, .04, .3, 2400, 1.5); },
       oops: function (t) { meow(t, 420, .38, .5, "grumpy"); },

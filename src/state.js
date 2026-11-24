@@ -75,7 +75,7 @@ var PurrzleState = (function () {
     // Gifts every 10 levels: gift stays null when missing so the game can work it out.
     out.gift = raw.gift == null ? null : int(raw.gift, 0, 1e9, null);
     if (typeof raw.theme === "string") out.theme = raw.theme;
-    ["noAds", "plus", "tutDone", "buzz"].forEach(function (f) { if (f in raw) out[f] = !!raw[f]; });
+    ["noAds", "plus", "tutDone", "buzz", "meows"].forEach(function (f) { if (f in raw) out[f] = !!raw[f]; });
     out.play = cleanPlay(raw.play);
     var free = obj(raw.free);
     if (free) out.free = { day: int(free.day, 0, 99991231, 0), n: int(free.n, 0, 1000, 0) };

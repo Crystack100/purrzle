@@ -117,6 +117,21 @@ test("Settings has no reminder, marks or reduce motion, and home has no trophies
   assert.equal(await page.isVisible("#s-how"), true);
 });
 
+test("Settings switches turn sound, music and meows off and back on", async t => {
+  const page = await open(t, Object.assign({}, PLAYER, { music: 55, sound: 70 }));
+  await page.click("#t-settings");
+  // Saves are batched, so wait for the stored value.
+  const stored = (k, v) => page.waitForFunction(([k, v]) => JSON.parse(localStorage.getItem("tango:v2"))[k] === v, [k, v], { timeout: 3000 });
+  await page.click("#s-music");
+  assert.equal(await page.getAttribute("#s-music", "aria-checked"), "false");
+  await stored("music", 0);
+  await page.click("#s-music");
+  await stored("music", 55); // back at the level it had
+  await page.click("#s-meows");
+  assert.equal(await page.getAttribute("#s-meows", "aria-checked"), "false");
+  await stored("meows", false);
+});
+
 test("a damaged save keeps what is still good and the game still starts", async t => {
   const page = await open(t, { best: { 1: 3, 2: "oops", 3: 2 }, wallet: "lots", owned: "everything", skin: "nope", play: { board: [1, 2] }, tutDone: true, music: 0, sound: 0 });
   assert.equal(await page.textContent("#h-play-sub"), "Level 2");

@@ -332,17 +332,43 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
   font: 700 1.6rem/1 var(--font-display) !important; letter-spacing: .02em; text-shadow: 0 2px 0 var(--acc-dk); }
 .set-x { width: 40px; height: 40px; border-radius: 50%; background: rgb(0 0 0 / .18); box-shadow: inset 0 2px 3px rgb(0 0 0 / .2); }
 .set-x svg { stroke: #fff; }
-#sheet .slider { grid-template-columns: 40px 1fr; grid-template-areas: "ic lb" "ic in"; row-gap: 6px; column-gap: 12px; padding: 12px 14px;
-  background: var(--cell); border-radius: 16px; box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--cell) 86%, #000); }
-#sheet .slider svg { grid-area: ic; width: 40px; height: 40px; padding: 9px; box-sizing: border-box; border-radius: 12px; color: #fff;
-  background: linear-gradient(var(--acc-lt), var(--accent)); box-shadow: 0 3px 0 var(--acc-dk); }
-#sheet .slider label { grid-area: lb; font: 600 1.05rem/1 var(--font-display); display: flex; justify-content: space-between; }
-#sheet .slider output { position: absolute; right: 18px; top: 14px; line-height: 1.05rem !important; font: 600 .95rem/1 var(--font-display); color: var(--muted); }
-#sheet .slider { position: relative; }
-#sheet .slider input { grid-area: in; height: 14px; border-radius: 7px; box-shadow: inset 0 2px 3px rgb(0 0 0 / .25); }
-#sheet .slider input::-webkit-slider-thumb { width: 18px; height: 18px; border: 0; background: radial-gradient(circle at 50% 35%, #fff, #ffe9d4); box-shadow: 0 0 0 2.5px var(--accent), 0 2px 0 2.5px var(--acc-dk); }
-#sheet .slider input::-moz-range-thumb { width: 14px; height: 14px; border: 3px solid var(--accent); background: #fff; }
 
+/* Settings: a row of icon tiles with ON/OFF switches, then big rounded buttons, then small links and the version. */
+.set-tiles { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 10px; }
+.set-tile { display: grid; justify-items: center; gap: 10px; padding: 14px 6px 12px; border: 0; border-radius: 18px; cursor: pointer; color: var(--accent);
+  background: var(--cell); box-shadow: inset 0 0 0 2px var(--line), inset 0 -4px 0 var(--line); transition: transform .08s; -webkit-tap-highlight-color: transparent; }
+.set-tile:active { transform: translateY(2px); }
+.set-tile svg { width: 34px; height: 34px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.set-tile svg .fill { fill: currentColor; }
+.set-tile svg .eye { fill: var(--cell); stroke: none; }
+.set-tile .off-x { stroke: var(--muted); stroke-width: 2.6; display: none; }
+.set-tile[aria-checked="false"] { color: var(--muted); }
+.set-tile[aria-checked="false"] svg { opacity: .7; }
+.set-tile[aria-checked="false"] .off-x { display: inline; }
+.tg { position: relative; display: block; width: 100%; max-width: 70px; height: 28px; border-radius: 999px; background: var(--accent);
+  box-shadow: inset 0 2px 3px rgb(0 0 0 / .22); transition: background .15s; }
+.tg b { position: absolute; top: 0; line-height: 28px; font: 800 .78rem/28px var(--font-display); letter-spacing: .03em; }
+.tg-on { left: 10px; color: var(--on-accent); }
+.tg-off { right: 8px; color: var(--muted); display: none; }
+.tg i { position: absolute; top: 3px; right: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 2px 2px rgb(0 0 0 / .25); transition: right .15s; }
+.set-tile[aria-checked="false"] .tg { background: var(--line); }
+.set-tile[aria-checked="false"] .tg i { right: calc(100% - 25px); }
+.set-tile[aria-checked="false"] .tg-on { display: none; }
+.set-tile[aria-checked="false"] .tg-off { display: block; }
+/* Small phones: slimmer switches so ON/OFF still fits beside the knob. */
+@media (max-width: 359px) {
+  .set-tiles { gap: 6px; } .set-tile { padding: 12px 4px 10px; }
+  .tg { height: 24px; } .tg b { font-size: .68rem; line-height: 24px; } .tg-on { left: 6px; } .tg-off { right: 5px; }
+  .tg i { top: 3px; right: 3px; width: 18px; height: 18px; } .set-tile[aria-checked="false"] .tg i { right: calc(100% - 21px); }
+}
+.set-big { width: 100%; padding: 15px 16px; border-radius: 999px; cursor: pointer; background: var(--surface); color: var(--acc-dk);
+  border: 2.5px solid var(--accent); box-shadow: 0 4px 0 color-mix(in srgb, var(--accent) 55%, var(--surface)); font: 800 1.2rem/1 var(--font-display); transition: transform .08s, box-shadow .08s; }
+.set-big:active { transform: translateY(3px); box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 55%, var(--surface)); }
+.set-foot { display: flex; justify-content: space-around; gap: 12px; margin-top: 4px; }
+.set-foot a { color: var(--muted); font-size: .92rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; padding: 4px; }
+.set-ver { margin: -6px 0 0; text-align: center; color: var(--muted); opacity: .75; font-size: .85rem; font-weight: 700; }
+/* Dark themes: the dark accent is unreadable on the dark surface, so the button text is the light accent. */
+:root:is([data-skin="midnight"], [data-skin="ocean"], [data-skin="arcade"], [data-skin="galaxy"], [data-skin="witch"], [data-skin="astro"], [data-skin="royal"], [data-skin="lucky"]) .set-big { color: var(--acc-lt); }
 .tr-label { font: 600 1.05rem var(--font-display); }
 /* settings sheet */
 .sheet-bg { position: fixed; inset: 0; z-index: 25; background: rgba(20, 12, 10, .45); display: grid; align-items: end; justify-items: center; }
@@ -380,14 +406,6 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .sheet-stats div { background: var(--cell); border-radius: 8px; padding: 8px; text-align: center; }
 .sheet-stats b { display: block; font: 700 1.3rem var(--font-display); font-variant-numeric: tabular-nums; }
 .sheet-stats span { font-size: .75rem; font-weight: 700; color: var(--muted); }
-.slider { display: grid; grid-template-columns: 24px 64px 1fr 34px; align-items: center; gap: 10px; background: var(--cell); border-radius: 10px; padding: 12px 14px; }
-.slider svg { width: 22px; height: 22px; color: var(--accent); }
-.slider label { font: 600 1rem var(--font-display); }
-.slider output { font: 700 .9rem var(--font-display); color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
-.slider input { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; margin: 0;
-  background: linear-gradient(var(--accent), var(--accent)) 0 / var(--p, 50%) 100% no-repeat, var(--line); outline: none; }
-.slider input::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--surface); border: 3px solid var(--accent); box-shadow: 0 2px 6px -2px var(--shadow); }
-.slider input::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--surface); border: 3px solid var(--accent); }
 .danger { background: none; border: 0; color: var(--bad); font: 600 .95rem var(--font-display); cursor: pointer; padding: 6px; justify-self: center; }
 
 /* level map: a winding trail, lowest level at the bottom */
@@ -1075,7 +1093,6 @@ body:not(.iap) .iap-only { display: none !important; }
 /* Game sites like CrazyGames show their own ads and do not allow outside purchases. */
 .portal-only { display: none !important; }
 /* The privacy policy link shows everywhere: App Store and Google Play require it inside the app. */
-a.how-btn { text-decoration: none; }
 body.portal .portal-only { display: flex !important; text-decoration: none; }
 body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .ad-x, body.portal #s-help { display: none; }
 /* The plain web app has no real ads or payments, so it shows neither. */
@@ -1092,18 +1109,11 @@ body.web .ad-banner, body.web #noads, body.web #s-noads, body.web .ad-x, body.we
 .bonus-btn svg { width: 20px; height: 20px; fill: currentColor; } .bonus-btn svg.st { fill: #fff; filter: drop-shadow(0 1px 0 #c9861a); }
 .bonus-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #c9861a; }
 .win-row:has(#win-share) { grid-template-columns: 1fr 1fr 1fr; }
-.how-btn .onoff { margin-left: auto; font: 700 .9rem var(--font-display); color: var(--muted); }
-.how-btn .onoff.on { color: var(--accent); }
-.how-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-radius: 16px; cursor: pointer; text-align: left; color: var(--ink);
-  background: var(--cell); box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--cell) 86%, #000); font: 600 1.05rem var(--font-display); }
-.how-btn svg { width: 40px; height: 40px; flex: none; padding: 9px; box-sizing: border-box; border-radius: 12px; color: #fff; background: linear-gradient(var(--acc-lt, #f8c08c), var(--accent)); box-shadow: 0 3px 0 color-mix(in srgb, var(--accent) 68%, #000); fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Sharper type for menus and instructions: Settings, How to play and the tutorial's sentences.
    Fredoka stays for the logo, buttons and big headlines. */
 #sheet .sheet, #sheet .sheet *, #how-sheet .sheet, #how-sheet .sheet *, .tut-text, .tut-msg, .tut-rules li { font-family: var(--font-ui) !important; }
 .set-head { font: 800 1.45rem/1 var(--font-ui) !important; letter-spacing: -.01em; text-shadow: 0 1px 0 var(--acc-dk); }
-#sheet .slider label, #sheet .how-btn { font-weight: 700 !important; font-size: 1rem !important; letter-spacing: -.005em; }
-#sheet .slider output { font-weight: 600 !important; font-size: .9rem !important; font-variant-numeric: tabular-nums; }
 #sheet .na-txt b { font-weight: 800 !important; font-size: 1.12rem !important; letter-spacing: -.01em; text-shadow: 0 1px 0 var(--acc-dk); }
 #sheet .na-txt small { font-weight: 500 !important; }
 #sheet .na-price, #sheet .na-ic b { font-weight: 800 !important; }
@@ -1146,7 +1156,6 @@ body.web .ad-banner, body.web #noads, body.web #s-noads, body.web .ad-x, body.we
 .logo { margin-bottom: .67em; }
 button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 [role="dialog"]:focus, .win:focus { outline: none; }
-.how-btn .hb-sub { display: block; margin-top: 2px; font: 500 .8rem/1.25 var(--font-ui); color: var(--muted); }
 .why-ok { min-height: 40px; }
 @media (prefers-reduced-motion: reduce) { .err-lines .ln { stroke-dashoffset: 0; } }
 
@@ -1186,7 +1195,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
 :root:is([data-skin="midnight"], [data-skin="royal"]) :is(.pillbtn:not(.alt), .set-head, .node.current, .map-jump, .win-ribbon, .win-btns .chunky, .why-ok, .tut-rules b, .tut-go, .noads-btn:not(.plus-btn):not(.owned), .noads-btn:not(.plus-btn):not(.owned) .na-txt b) {
   color: var(--on-accent); text-shadow: 0 1px 0 rgb(255 255 255 / .35); }
 :root:is([data-skin="midnight"], [data-skin="royal"]) :is(.set-x svg) { stroke: var(--on-accent); }
-:root:is([data-skin="midnight"], [data-skin="royal"]) :is(#sheet .slider svg, .how-btn svg) { color: var(--on-accent); }
 /* Enough stars for the next theme: the badge says so and gives a little bounce. */
 .goal-badge.ready .tag { background: var(--accent); color: var(--on-accent); }
 .goal-badge.ready .ring { animation: readyBob 1.8s ease-in-out infinite; }
@@ -1923,24 +1931,12 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
 <div class="sheet-bg" id="sheet" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
     <h3 class="set-head" aria-level="2"><span id="sheet-title">Settings</span><button class="round set-x" id="sheet-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h3>
-    <div class="slider">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="3" fill="currentColor"/><circle cx="17.5" cy="16" r="3" fill="currentColor"/></svg>
-      <label for="s-music">Music</label>
-      <input type="range" id="s-music" min="0" max="100" step="1">
-      <output id="s-music-v">40</output>
+    <div class="set-tiles">
+      <button class="set-tile" id="s-music" type="button" role="switch" aria-checked="true" aria-label="Music"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13" fill="none"/><circle cx="6.5" cy="18" r="2.6" class="fill"/><circle cx="17.5" cy="16" r="2.6" class="fill"/><path class="off-x" d="M4 3.5l16 17"/></svg><span class="tg" aria-hidden="true"><b class="tg-on">ON</b><b class="tg-off">OFF</b><i></i></span></button>
+      <button class="set-tile" id="s-sound" type="button" role="switch" aria-checked="true" aria-label="Sound"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h3.5L12 5v14l-4.5-4H4z" class="fill"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.2 6.6a7.6 7.6 0 0 1 0 10.8" fill="none"/><path class="off-x" d="M4 3.5l16 17"/></svg><span class="tg" aria-hidden="true"><b class="tg-on">ON</b><b class="tg-off">OFF</b><i></i></span></button>
+      <button class="set-tile" id="s-meows" type="button" role="switch" aria-checked="true" aria-label="Meows"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.6 19.5c-.8-3-.4-6.1 1-8.2L3.2 5l4 3a7.4 7.4 0 0 1 3.8 0l4-3-.4 6.3c1.4 2.1 1.8 5.2 1 8.2z" class="fill"/><circle cx="6.9" cy="14.2" r="1.15" class="eye"/><circle cx="11.3" cy="14.2" r="1.15" class="eye"/><path d="M19 10.6a3.4 3.4 0 0 1 0 4.8M21.3 8.5a6.4 6.4 0 0 1 0 9" fill="none"/><path class="off-x" d="M4 3.5l16 17"/></svg><span class="tg" aria-hidden="true"><b class="tg-on">ON</b><b class="tg-off">OFF</b><i></i></span></button>
+      <button class="set-tile" id="s-buzz" type="button" role="switch" aria-checked="true" aria-label="Vibration" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7.5" y="3" width="9" height="18" rx="2.2" fill="none"/><path d="M3.5 9v6M20.5 9v6" fill="none"/><path class="off-x" d="M4 3.5l16 17"/></svg><span class="tg" aria-hidden="true"><b class="tg-on">ON</b><b class="tg-off">OFF</b><i></i></span></button>
     </div>
-    <div class="slider">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
-      <label for="s-sound">Sound</label>
-      <input type="range" id="s-sound" min="0" max="100" step="1">
-      <output id="s-sound-v">70</output>
-    </div>
-    <button class="how-btn" id="s-how" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 .9c0 1.8-2.5 2.2-2.5 3.8"/><circle cx="12" cy="17.2" r=".6" fill="currentColor"/></svg>How to play</button>
-    <button class="how-btn" id="s-buzz" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7.5" y="3" width="9" height="18" rx="2.2"/><path d="M3.5 9v6M20.5 9v6"/></svg><span>Vibration</span><b class="onoff" id="s-buzz-v">On</b></button>
-    <button class="how-btn" id="s-privacy" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Privacy choices</button>
-    <button class="how-btn iap-only" id="s-restore" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></svg>Restore purchases</button>
-    <a class="how-btn" id="s-policy" href="https://crystack100.github.io/purrzle/privacy.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Privacy policy</a>
-    <a class="how-btn" id="s-help" href="https://crystack100.github.io/purrzle/support.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>Help and contact</a>
     <button class="noads-btn plus-btn iap-only" id="s-plus" type="button">
       <span class="na-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="#ffc94a" stroke="#c9861a" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
       <span class="na-txt"><b id="sp-title">Purrzle Plus</b><small id="sp-sub">No ads and every theme</small></span>
@@ -1951,6 +1947,14 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       <span class="na-txt"><b id="na-title">Remove ads</b><small id="na-sub">No banners or pop-ups, forever</small></span>
       <span class="na-price" id="na-price">$2.99</span>
     </button>
+    <button class="set-big" id="s-how" type="button">How to play</button>
+    <button class="set-big iap-only" id="s-restore" type="button">Restore purchases</button>
+    <button class="set-big" id="s-privacy" type="button" hidden>Privacy choices</button>
+    <div class="set-foot">
+      <a id="s-policy" href="https://crystack100.github.io/purrzle/privacy.html" target="_blank" rel="noopener">Privacy policy</a>
+      <a id="s-help" href="https://crystack100.github.io/purrzle/support.html" target="_blank" rel="noopener">Help and contact</a>
+    </div>
+    <p class="set-ver" id="s-ver">Version 1.0</p>
   </div>
 </div>
 
@@ -1997,7 +2001,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   var WEB = !NATIVE && !PORTAL;
   function plugin(name) { return NATIVE && Cap.registerPlugin ? Cap.registerPlugin(name) : null; }
   var save = { best: {}, times: {}, wallet: 0, owned: ["cozy"], skin: "cozy", play: null, daily: {}, noAds: false, wins: 0, music: 40, sound: 70, theme: "light",
-    gift: null, buzz: true };
+    gift: null, buzz: true, meows: true };
   var play = null, cells = [], marks = [], tick = null, toastT = null;
 
   function load() {
@@ -2132,18 +2136,28 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   $("h-gift").onclick = function () { show("levels"); };
 
   /* ---------- settings ---------- */
+  // A row of icon tiles with ON/OFF switches. Music and sound keep their volume numbers in the save
+  // (0 means off), so switching one back on brings back the level it had, or the starting level.
+  var VOL = { music: 40, sound: 70 };
+  function paintTile(id, on) { $(id).setAttribute("aria-checked", on ? "true" : "false"); }
+  function paintSettings() {
+    paintTile("s-music", save.music > 0); paintTile("s-sound", save.sound > 0); paintTile("s-meows", save.meows !== false); paintBuzz();
+  }
   function openSheet() {
-    ["music", "sound"].forEach(function (k) { var el = $("s-" + k); el.value = save[k]; paintSlider(el); });
+    ["music", "sound"].forEach(function (k) { if (save[k] > 0) VOL[k] = save[k]; });
+    paintSettings();
     $("sheet").hidden = false;
   }
   $("sheet-close").onclick = function () { $("sheet").hidden = true; };
   $("sheet").onclick = function (e) { if (e.target === this) this.hidden = true; };
-  function paintSlider(el) { el.style.setProperty("--p", el.value + "%"); $(el.id + "-v").textContent = el.value; }
   ["music", "sound"].forEach(function (k) {
-    var el = $("s-" + k);
-    el.oninput = function () { save[k] = +el.value; paintSlider(el); Audio.volumes(); };
-    el.onchange = function () { persist(); if (k === "sound") Audio.sfx("place0"); };
+    $("s-" + k).onclick = function () {
+      if (save[k] > 0) { VOL[k] = save[k]; save[k] = 0; } else save[k] = VOL[k];
+      Audio.volumes(); persist(); paintSettings();
+      if (k === "sound") Audio.sfx("tap");
+    };
   });
+  $("s-meows").onclick = function () { save.meows = save.meows === false; persist(); paintSettings(); Audio.sfx("hint"); };
   // Home's button carries on with the puzzle in hand, unless it's an old level that was only opened and left untouched.
   function playOn() { return !!(play && !play.done && !play.daily && (play.level === nextLevel() || started(play))); }
   $("h-play").onclick = function () { if (playOn()) resumeLevel(); else startLevel(nextLevel()); };
@@ -2837,9 +2851,9 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   })();
   function paintBuzz() {
     $("s-buzz").hidden = !Haptic.can();
-    $("s-buzz-v").textContent = save.buzz !== false ? "On" : "Off"; $("s-buzz-v").classList.toggle("on", save.buzz !== false);
+    paintTile("s-buzz", save.buzz !== false);
   }
-  $("s-buzz").onclick = function () { save.buzz = save.buzz === false; persist(); paintBuzz(); Haptic.go("line"); };
+  $("s-buzz").onclick = function () { save.buzz = save.buzz === false; persist(); paintSettings(); Haptic.go("line"); };
 
   /* ---------- ads ----------
      In the phone app these are Google AdMob ads: a full-screen ad after every win (from the third),
@@ -3149,6 +3163,8 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
      Closes whatever is on top first, then steps back toward Home. On Home it sends the app to the
      background (like other games) instead of closing it mid-level. */
   var AppPlugin = plugin("App");
+  // Settings shows the app's own version number in the phone app (the web build says 1.0).
+  if (AppPlugin) AppPlugin.getInfo().then(function (i) { if (i && i.version) $("s-ver").textContent = "Version " + i.version; }).catch(function () {});
   if (AppPlugin && Cap.getPlatform() === "android") AppPlugin.addListener("backButton", function () {
     if (Ads.busy()) return;
     var shown = function (id) { return !$(id).hidden; };
@@ -3400,6 +3416,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     // A little synthesized meow: a buzzy voice through two mouth-shaped filters that open ("eee-aa") and
     // close ("-ow") while the pitch rises and falls. mood: "happy", "ask" (rises like a question), "grumpy".
     function meow(t, pitch, len, vol, mood) {
+      if (save.meows === false) return; // Settings > Meows
       pitch *= .94 + Math.random() * .12;
       var o = ctx.createOscillator(), g = ctx.createGain(), f1 = ctx.createBiquadFilter(), f2 = ctx.createBiquadFilter(), g2 = ctx.createGain();
       var lfo = ctx.createOscillator(), lg = ctx.createGain(), fr = o.frequency;
@@ -3448,7 +3465,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       }
     };
     function sfx(name, arg) {
-      if (!save.sound || !ensure()) return;
+      if (!save.sound || !SFX[name] || (save.meows === false && /meow/.test(name)) || !ensure()) return;
       SFX[name](ctx.currentTime + .01, arg);
     }
     // Music: "Rainy window", a slow piano loop (Dmaj9, Bm9, Gmaj9, Asus/A) of broken chords in 8ths, with a

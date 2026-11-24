@@ -1114,7 +1114,7 @@ if (screen === "levels") renderMap();
 if (screen === "store") renderStore();
 }
 document.querySelectorAll(".tab[data-to]").forEach(function (t) { t.onclick = function () { show(t.dataset.to); }; });
-$("t-settings").onclick = function () { openSheet(); };
+$("t-settings").onclick = function () { Audio.sfx("pop"); openSheet(); };
 function applyTheme() {
 document.documentElement.setAttribute("data-theme", "light");
 var m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = "#f6f5f3";
@@ -1171,7 +1171,7 @@ function paintSlider(el) { el.style.setProperty("--p", el.value + "%"); $(el.id 
 ["music", "sound"].forEach(function (k) {
 var el = $("s-" + k);
 el.oninput = function () { save[k] = +el.value; paintSlider(el); Audio.volumes(); };
-el.onchange = function () { persist(); if (k === "sound") Audio.sfx("place0"); };
+el.onchange = function () { persist(); if (k === "sound") Audio.sfx("place"); };
 });
 function playOn() { return !!(play && !play.done && !play.daily && (play.level === nextLevel() || started(play))); }
 $("h-play").onclick = function () { if (playOn()) resumeLevel(); else startLevel(nextLevel()); };
@@ -1339,7 +1339,7 @@ var L = TUT[tut.step];
 if (tut.solved && tut.step > 0) return;
 var v = tut.row[i] === 0 ? 1 : 0;
 tut.row[i] = v; tut.changed = i;
-Audio.sfx(v === -1 ? "clear" : "place" + v);
+Audio.sfx("place");
 var bad = L.bad && L.bad[v];
 clearTimeout(tut.badTimer);
 if (bad) {
@@ -1557,7 +1557,8 @@ function set(i, v) {
 if (play.done || play.givens[i] !== -1 || play.board[i] === v) return;
 play.history.push([i, play.board[i]]);
 play.board[i] = v;
-Audio.sfx(v === -1 ? "clear" : "place" + v); Haptic.go("tap");
+Audio.sfx(v === -1 ? "clear" : "place");
+Haptic.go("tap");
 render(i); persist();
 if (v !== -1) lineSparkle(i);
 }
@@ -2289,22 +2290,23 @@ setTimeout(i.remove.bind(i), 760);
 }
 }
 /* ---------- sound and music ----------
-Everything is synthesized with Web Audio, so there are no files to load.
+Everything is synthesized with Web Audio except the placing pop and the Settings pop, short clips inlined at build time.
 iOS only allows audio after a tap, so the context starts on the first touch. */
 var Audio = (function () {
-var ctx = null, muted = false, master, musicBus, sfxBus, noiseBuf, nextBeat = 0, step = 0, timer = null;
+var ctx = null, muted = false, master, musicBus, sfxBus, dryBus, noiseBuf, nextBeat = 0, step = 0, timer = null;
 function ensure() {
 if (!ctx) {
 var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
 ctx = new AC(); master = ctx.createGain(); master.connect(ctx.destination); master.gain.value = muted ? 0 : 1;
 musicBus = ctx.createGain(); sfxBus = ctx.createGain(); musicBus.connect(master); sfxBus.connect(master);
+dryBus = ctx.createGain(); dryBus.connect(master);
 var len = Math.floor(ctx.sampleRate * 1.6), ir = ctx.createBuffer(2, len, ctx.sampleRate);
 for (var ch = 0; ch < 2; ch++) { var d = ir.getChannelData(ch); for (var n = 0; n < len; n++) d[n] = (Math.random() * 2 - 1) * Math.pow(1 - n / len, 3); }
 var verb = ctx.createConvolver(), wet = ctx.createGain(); verb.buffer = ir; wet.gain.value = .22;
 musicBus.connect(verb); sfxBus.connect(verb); verb.connect(wet); wet.connect(master);
 noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * .5), ctx.sampleRate);
 var nd = noiseBuf.getChannelData(0); for (n = 0; n < nd.length; n++) nd[n] = Math.random() * 2 - 1;
-volumes();
+volumes(); loadClips();
 }
 if (ctx.state === "suspended") ctx.resume();
 return ctx;
@@ -2314,6 +2316,7 @@ if (!ctx) return;
 var m = (save.music || 0) / 100, f = (save.sound || 0) / 100;
 musicBus.gain.setTargetAtTime(m * m * .5, ctx.currentTime, .05);
 sfxBus.gain.setTargetAtTime(f * f * .9, ctx.currentTime, .02);
+dryBus.gain.setTargetAtTime(f * f * .9, ctx.currentTime, .02);
 if (m > 0) startMusic(); else stopMusic();
 }
 function note(bus, freq, t, dur, type, vol, glideTo) {
@@ -2354,17 +2357,33 @@ g.gain.setValueAtTime(vol, t + len * .7); g.gain.exponentialRampToValueAtTime(.0
 o.connect(f1); o.connect(f2); f2.connect(g2); f1.connect(g); g2.connect(g); g.connect(sfxBus);
 o.start(t); lfo.start(t); o.stop(t + len + .05); lfo.stop(t + len + .05);
 }
-var RUN_SCALE = [523.3, 587.3, 659.3, 784, 880, 1046.5, 1174.7, 1318.5, 1568, 1760, 2093], RUN_TOP = 7, RUN_RESET = 1.5;
-var run = 0, runAt = -1e9;
-function runNote(offset) {
-var now = ctx.currentTime;
-run = now - runAt > RUN_RESET ? 0 : Math.min(run + 1, RUN_TOP);
-runAt = now;
-return RUN_SCALE[run + offset];
+var PENTATONIC = [-8, -5, -3, 0, 2, 4, 7];
+var CLIPS = { place: "data:audio/mpeg;base64,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qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqr/+3LEbQPAAAGkAAAAIAAANIAAAASqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqg==", pop: "data:audio/mpeg;base64,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1cxwNYOSfiNidFkyZTA4ZqHcYwEWYQEgYeCqAgwMAgALaIOLEYm5b/xuX2/qUkbjcbjcbjcbjcbhyMRiMRiMSykpKenp87YP4Pj/+2DEWoLJFC6SDf+oQkcO0NXf9UA+D4OAgCAIAgD4Pg+f8TggCAIAgCYPm3/yrr6f9nF//5v////9CnSS+LvFsgCAhUDWB6ozcDI9MgAxMCUjOvsbNDrEP+76PH1zamY0kzMVLRJYC4aYoArFWFWKu1YVhzEmdNecpyn+f5/ozGYzGaWlpQU7+goMFBQUFAoKCgpv///4UFBIKCgtTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/+2DEZQPMNFaMDPdoSAAANIAAAARVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU=" }, bufs = {};
+function loadClips() {
+Object.keys(CLIPS).forEach(function (k) {
+var src = CLIPS[k]; if (bufs[k] || src.indexOf("data:") !== 0) return;
+bufs[k] = true;
+try {
+var bin = atob(src.slice(src.indexOf(",") + 1)), bytes = new Uint8Array(bin.length);
+for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+ctx.decodeAudioData(bytes.buffer, function (buf) { bufs[k] = buf; }, function () { bufs[k] = null; });
+} catch (e) { bufs[k] = null; }
+});
+}
+function clip(k, t, rate, vol) {
+var buf = bufs[k]; if (!buf || buf === true) return false;
+var src = ctx.createBufferSource(), g = ctx.createGain();
+src.buffer = buf; src.playbackRate.value = rate || 1; g.gain.value = vol;
+src.connect(g); g.connect(dryBus); src.start(t);
+return true;
+}
+function placeNote(t) {
+var rate = Math.pow(2, PENTATONIC[Math.floor(Math.random() * PENTATONIC.length)] / 12);
+if (!clip("place", t, rate, .6)) pluck(sfxBus, 1046.5 * rate, t, .3, .5);
 }
 var SFX = {
-place0: function (t) { var f = runNote(3); pluck(sfxBus, f, t, .3, .6); pluck(sfxBus, f * 1.5, t + .05, .1, .4); },
-place1: function (t) { var f = runNote(0); pluck(sfxBus, f, t, .3, .8); pluck(sfxBus, f * .75, t + .06, .1, .6); },
+place: function (t) { placeNote(t); },
+pop: function (t) { if (!clip("pop", t, 1, .5)) noise(sfxBus, t, .04, .3, 2400, 1.5); },
 clear: function (t) { noise(sfxBus, t, .06, .25, 900, 2); },
 tap: function (t) { noise(sfxBus, t, .04, .3, 2400, 1.5); },
 oops: function (t) { meow(t, 420, .38, .5, "grumpy"); },

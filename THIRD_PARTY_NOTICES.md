@@ -12,7 +12,8 @@ Purrzle includes or depends on the following third-party software. All of these 
 | `@capacitor-community/admob` | Ads in the phone app | MIT |
 | Google Mobile Ads SDK and User Messaging Platform | Ads and consent form in the phone app | Google terms (https://developers.google.com/admob/terms) |
 | CrazyGames HTML5 SDK v3 (CrazyGames build only) | Ads and saves on CrazyGames | CrazyGames developer terms |
+| "Bubble Pop 04" by Universfield (Pixabay), trimmed (`src/place.mp3`) | Sound for placing a cat | Pixabay Content License (https://pixabay.com/service/license-summary/) |
 
 The Fredoka and Plus Jakarta Sans fonts are embedded in the game and may not be sold on their own. The OFL text: https://openfontlicense.org/open-font-license-official-text/
 
-Cat artwork (Sunny and Luna), icons and sounds are original to Purrzle. Sounds are generated in code at runtime.
+Cat artwork (Sunny and Luna) and icons are original to Purrzle. Apart from the two recorded clips (`src/place.mp3` and the Settings pop `src/pop.mp3`), sounds are generated in code at runtime.

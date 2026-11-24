@@ -177,7 +177,9 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 :root[data-skin="ocean"] .board-wrap, :root[data-skin="midnight"] .board-wrap { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 80%, #fff), var(--surface) 45%); }
 /* Cat details derive from the fur colors, so every skin gets matching faces.
    Declared on every element so a shop card's own fur colors flow into its previews. */
-* {
+/* Only where a palette is set (the page, shop cards, previews), so these inherit instead of being recomputed on every element.
+   Keeping this off * makes the shop's many cat previews much cheaper to style. */
+:root, .skin, .skin-preview, .duo, [style^="--"] {
   --moon-line: color-mix(in srgb, var(--moon) 62%, #000);
   --eye: #2b1b16;
   --eye2: var(--eye2-base, color-mix(in srgb, var(--moon) 20%, #fff));
@@ -332,17 +334,43 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
   font: 700 1.6rem/1 var(--font-display) !important; letter-spacing: .02em; text-shadow: 0 2px 0 var(--acc-dk); }
 .set-x { width: 40px; height: 40px; border-radius: 50%; background: rgb(0 0 0 / .18); box-shadow: inset 0 2px 3px rgb(0 0 0 / .2); }
 .set-x svg { stroke: #fff; }
-#sheet .slider { grid-template-columns: 40px 1fr; grid-template-areas: "ic lb" "ic in"; row-gap: 6px; column-gap: 12px; padding: 12px 14px;
-  background: var(--cell); border-radius: 16px; box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--cell) 86%, #000); }
-#sheet .slider svg { grid-area: ic; width: 40px; height: 40px; padding: 9px; box-sizing: border-box; border-radius: 12px; color: #fff;
-  background: linear-gradient(var(--acc-lt), var(--accent)); box-shadow: 0 3px 0 var(--acc-dk); }
-#sheet .slider label { grid-area: lb; font: 600 1.05rem/1 var(--font-display); display: flex; justify-content: space-between; }
-#sheet .slider output { position: absolute; right: 18px; top: 14px; line-height: 1.05rem !important; font: 600 .95rem/1 var(--font-display); color: var(--muted); }
-#sheet .slider { position: relative; }
-#sheet .slider input { grid-area: in; height: 14px; border-radius: 7px; box-shadow: inset 0 2px 3px rgb(0 0 0 / .25); }
-#sheet .slider input::-webkit-slider-thumb { width: 18px; height: 18px; border: 0; background: radial-gradient(circle at 50% 35%, #fff, #ffe9d4); box-shadow: 0 0 0 2.5px var(--accent), 0 2px 0 2.5px var(--acc-dk); }
-#sheet .slider input::-moz-range-thumb { width: 14px; height: 14px; border: 3px solid var(--accent); background: #fff; }
 
+/* Settings: a row of icon tiles with ON/OFF switches, then big rounded buttons, then small links and the version. */
+.set-tiles { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 10px; }
+.set-tile { display: grid; justify-items: center; gap: 10px; padding: 14px 6px 12px; border: 0; border-radius: 18px; cursor: pointer; color: var(--accent);
+  background: var(--cell); box-shadow: inset 0 0 0 2px var(--line), inset 0 -4px 0 var(--line); transition: transform .08s; -webkit-tap-highlight-color: transparent; }
+.set-tile:active { transform: translateY(2px); }
+.set-tile svg { width: 34px; height: 34px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.set-tile svg .fill { fill: currentColor; }
+.set-tile svg .eye { fill: var(--cell); stroke: none; }
+.set-tile .off-x { stroke: var(--muted); stroke-width: 2.6; display: none; }
+.set-tile[aria-checked="false"] { color: var(--muted); }
+.set-tile[aria-checked="false"] svg { opacity: .7; }
+.set-tile[aria-checked="false"] .off-x { display: inline; }
+.tg { position: relative; display: block; width: 100%; max-width: 70px; height: 28px; border-radius: 999px; background: var(--accent);
+  box-shadow: inset 0 2px 3px rgb(0 0 0 / .22); transition: background .15s; }
+.tg b { position: absolute; top: 0; line-height: 28px; font: 800 .78rem/28px var(--font-display); letter-spacing: .03em; }
+.tg-on { left: 10px; color: var(--on-accent); }
+.tg-off { right: 8px; color: var(--muted); display: none; }
+.tg i { position: absolute; top: 3px; right: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 2px 2px rgb(0 0 0 / .25); transition: right .15s; }
+.set-tile[aria-checked="false"] .tg { background: var(--line); }
+.set-tile[aria-checked="false"] .tg i { right: calc(100% - 25px); }
+.set-tile[aria-checked="false"] .tg-on { display: none; }
+.set-tile[aria-checked="false"] .tg-off { display: block; }
+/* Small phones: slimmer switches so ON/OFF still fits beside the knob. */
+@media (max-width: 359px) {
+  .set-tiles { gap: 6px; } .set-tile { padding: 12px 4px 10px; }
+  .tg { height: 24px; } .tg b { font-size: .68rem; line-height: 24px; } .tg-on { left: 6px; } .tg-off { right: 5px; }
+  .tg i { top: 3px; right: 3px; width: 18px; height: 18px; } .set-tile[aria-checked="false"] .tg i { right: calc(100% - 21px); }
+}
+.set-big { width: 100%; padding: 15px 16px; border-radius: 999px; cursor: pointer; background: var(--surface); color: var(--acc-dk);
+  border: 2.5px solid var(--accent); box-shadow: 0 4px 0 color-mix(in srgb, var(--accent) 55%, var(--surface)); font: 800 1.2rem/1 var(--font-display); transition: transform .08s, box-shadow .08s; }
+.set-big:active { transform: translateY(3px); box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 55%, var(--surface)); }
+.set-foot { display: flex; justify-content: space-around; gap: 12px; margin-top: 4px; }
+.set-foot a { color: var(--muted); font-size: .92rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; padding: 4px; }
+.set-ver { margin: -6px 0 0; text-align: center; color: var(--muted); opacity: .75; font-size: .85rem; font-weight: 700; }
+/* Dark themes: the dark accent is unreadable on the dark surface, so the button text is the light accent. */
+:root:is([data-skin="midnight"], [data-skin="ocean"], [data-skin="arcade"], [data-skin="galaxy"], [data-skin="witch"], [data-skin="astro"], [data-skin="royal"], [data-skin="lucky"]) .set-big { color: var(--acc-lt); }
 .tr-label { font: 600 1.05rem var(--font-display); }
 /* settings sheet */
 .sheet-bg { position: fixed; inset: 0; z-index: 25; background: rgba(20, 12, 10, .45); display: grid; align-items: end; justify-items: center; }
@@ -380,14 +408,6 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .sheet-stats div { background: var(--cell); border-radius: 8px; padding: 8px; text-align: center; }
 .sheet-stats b { display: block; font: 700 1.3rem var(--font-display); font-variant-numeric: tabular-nums; }
 .sheet-stats span { font-size: .75rem; font-weight: 700; color: var(--muted); }
-.slider { display: grid; grid-template-columns: 24px 64px 1fr 34px; align-items: center; gap: 10px; background: var(--cell); border-radius: 10px; padding: 12px 14px; }
-.slider svg { width: 22px; height: 22px; color: var(--accent); }
-.slider label { font: 600 1rem var(--font-display); }
-.slider output { font: 700 .9rem var(--font-display); color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
-.slider input { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; margin: 0;
-  background: linear-gradient(var(--accent), var(--accent)) 0 / var(--p, 50%) 100% no-repeat, var(--line); outline: none; }
-.slider input::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--surface); border: 3px solid var(--accent); box-shadow: 0 2px 6px -2px var(--shadow); }
-.slider input::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--surface); border: 3px solid var(--accent); }
 .danger { background: none; border: 0; color: var(--bad); font: 600 .95rem var(--font-display); cursor: pointer; padding: 6px; justify-self: center; }
 
 /* level map: a winding trail, lowest level at the bottom */
@@ -604,15 +624,6 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .win::before { content: ""; position: fixed; inset: 0; background: var(--motif, none); pointer-events: none; }
 @keyframes winIn { from { opacity: 0; } }
 .win-page { position: relative; width: 100%; max-width: 400px; min-height: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
-.win-ribbon {
-  position: relative; margin-top: 10px; padding: 9px 30px; background: var(--accent); color: var(--on-accent);
-  font: 800 1.05rem/1 var(--font-display); letter-spacing: .12em; text-transform: uppercase;
-  box-shadow: 0 8px 18px -10px var(--accent); animation: drop .5s cubic-bezier(.3, 1.5, .5, 1) both;
-}
-.win-ribbon::before, .win-ribbon::after { content: ""; position: absolute; top: 7px; width: 20px; height: 100%; background: var(--press); z-index: -1; }
-.win-ribbon::before { left: -16px; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 40% 50%); }
-.win-ribbon::after { right: -16px; clip-path: polygon(0 0, 100% 0, 60% 50%, 100% 100%, 0 100%); }
-.win-ribbon span { position: relative; }
 @keyframes drop { from { transform: translateY(-40px); opacity: 0; } }
 .win-hero { position: relative; display: grid; place-items: center; width: 100%; height: 170px; margin-top: auto; }
 .rays {
@@ -661,11 +672,37 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
   --slab: color-mix(in srgb, var(--surface) 82%, #000); --gold-dk: #c97a14;
   background: radial-gradient(90% 46% at 50% 18%, color-mix(in srgb, var(--star) 34%, transparent), transparent 72%),
     radial-gradient(140% 70% at 50% 0%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 70%) var(--bg); }
-.win-ribbon { padding: 11px 34px 12px; border-radius: 4px; background: linear-gradient(var(--acc-lt), var(--accent) 55%, color-mix(in srgb, var(--accent) 88%, #000));
-  color: #fff; text-shadow: 0 2px 0 var(--acc-dk); font-size: 1.1rem;
-  box-shadow: inset 0 2px 0 rgb(255 255 255 / .45), inset 0 -3px 0 rgb(0 0 0 / .14), 0 5px 0 var(--acc-dk), 0 14px 24px -8px var(--acc-dk); }
-.win-ribbon::before, .win-ribbon::after { top: 12px; width: 26px; background: var(--acc-dk); }
-.win-ribbon::before { left: -20px; } .win-ribbon::after { right: -20px; }
+/* "Level N clear": a cozy stitched ribbon. The band drops in with a bounce, the folded tails unfurl behind it,
+   and a soft shine passes over now and then. */
+.win-ribbon { --rb-dk: color-mix(in srgb, var(--accent) 62%, #000); --rb-mid: color-mix(in srgb, var(--accent) 80%, #000);
+  position: relative; z-index: 1; margin-top: 12px; padding: 0 30px; color: #fff; animation: drop .6s cubic-bezier(.3, 1.5, .5, 1) both; }
+.rb-band { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; padding: 11px 22px 13px; border-radius: 12px; overflow: hidden;
+  background: linear-gradient(var(--acc-lt), var(--accent) 52%, color-mix(in srgb, var(--accent) 90%, #000));
+  outline: 1.5px dashed rgb(255 255 255 / .6); outline-offset: -6px;
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / .45), inset 0 -3px 0 rgb(0 0 0 / .12), 0 4px 0 var(--rb-dk), 0 14px 22px -10px var(--rb-dk); }
+.rb-band::after { content: ""; position: absolute; inset: 0; transform: translateX(-120%); pointer-events: none;
+  background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / .5) 50%, transparent 70%); animation: rbShine 3.6s .9s ease-in-out infinite; }
+@keyframes rbShine { 0% { transform: translateX(-120%); } 35%, 100% { transform: translateX(120%); } }
+.rb-band b { font: 700 1.3rem/1 var(--font-display); letter-spacing: .03em; text-transform: capitalize; white-space: nowrap; text-shadow: 0 2px 0 var(--rb-dk); }
+.rb-band svg { flex: none; width: 18px; height: 16px; fill: currentColor; opacity: .85; filter: drop-shadow(0 1.5px 0 var(--rb-dk)); }
+.rb-band svg:first-child { rotate: -18deg; } .rb-band svg:last-child { rotate: 18deg; }
+/* Each tail: a notched end tucked behind the band, with a dark fold where it turns under. */
+.rb-tail { position: absolute; top: 12px; bottom: -10px; width: 46px; z-index: 0; animation: unfurl .45s .3s cubic-bezier(.3, 1.4, .5, 1) both; }
+.rb-tail::before { content: ""; position: absolute; inset: 0 0 0 0; border-radius: 3px;
+  background: linear-gradient(var(--rb-mid), var(--rb-dk)); box-shadow: inset 0 2px 0 rgb(255 255 255 / .2); }
+.rb-tail::after { content: ""; position: absolute; bottom: 0; width: 16px; height: 10px; background: color-mix(in srgb, var(--rb-dk) 70%, #000); }
+.rb-tail.l { left: 0; transform-origin: 100% 50%; } .rb-tail.r { right: 0; transform-origin: 0 50%; }
+.rb-tail.l::before { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%); }
+.rb-tail.r::before { clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 50%, 100% 100%, 0 100%); }
+.rb-tail.l::after { right: 0; clip-path: polygon(0 0, 100% 0, 100% 100%); }
+.rb-tail.r::after { left: 0; clip-path: polygon(0 0, 100% 0, 0 100%); }
+@keyframes unfurl { from { transform: scaleX(0); } }
+/* Narrow phones: a slimmer ribbon, no paws, so it clears the home button. */
+@media (max-width: 380px) {
+  .win-ribbon { padding: 0 20px; }
+  .rb-band { padding: 10px 14px 12px; } .rb-band svg { display: none; }
+  .rb-band b { font-size: 1.05rem; } .rb-tail { width: 32px; top: 10px; }
+}
 .win-hero { height: 190px; }
 .rays { width: 380px; height: 380px; background: repeating-conic-gradient(color-mix(in srgb, var(--star) 46%, transparent) 0 8deg, transparent 8deg 20deg); }
 .win-hero .glow { position: absolute; width: 190px; height: 190px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--star) 70%, #fff) 0, color-mix(in srgb, var(--star) 40%, transparent) 38%, transparent 70%); animation: breathe 2.4s ease-in-out infinite; }
@@ -796,7 +833,9 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
   background: linear-gradient(#fff3a6, #ffcc3d); color: #6b3d06; font: 700 1.15rem/1 var(--font-display); box-shadow: inset 0 2px 0 rgb(255 255 255 / .6), 0 4px 0 #c98a12, 0 12px 20px -10px #000; }
 .bc-txt .chunky:active { transform: translateY(3px); box-shadow: inset 0 2px 0 rgb(255 255 255 / .6), 0 1px 0 #c98a12; }
 .bc-txt .chunky svg { width: 18px; height: 18px; fill: #e08a00; }
-.bc-txt .chunky.short { background: rgb(255 255 255 / .9); color: #7a4cf0; box-shadow: 0 4px 0 rgb(0 0 0 / .15); }
+.bc-txt .chunky.short { background: rgb(40 12 64 / .32); color: #fff; font-weight: 600; letter-spacing: .02em; gap: 7px;
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / .45); text-shadow: none; }
+.bc-txt .chunky.short svg { fill: #ffd84d; }
 .odds { position: relative; list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .odds li { background: rgb(255 255 255 / .16); border-radius: 10px; padding: 6px 2px 5px; text-align: center; font: 600 .72rem/1.2 var(--font-body); }
 .odds li b { display: block; font: 700 1.05rem/1.1 var(--font-display); }
@@ -808,7 +847,7 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .tier-head { display: flex; align-items: center; gap: 8px; margin: 8px 2px 8px; font: 700 .95rem var(--font-display); color: var(--rc); letter-spacing: .04em; text-transform: uppercase; }
 .tier-head::after { content: ""; flex: 1; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--rc), transparent); opacity: .5; }
 .tier-head small { color: var(--muted); font: 600 .85rem var(--font-body); text-transform: none; letter-spacing: 0; }
-.tier { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 6px; }
+.tier { content-visibility: auto; contain-intrinsic-size: auto 600px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 6px; }
 .skin { position: relative; border-color: var(--rc, transparent); overflow: hidden; padding-top: 28px; }
 .skin.equipped { border-color: var(--rc, var(--accent)); box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--accent), 0 6px 16px -8px var(--shadow); }
 .rar-tag { position: absolute; top: 0; left: 0; z-index: 1; padding: 3px 9px 4px 8px; border-radius: 0 0 10px 0; background: var(--rc); color: #fff; font: 700 .68rem/1 var(--font-display); letter-spacing: .06em; text-transform: uppercase; }
@@ -1075,7 +1114,6 @@ body:not(.iap) .iap-only { display: none !important; }
 /* Game sites like CrazyGames show their own ads and do not allow outside purchases. */
 .portal-only { display: none !important; }
 /* The privacy policy link shows everywhere: App Store and Google Play require it inside the app. */
-a.how-btn { text-decoration: none; }
 body.portal .portal-only { display: flex !important; text-decoration: none; }
 body.portal .ad-banner, body.portal #noads, body.portal #s-noads, body.portal .ad-x, body.portal #s-help { display: none; }
 /* The plain web app has no real ads or payments, so it shows neither. */
@@ -1092,18 +1130,11 @@ body.web .ad-banner, body.web #noads, body.web #s-noads, body.web .ad-x, body.we
 .bonus-btn svg { width: 20px; height: 20px; fill: currentColor; } .bonus-btn svg.st { fill: #fff; filter: drop-shadow(0 1px 0 #c9861a); }
 .bonus-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #c9861a; }
 .win-row:has(#win-share) { grid-template-columns: 1fr 1fr 1fr; }
-.how-btn .onoff { margin-left: auto; font: 700 .9rem var(--font-display); color: var(--muted); }
-.how-btn .onoff.on { color: var(--accent); }
-.how-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-radius: 16px; cursor: pointer; text-align: left; color: var(--ink);
-  background: var(--cell); box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--cell) 86%, #000); font: 600 1.05rem var(--font-display); }
-.how-btn svg { width: 40px; height: 40px; flex: none; padding: 9px; box-sizing: border-box; border-radius: 12px; color: #fff; background: linear-gradient(var(--acc-lt, #f8c08c), var(--accent)); box-shadow: 0 3px 0 color-mix(in srgb, var(--accent) 68%, #000); fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Sharper type for menus and instructions: Settings, How to play and the tutorial's sentences.
    Fredoka stays for the logo, buttons and big headlines. */
 #sheet .sheet, #sheet .sheet *, #how-sheet .sheet, #how-sheet .sheet *, .tut-text, .tut-msg, .tut-rules li { font-family: var(--font-ui) !important; }
 .set-head { font: 800 1.45rem/1 var(--font-ui) !important; letter-spacing: -.01em; text-shadow: 0 1px 0 var(--acc-dk); }
-#sheet .slider label, #sheet .how-btn { font-weight: 700 !important; font-size: 1rem !important; letter-spacing: -.005em; }
-#sheet .slider output { font-weight: 600 !important; font-size: .9rem !important; font-variant-numeric: tabular-nums; }
 #sheet .na-txt b { font-weight: 800 !important; font-size: 1.12rem !important; letter-spacing: -.01em; text-shadow: 0 1px 0 var(--acc-dk); }
 #sheet .na-txt small { font-weight: 500 !important; }
 #sheet .na-price, #sheet .na-ic b { font-weight: 800 !important; }
@@ -1146,7 +1177,6 @@ body.web .ad-banner, body.web #noads, body.web #s-noads, body.web .ad-x, body.we
 .logo { margin-bottom: .67em; }
 button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 [role="dialog"]:focus, .win:focus { outline: none; }
-.how-btn .hb-sub { display: block; margin-top: 2px; font: 500 .8rem/1.25 var(--font-ui); color: var(--muted); }
 .why-ok { min-height: 40px; }
 @media (prefers-reduced-motion: reduce) { .err-lines .ln { stroke-dashoffset: 0; } }
 
@@ -1158,7 +1188,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 /* Short phones (iPhone SE and smaller): a slimmer results hero so "Next level" sits on screen without scrolling. */
 @media (max-height: 720px) {
   .win-page { gap: 8px; }
-  .win-ribbon { margin-top: 4px; }
+  .win-ribbon { margin-top: 6px; }
   .win-hero { height: 140px; }
   .rays { width: 290px; height: 290px; }
   .win-hero .glow { width: 150px; height: 150px; }
@@ -1176,9 +1206,28 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
    clear of the Undo, Hint and Clear buttons. */
 .toast { white-space: normal; width: max-content; max-width: calc(100% - 32px); text-align: center; }
 body.playing .toast { bottom: calc(22px + env(safe-area-inset-bottom, 0px)); }
-/* Solved: the cats hop in a wave across the board and the frame glows before the results appear. */
-.board.solved .cell svg { animation: solvedHop .55s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: calc(var(--wave, 0) * 45ms + 120ms); }
-@keyframes solvedHop { 40% { transform: translateY(-14%) scale(1.08); } }
+/* Solved: a wave rolls across the board from the top-left corner. Each cat crouches, springs up with a little stretch
+   and tilt, lands with a squash and settles with a small rebound, while a warm shine sweeps over its tile.
+   --wave is the cell's diagonal (0-10), so neighbours move together and the ripple reads as one smooth swell. */
+.board.solved .cell svg { transform-origin: 50% 88%; animation: solvedHop .95s both; animation-delay: calc(var(--wave, 0) * 58ms + 80ms); }
+.board.solved .cell:nth-child(odd) svg { --tilt: -5deg; } .board.solved .cell:nth-child(even) svg { --tilt: 5deg; }
+@keyframes solvedHop {
+  0% { transform: none; animation-timing-function: cubic-bezier(.3, 0, .5, 1); }
+  13% { transform: translateY(3%) scale(1.1, .88); animation-timing-function: cubic-bezier(.2, .8, .35, 1); }
+  42% { transform: translateY(-26%) scale(.95, 1.07) rotate(var(--tilt, 0deg)); animation-timing-function: cubic-bezier(.55, 0, .85, .35); }
+  62% { transform: translateY(0) scale(1.12, .86); animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
+  76% { transform: translateY(-8%) scale(.98, 1.03); animation-timing-function: cubic-bezier(.5, 0, .7, .4); }
+  88% { transform: translateY(0) scale(1.03, .97); animation-timing-function: ease-out; }
+  100% { transform: none; }
+}
+.board.solved .cell::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0; opacity: 0;
+  background: radial-gradient(70% 60% at 50% 40%, color-mix(in srgb, var(--star) 55%, #fff), transparent 75%);
+  animation: tileGlow .95s ease-out both; animation-delay: calc(var(--wave, 0) * 58ms + 180ms); }
+@keyframes tileGlow { 30% { opacity: .9; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .board.solved .cell svg { animation: solvedCalm .6s ease-in-out both; animation-delay: calc(var(--wave, 0) * 40ms); }
+}
+@keyframes solvedCalm { 50% { transform: scale(1.06); } }
 .board.solved .cell.v0, .board.solved .cell.v1 { transition: filter .3s; }
 html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star), 0 0 28px 4px color-mix(in srgb, var(--star) 60%, transparent), 0 10px 28px -16px var(--shadow); transition: box-shadow .3s; }
 .board.solved .mark { opacity: 0; transition: opacity .3s; }
@@ -1186,7 +1235,6 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
 :root:is([data-skin="midnight"], [data-skin="royal"]) :is(.pillbtn:not(.alt), .set-head, .node.current, .map-jump, .win-ribbon, .win-btns .chunky, .why-ok, .tut-rules b, .tut-go, .noads-btn:not(.plus-btn):not(.owned), .noads-btn:not(.plus-btn):not(.owned) .na-txt b) {
   color: var(--on-accent); text-shadow: 0 1px 0 rgb(255 255 255 / .35); }
 :root:is([data-skin="midnight"], [data-skin="royal"]) :is(.set-x svg) { stroke: var(--on-accent); }
-:root:is([data-skin="midnight"], [data-skin="royal"]) :is(#sheet .slider svg, .how-btn svg) { color: var(--on-accent); }
 /* Enough stars for the next theme: the badge says so and gives a little bounce. */
 .goal-badge.ready .tag { background: var(--accent); color: var(--on-accent); }
 .goal-badge.ready .ring { animation: readyBob 1.8s ease-in-out infinite; }
@@ -1778,7 +1826,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   <div class="confetti" id="confetti" aria-hidden="true"></div>
   <div class="win-page">
     <button class="win-x" id="win-x" type="button" aria-label="Home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg></button>
-    <div class="win-ribbon"><span id="win-label">Level 1</span></div>
+    <div class="win-ribbon"><i class="rb-tail l"></i><i class="rb-tail r"></i><span class="rb-band"><svg viewBox="0 0 40 34" aria-hidden="true"><use href="#paw"/></svg><b id="win-label">Level 1</b><svg viewBox="0 0 40 34" aria-hidden="true"><use href="#paw"/></svg></span></div>
     <div class="win-hero" aria-hidden="true">
       <div class="rays"></div>
       <div class="glow"></div>
@@ -1923,24 +1971,12 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
 <div class="sheet-bg" id="sheet" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
     <h3 class="set-head" aria-level="2"><span id="sheet-title">Settings</span><button class="round set-x" id="sheet-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h3>
-    <div class="slider">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="3" fill="currentColor"/><circle cx="17.5" cy="16" r="3" fill="currentColor"/></svg>
-      <label for="s-music">Music</label>
-      <input type="range" id="s-music" min="0" max="100" step="1">
-      <output id="s-music-v">40</output>
+    <div class="set-tiles">
+      <button class="set-tile" id="s-music" type="button" role="switch" aria-checked="true" aria-label="Music"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13" fill="none"/><circle cx="6.5" cy="18" r="2.6" class="fill"/><circle cx="17.5" cy="16" r="2.6" class="fill"/><path class="off-x" d="M4 3.5l16 17"/></svg><span class="tg" aria-hidden="true"><b class="tg-on">ON</b><b class="tg-off">OFF</b><i></i></span></button>
+      <button class="set-tile" id="s-sound" type="button" role="switch" aria-checked="true" aria-label="Sound"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h3.5L12 5v14l-4.5-4H4z" class="fill"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.2 6.6a7.6 7.6 0 0 1 0 10.8" fill="none"/><path class="off-x" d="M4 3.5l16 17"/></svg><span class="tg" aria-hidden="true"><b class="tg-on">ON</b><b class="tg-off">OFF</b><i></i></span></button>
+      <button class="set-tile" id="s-meows" type="button" role="switch" aria-checked="true" aria-label="Meows"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.6 19.5c-.8-3-.4-6.1 1-8.2L3.2 5l4 3a7.4 7.4 0 0 1 3.8 0l4-3-.4 6.3c1.4 2.1 1.8 5.2 1 8.2z" class="fill"/><circle cx="6.9" cy="14.2" r="1.15" class="eye"/><circle cx="11.3" cy="14.2" r="1.15" class="eye"/><path d="M19 10.6a3.4 3.4 0 0 1 0 4.8M21.3 8.5a6.4 6.4 0 0 1 0 9" fill="none"/><path class="off-x" d="M4 3.5l16 17"/></svg><span class="tg" aria-hidden="true"><b class="tg-on">ON</b><b class="tg-off">OFF</b><i></i></span></button>
+      <button class="set-tile" id="s-buzz" type="button" role="switch" aria-checked="true" aria-label="Vibration" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7.5" y="3" width="9" height="18" rx="2.2" fill="none"/><path d="M3.5 9v6M20.5 9v6" fill="none"/><path class="off-x" d="M4 3.5l16 17"/></svg><span class="tg" aria-hidden="true"><b class="tg-on">ON</b><b class="tg-off">OFF</b><i></i></span></button>
     </div>
-    <div class="slider">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
-      <label for="s-sound">Sound</label>
-      <input type="range" id="s-sound" min="0" max="100" step="1">
-      <output id="s-sound-v">70</output>
-    </div>
-    <button class="how-btn" id="s-how" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 .9c0 1.8-2.5 2.2-2.5 3.8"/><circle cx="12" cy="17.2" r=".6" fill="currentColor"/></svg>How to play</button>
-    <button class="how-btn" id="s-buzz" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7.5" y="3" width="9" height="18" rx="2.2"/><path d="M3.5 9v6M20.5 9v6"/></svg><span>Vibration</span><b class="onoff" id="s-buzz-v">On</b></button>
-    <button class="how-btn" id="s-privacy" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Privacy choices</button>
-    <button class="how-btn iap-only" id="s-restore" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></svg>Restore purchases</button>
-    <a class="how-btn" id="s-policy" href="https://crystack100.github.io/purrzle/privacy.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Privacy policy</a>
-    <a class="how-btn" id="s-help" href="https://crystack100.github.io/purrzle/support.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>Help and contact</a>
     <button class="noads-btn plus-btn iap-only" id="s-plus" type="button">
       <span class="na-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="#ffc94a" stroke="#c9861a" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
       <span class="na-txt"><b id="sp-title">Purrzle Plus</b><small id="sp-sub">No ads and every theme</small></span>
@@ -1951,6 +1987,14 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       <span class="na-txt"><b id="na-title">Remove ads</b><small id="na-sub">No banners or pop-ups, forever</small></span>
       <span class="na-price" id="na-price">$2.99</span>
     </button>
+    <button class="set-big" id="s-how" type="button">How to play</button>
+    <button class="set-big iap-only" id="s-restore" type="button">Restore purchases</button>
+    <button class="set-big" id="s-privacy" type="button" hidden>Privacy choices</button>
+    <div class="set-foot">
+      <a id="s-policy" href="https://crystack100.github.io/purrzle/privacy.html" target="_blank" rel="noopener">Privacy policy</a>
+      <a id="s-help" href="https://crystack100.github.io/purrzle/support.html" target="_blank" rel="noopener">Help and contact</a>
+    </div>
+    <p class="set-ver" id="s-ver">Version 1.0</p>
   </div>
 </div>
 
@@ -1997,7 +2041,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   var WEB = !NATIVE && !PORTAL;
   function plugin(name) { return NATIVE && Cap.registerPlugin ? Cap.registerPlugin(name) : null; }
   var save = { best: {}, times: {}, wallet: 0, owned: ["cozy"], skin: "cozy", play: null, daily: {}, noAds: false, wins: 0, music: 40, sound: 70, theme: "light",
-    gift: null, buzz: true };
+    gift: null, buzz: true, meows: true };
   var play = null, cells = [], marks = [], tick = null, toastT = null;
 
   function load() {
@@ -2061,7 +2105,9 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     cgPlaying = on;
     try { if (on) CG.game.gameplayStart(); else CG.game.gameplayStop(); } catch (e) {}
   }
+  var shownScreen = "home";
   function show(screen) {
+    shownScreen = screen;
     if (screen !== "game") { $("win").hidden = true; if (celebrating) { celebrating = null; clearTimeout(celebrateT); $("board").classList.remove("solved"); } }
     $("why").hidden = true;
     ["home", "levels", "store", "game"].forEach(function (s) { $(s).hidden = s !== screen; });
@@ -2080,14 +2126,50 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     if (screen === "store") renderStore();
   }
   document.querySelectorAll(".tab[data-to]").forEach(function (t) { t.onclick = function () { show(t.dataset.to); }; });
-  $("t-settings").onclick = function () { openSheet(); };
+  $("t-settings").onclick = function () { Audio.sfx("pop"); openSheet(); };
   function applyTheme() {
     // One look only: the light theme (dark mode was removed).
     document.documentElement.setAttribute("data-theme", "light");
     var m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = "#f6f5f3";
   }
+  /* Each cat symbol carries every look's accessories and effects, switched by CSS. Fine for one cat, slow for dozens:
+     so each look gets its own copy holding only the layers it uses, and #sun / #moon are trimmed to the equipped look. */
+  var CAT_TPL = {}, PARTS = {};
+  function catTpl(kind) { return CAT_TPL[kind] || (CAT_TPL[kind] = $(kind).cloneNode(true)); }
+  function lookParts(look) {
+    if (PARTS[look]) return PARTS[look];
+    var probe = document.createElement("div"), on = {};
+    probe.className = "skin-preview sk-" + look; probe.hidden = true; document.body.appendChild(probe);
+    var cs = getComputedStyle(probe);
+    catTpl("sun").querySelectorAll("[style]").forEach(function (el) {
+      var m = /display:\s*var\((--[\w-]+),\s*none\)/.exec(el.getAttribute("style"));
+      if (m) on[m[1]] = cs.getPropertyValue(m[1]).trim() === "inline";
+    });
+    probe.remove();
+    return (PARTS[look] = on);
+  }
+  function trimmedCat(kind, look) {
+    var sym = catTpl(kind).cloneNode(true), on = lookParts(look);
+    Array.prototype.slice.call(sym.children).forEach(function (el) {
+      var m = /display:\s*var\((--[\w-]+),\s*none\)/.exec(el.getAttribute("style") || "");
+      if (m && !on[m[1]]) el.remove();
+    });
+    return sym;
+  }
+  function catSymbol(kind, look) {
+    var id = kind + "-" + look;
+    if (!$(id)) { var sym = trimmedCat(kind, look); sym.id = id; $(kind).parentNode.appendChild(sym); }
+    return id;
+  }
+  function trimCats() {
+    ["sun", "moon"].forEach(function (kind) {
+      var live = $(kind), sym = trimmedCat(kind, save.skin);
+      while (live.firstChild) live.removeChild(live.firstChild);
+      while (sym.firstChild) live.appendChild(sym.firstChild);
+    });
+  }
   function applySkin() {
-    applyTheme();
+    applyTheme(); trimCats();
     if (save.skin === "cozy") document.documentElement.removeAttribute("data-skin");
     else document.documentElement.setAttribute("data-skin", save.skin);
   }
@@ -2111,6 +2193,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     if (goal) {
       for (var v in goal.v) duo.style.setProperty("--" + v, goal.v[v]);
       duo.className = "duo skin-preview sk-" + goal.id;
+      duo.innerHTML = catSvg("sun", goal.id) + catSvg("moon", goal.id);
       duo.style.setProperty("--g-bg", goal.v.cell);
       var len = 2 * Math.PI * 33, frac = Math.min(1, save.wallet / BOX.price);
       $("g-tag").textContent = frac >= 1 ? "Open!" : save.wallet + "/" + BOX.price;
@@ -2132,18 +2215,28 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   $("h-gift").onclick = function () { show("levels"); };
 
   /* ---------- settings ---------- */
+  // A row of icon tiles with ON/OFF switches. Music and sound keep their volume numbers in the save
+  // (0 means off), so switching one back on brings back the level it had, or the starting level.
+  var VOL = { music: 40, sound: 70 };
+  function paintTile(id, on) { $(id).setAttribute("aria-checked", on ? "true" : "false"); }
+  function paintSettings() {
+    paintTile("s-music", save.music > 0); paintTile("s-sound", save.sound > 0); paintTile("s-meows", save.meows !== false); paintBuzz();
+  }
   function openSheet() {
-    ["music", "sound"].forEach(function (k) { var el = $("s-" + k); el.value = save[k]; paintSlider(el); });
+    ["music", "sound"].forEach(function (k) { if (save[k] > 0) VOL[k] = save[k]; });
+    paintSettings();
     $("sheet").hidden = false;
   }
   $("sheet-close").onclick = function () { $("sheet").hidden = true; };
   $("sheet").onclick = function (e) { if (e.target === this) this.hidden = true; };
-  function paintSlider(el) { el.style.setProperty("--p", el.value + "%"); $(el.id + "-v").textContent = el.value; }
   ["music", "sound"].forEach(function (k) {
-    var el = $("s-" + k);
-    el.oninput = function () { save[k] = +el.value; paintSlider(el); Audio.volumes(); };
-    el.onchange = function () { persist(); if (k === "sound") Audio.sfx("place0"); };
+    $("s-" + k).onclick = function () {
+      if (save[k] > 0) { VOL[k] = save[k]; save[k] = 0; } else save[k] = VOL[k];
+      Audio.volumes(); persist(); paintSettings();
+      if (k === "sound") Audio.sfx("tap");
+    };
   });
+  $("s-meows").onclick = function () { save.meows = save.meows === false; persist(); paintSettings(); Audio.sfx("hint"); };
   // Home's button carries on with the puzzle in hand, unless it's an old level that was only opened and left untouched.
   function playOn() { return !!(play && !play.done && !play.daily && (play.level === nextLevel() || started(play))); }
   $("h-play").onclick = function () { if (playOn()) resumeLevel(); else startLevel(nextLevel()); };
@@ -2329,7 +2422,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     // In the tutorial a tap only swaps Sunny and Luna; squares never go back to empty.
     var v = tut.row[i] === 0 ? 1 : 0;
     tut.row[i] = v; tut.changed = i;
-    Audio.sfx(v === -1 ? "clear" : "place" + v);
+    Audio.sfx("place");
     var bad = L.bad && L.bad[v];
     // A wrong cat waits a moment before it's flagged, so double-tapping
     // straight to Luna passes through Sunny without flashing an error.
@@ -2565,7 +2658,8 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     if (play.done || play.givens[i] !== -1 || play.board[i] === v) return;
     play.history.push([i, play.board[i]]);
     play.board[i] = v;
-    Audio.sfx(v === -1 ? "clear" : "place" + v); Haptic.go("tap");
+    Audio.sfx(v === -1 ? "clear" : "place");
+    Haptic.go("tap");
     render(i); persist();
     if (v !== -1) lineSparkle(i);
   }
@@ -2642,7 +2736,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     clearTimeout(celebrateT);
     celebrateT = setTimeout(function () { revealWin(mine); }, WIN_DELAY);
   }
-  var WIN_DELAY = 1600, celebrating = null, celebrateT = null, celebrateFrom = 0;
+  var WIN_DELAY = 1900, celebrating = null, celebrateT = null, celebrateFrom = 0;
   function revealWin(mine) {
     if (celebrating !== mine) return;
     celebrating = null; clearTimeout(celebrateT);
@@ -2837,9 +2931,9 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   })();
   function paintBuzz() {
     $("s-buzz").hidden = !Haptic.can();
-    $("s-buzz-v").textContent = save.buzz !== false ? "On" : "Off"; $("s-buzz-v").classList.toggle("on", save.buzz !== false);
+    paintTile("s-buzz", save.buzz !== false);
   }
-  $("s-buzz").onclick = function () { save.buzz = save.buzz === false; persist(); paintBuzz(); Haptic.go("line"); };
+  $("s-buzz").onclick = function () { save.buzz = save.buzz === false; persist(); paintSettings(); Haptic.go("line"); };
 
   /* ---------- ads ----------
      In the phone app these are Google AdMob ads: a full-screen ad after every win (from the third),
@@ -3149,6 +3243,8 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
      Closes whatever is on top first, then steps back toward Home. On Home it sends the app to the
      background (like other games) instead of closing it mid-level. */
   var AppPlugin = plugin("App");
+  // Settings shows the app's own version number in the phone app (the web build says 1.0).
+  if (AppPlugin) AppPlugin.getInfo().then(function (i) { if (i && i.version) $("s-ver").textContent = "Version " + i.version; }).catch(function () {});
   if (AppPlugin && Cap.getPlatform() === "android") AppPlugin.addListener("backButton", function () {
     if (Ads.busy()) return;
     var shown = function (id) { return !$(id).hidden; };
@@ -3190,7 +3286,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   function missing() { return SKINS.filter(function (s) { return !ownsReal(s.id); }); }
   function boxState() { return save.box || (save.box = { n: 0, dry: 0 }); }
   function palette(s) { var css = ""; for (var k in s.v) css += "--" + k + ":" + s.v[k] + ";"; return css; }
-  function catSvg(id) { return '<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#' + id + '"/></svg>'; }
+  function catSvg(kind, look) { return '<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#' + (look ? catSymbol(kind, look) : kind) + '"/></svg>'; }
   function boxArt() {
     return '<svg viewBox="0 0 120 120" aria-hidden="true">' +
       '<defs><linearGradient id="mb-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb3c9"/><stop offset="1" stop-color="#f0679a"/></linearGradient>' +
@@ -3219,44 +3315,51 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     var open = $("bc-open");
     open.disabled = done;
     open.classList.toggle("short", !can && !done);
-    open.innerHTML = done ? "All found!" : can ? "Open " + STAR + BOX.price : STAR + (BOX.price - save.wallet) + " more";
+    open.innerHTML = done ? "All found!" : can ? "Open " + STAR + BOX.price : "Need " + STAR + (BOX.price - save.wallet) + " more";
     open.setAttribute("aria-label", done ? "Collection complete" : "Open a Mystery Box for " + BOX.price + " stars");
     $("odds").innerHTML = TIERS.slice().reverse().map(function (r) {
       return '<li style="--rc: var(--r-' + r + ')"><b>' + RAR[r].odds + "%</b><i></i>" + RAR[r].name + "</li>";
     }).join("");
     var toGo = BOX.pity - b.dry;
-    // Base odds are in the chips above. The guarantee raises Epic and Legendary over many boxes, so the overall rates are stated too
+    // The chips are the base odds. The guarantee lifts Epic and Legendary, so the overall rates are stated too
     // (measured by running rollBox 200,000 times; update them if the odds or the guarantee change).
-    $("bc-note").textContent = "Base odds per box. Every 10th box in a row without an Epic or Legendary is guaranteed one, so over many boxes the chances are about " +
-      "Common 57%, Rare 26%, Epic 13%, Legendary 4%. " + (toGo <= 1 ? "Your next box is guaranteed Epic or better. " : "Epic or better guaranteed within " + toGo + " boxes. ") +
-      "No repeats until you own every look of that rarity, then repeats give stars back.";
+    $("bc-note").textContent = (toGo <= 1 ? "Next box is guaranteed Epic or better." : "Epic or better guaranteed within " + toGo + " boxes.") +
+      " Overall odds with this: 57%, 26%, 13%, 4%.";
     $("coll-n").textContent = (SKINS.length - left.length) + "/" + SKINS.length;
-    var box = $("skins"); box.innerHTML = "";
+    var box = $("skins"), built = !!box.firstChild;
     TIERS.forEach(function (r) {
       var list = SKINS.filter(function (s) { return s.r === r || (r === "common" && s.r === "starter"); });
       var have = list.filter(function (s) { return ownsReal(s.id); }).length;
-      var head = document.createElement("div");
-      head.className = "tier-head"; head.style.setProperty("--rc", "var(--r-" + r + ")");
-      head.innerHTML = RAR[r].name + " <small>" + have + "/" + list.length + "</small>";
-      var grid = document.createElement("div"); grid.className = "tier";
-      list.forEach(function (s) { grid.appendChild(skinCard(s)); });
-      box.appendChild(head); box.appendChild(grid);
+      if (!built) {
+        var head = document.createElement("div");
+        head.className = "tier-head"; head.id = "th-" + r; head.style.setProperty("--rc", "var(--r-" + r + ")");
+        var grid = document.createElement("div"); grid.className = "tier";
+        list.forEach(function (s) { grid.appendChild(skinCard(s)); });
+        box.appendChild(head); box.appendChild(grid);
+      }
+      $("th-" + r).innerHTML = RAR[r].name + " <small>" + have + "/" + list.length + "</small>";
+      list.forEach(paintCard);
     });
   }
+  var LOCK = '<svg viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z"/></svg>';
   function skinCard(s) {
-    var owned = ownsReal(s.id) || !!save.plus, on = save.skin === s.id;
     var card = document.createElement("div");
-    card.className = "skin sk-" + s.id + " r-" + s.r + (on ? " equipped" : "") + (owned ? "" : " locked");
+    card.id = "card-" + s.id;
     card.style.cssText = palette(s) + "--rc: var(--r-" + s.r + ");";
-    var act = owned ? '<button class="chunky" type="button" ' + (on ? "disabled" : "") + ">" + (on ? "Wearing" : "Wear") + "</button>"
-      : '<button class="lockline" type="button"><svg viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z"/></svg>In boxes</button>';
-    card.innerHTML = '<span class="rar-tag">' + RAR[s.r].name + '</span><div class="mini"><span>' + catSvg("sun") + "</span><span>" + catSvg("moon") +
-      "</span><span>" + catSvg("moon") + "</span><span>" + catSvg("sun") + "</span></div><b>" + s.name + "</b><small>" + s.tag + "</small>" + act;
+    card.innerHTML = '<span class="rar-tag">' + RAR[s.r].name + '</span><div class="mini"><span>' + catSvg("sun", s.id) + "</span><span>" + catSvg("moon", s.id) +
+      "</span><span>" + catSvg("moon", s.id) + "</span><span>" + catSvg("sun", s.id) + "</span></div><b>" + s.name + "</b><small>" + s.tag + '</small><button type="button"></button>';
     card.querySelector("button").onclick = function () {
-      if (!owned) { toast(RAR[s.r].name + ": " + RAR[s.r].odds + "% per Mystery Box"); return; }
+      if (!(ownsReal(s.id) || save.plus)) { toast(RAR[s.r].name + ": " + RAR[s.r].odds + "% per Mystery Box"); return; }
       wear(s.id);
     };
     return card;
+  }
+  function paintCard(s) {
+    var card = $("card-" + s.id), btn = card.querySelector("button"), owned = ownsReal(s.id) || !!save.plus, on = save.skin === s.id;
+    card.className = "skin sk-" + s.id + " r-" + s.r + (on ? " equipped" : "") + (owned ? "" : " locked");
+    btn.className = owned ? "chunky" : "lockline";
+    btn.disabled = on;
+    btn.innerHTML = owned ? (on ? "Wearing" : "Wear") : LOCK + "In boxes";
   }
   function wear(id) { save.skin = id; applySkin(); persist(true); renderStore(); }
 
@@ -3308,7 +3411,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     card.className = "bo-card skin-preview sk-" + s.id;
     card.style.cssText = palette(s) + "--rc: var(--r-" + s.r + ");";
     $("bo-rar").className = "rar-chip r-" + s.r; $("bo-rar").textContent = RAR[s.r].name;
-    $("bo-cats").innerHTML = "<span>" + catSvg("sun") + "</span><span>" + catSvg("moon") + "</span>";
+    $("bo-cats").innerHTML = "<span>" + catSvg("sun", s.id) + "</span><span>" + catSvg("moon", s.id) + "</span>";
     $("bo-name").textContent = s.name;
     $("bo-sub").innerHTML = res.dup ? "Already in your collection, so here are <b>" + res.back + " stars</b> back." : "<b>New!</b> " + s.tag + ".";
     $("bo-equip").hidden = res.dup || save.skin === s.id;
@@ -3348,23 +3451,28 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     }
   }
   /* ---------- sound and music ----------
-     Everything is synthesized with Web Audio, so there are no files to load.
+     Everything is synthesized with Web Audio except the placing pop and the Settings pop, short clips inlined at build time.
      iOS only allows audio after a tap, so the context starts on the first touch. */
   var Audio = (function () {
-    var ctx = null, muted = false, master, musicBus, sfxBus, noiseBuf, nextBeat = 0, step = 0, timer = null;
+    var ctx = null, muted = false, master, musicBus, sfxBus, dryBus, noiseBuf, nextBeat = 0, step = 0, timer = null;
     function ensure() {
       if (!ctx) {
         var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
         ctx = new AC(); master = ctx.createGain(); master.connect(ctx.destination); master.gain.value = muted ? 0 : 1;
         musicBus = ctx.createGain(); sfxBus = ctx.createGain(); musicBus.connect(master); sfxBus.connect(master);
+        // The recorded clips skip the room reverb: they already sound like a real room, and on top of it they echoed.
+        dryBus = ctx.createGain(); dryBus.connect(master);
         // A soft room reverb under everything makes the plucks and meows sound warm instead of beepy.
-        var len = Math.floor(ctx.sampleRate * 1.6), ir = ctx.createBuffer(2, len, ctx.sampleRate);
-        for (var ch = 0; ch < 2; ch++) { var d = ir.getChannelData(ch); for (var n = 0; n < len; n++) d[n] = (Math.random() * 2 - 1) * Math.pow(1 - n / len, 3); }
-        var verb = ctx.createConvolver(), wet = ctx.createGain(); verb.buffer = ir; wet.gain.value = .22;
-        musicBus.connect(verb); sfxBus.connect(verb); verb.connect(wet); wet.connect(master);
+        // Built just after the first tap rather than inside it, so that tap's screen opens without a pause.
+        setTimeout(function () {
+          var len = Math.floor(ctx.sampleRate * 1.6), ir = ctx.createBuffer(2, len, ctx.sampleRate);
+          for (var ch = 0; ch < 2; ch++) { var d = ir.getChannelData(ch); for (var n = 0; n < len; n++) d[n] = (Math.random() * 2 - 1) * Math.pow(1 - n / len, 3); }
+          var verb = ctx.createConvolver(), wet = ctx.createGain(); verb.buffer = ir; wet.gain.value = .22;
+          musicBus.connect(verb); sfxBus.connect(verb); verb.connect(wet); wet.connect(master);
+        }, 300);
         noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * .5), ctx.sampleRate);
-        var nd = noiseBuf.getChannelData(0); for (n = 0; n < nd.length; n++) nd[n] = Math.random() * 2 - 1;
-        volumes();
+        var nd = noiseBuf.getChannelData(0); for (var n = 0; n < nd.length; n++) nd[n] = Math.random() * 2 - 1;
+        volumes(); loadClips();
       }
       if (ctx.state === "suspended") ctx.resume();
       return ctx;
@@ -3374,7 +3482,10 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       var m = (save.music || 0) / 100, f = (save.sound || 0) / 100;
       musicBus.gain.setTargetAtTime(m * m * .5, ctx.currentTime, .05);
       sfxBus.gain.setTargetAtTime(f * f * .9, ctx.currentTime, .02);
-      if (m > 0) startMusic(); else stopMusic();
+      dryBus.gain.setTargetAtTime(f * f * .9, ctx.currentTime, .02);
+      // Start the music a moment after the tap: building the first piano notes takes a while on phones,
+      // and doing it inside the first tap made that tap (often the Shop) feel slow to open.
+      if (m > 0) setTimeout(function () { if (save.music > 0) startMusic(); }, 600); else stopMusic();
     }
     function note(bus, freq, t, dur, type, vol, glideTo) {
       var o = ctx.createOscillator(), g = ctx.createGain();
@@ -3400,6 +3511,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     // A little synthesized meow: a buzzy voice through two mouth-shaped filters that open ("eee-aa") and
     // close ("-ow") while the pitch rises and falls. mood: "happy", "ask" (rises like a question), "grumpy".
     function meow(t, pitch, len, vol, mood) {
+      if (save.meows === false) return; // Settings > Meows
       pitch *= .94 + Math.random() * .12;
       var o = ctx.createOscillator(), g = ctx.createGain(), f1 = ctx.createBiquadFilter(), f2 = ctx.createBiquadFilter(), g2 = ctx.createGain();
       var lfo = ctx.createOscillator(), lg = ctx.createGain(), fr = o.frequency;
@@ -3418,19 +3530,36 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       o.connect(f1); o.connect(f2); f2.connect(g2); f1.connect(g); g2.connect(g); g.connect(sfxBus);
       o.start(t); lfo.start(t); o.stop(t + len + .05); lfo.stop(t + len + .05);
     }
-    // Placing cats climbs a pentatonic scale, one note per placement, so a quick run of taps plays a rising
-    // tune. After a pause in placing it starts again from the bottom. Sunny sits a few notes above Luna.
-    var RUN_SCALE = [523.3, 587.3, 659.3, 784, 880, 1046.5, 1174.7, 1318.5, 1568, 1760, 2093], RUN_TOP = 7, RUN_RESET = 1.5;
-    var run = 0, runAt = -1e9;
-    function runNote(offset) {
-      var now = ctx.currentTime;
-      run = now - runAt > RUN_RESET ? 0 : Math.min(run + 1, RUN_TOP);
-      runAt = now;
-      return RUN_SCALE[run + offset];
+    // Placing a cat plays a bubble pop (src/place.mp3, "Bubble Pop 04" by Universfield, Pixabay) on a random
+    // note of a pentatonic scale, so any run of taps sounds like it belongs together.
+    var PENTATONIC = [-8, -5, -3, 0, 2, 4, 7];
+    // Recorded clips, inlined by build.py and decoded once the audio has started.
+    var CLIPS = { place: "/*PLACE*/", pop: "/*POP*/" }, bufs = {};
+    function loadClips() {
+      Object.keys(CLIPS).forEach(function (k) {
+        var src = CLIPS[k]; if (bufs[k] || src.indexOf("data:") !== 0) return;
+        bufs[k] = true;
+        try {
+          var bin = atob(src.slice(src.indexOf(",") + 1)), bytes = new Uint8Array(bin.length);
+          for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+          ctx.decodeAudioData(bytes.buffer, function (buf) { bufs[k] = buf; }, function () { bufs[k] = null; });
+        } catch (e) { bufs[k] = null; }
+      });
+    }
+    function clip(k, t, rate, vol) {
+      var buf = bufs[k]; if (!buf || buf === true) return false;
+      var src = ctx.createBufferSource(), g = ctx.createGain();
+      src.buffer = buf; src.playbackRate.value = rate || 1; g.gain.value = vol;
+      src.connect(g); g.connect(dryBus); src.start(t);
+      return true;
+    }
+    function placeNote(t) {
+      var rate = Math.pow(2, PENTATONIC[Math.floor(Math.random() * PENTATONIC.length)] / 12);
+      if (!clip("place", t, rate, .6)) pluck(sfxBus, 1046.5 * rate, t, .3, .5);
     }
     var SFX = {
-      place0: function (t) { var f = runNote(3); pluck(sfxBus, f, t, .3, .6); pluck(sfxBus, f * 1.5, t + .05, .1, .4); },
-      place1: function (t) { var f = runNote(0); pluck(sfxBus, f, t, .3, .8); pluck(sfxBus, f * .75, t + .06, .1, .6); },
+      place: function (t) { placeNote(t); },
+      pop: function (t) { if (!clip("pop", t, 1, .5)) noise(sfxBus, t, .04, .3, 2400, 1.5); },
       clear: function (t) { noise(sfxBus, t, .06, .25, 900, 2); },
       tap: function (t) { noise(sfxBus, t, .04, .3, 2400, 1.5); },
       oops: function (t) { meow(t, 420, .38, .5, "grumpy"); },
@@ -3448,7 +3577,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       }
     };
     function sfx(name, arg) {
-      if (!save.sound || !ensure()) return;
+      if (!save.sound || !SFX[name] || (save.meows === false && /meow/.test(name)) || !ensure()) return;
       SFX[name](ctx.currentTime + .01, arg);
     }
     // Music: "Rainy window", a slow piano loop (Dmaj9, Bm9, Gmaj9, Asus/A) of broken chords in 8ths, with a
@@ -3646,6 +3775,14 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     // Ads and the store start once the home screen is up, so they never slow the first frame.
     setTimeout(Ads.start, screen ? 0 : 1200);
     setTimeout(Shop.start, screen ? 0 : 1200);
+    // Build the shop's cards while the player is on Home, so the first visit to the Shop is quick too.
+    setTimeout(function () {
+      var st = $("store");
+      if (!st.hidden) return;
+      // Lay it out once off screen (invisible), so images and patterns are ready before the first real visit.
+      renderStore(); st.style.cssText = "position: fixed; left: -300vw; top: 0; width: 100%; visibility: hidden"; st.hidden = false;
+      requestAnimationFrame(function () { requestAnimationFrame(function () { st.style.cssText = ""; if (shownScreen !== "store") st.hidden = true; }); });
+    }, 2500);
   }
   if (window.claude && window.claude.hot) window.claude.hot.snapshot(function () {
     var cur = ["game", "levels", "store", "home"].filter(function (s) { return !$(s).hidden; })[0];

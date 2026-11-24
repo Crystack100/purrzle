@@ -6,6 +6,9 @@ game = (root / "src/game.html").read_text().replace("/*CORE*/", (root / "src/cor
 for kind in ("sun", "moon"):
     game = game.replace("/*CAT_" + kind.upper() + "*/", "data:image/webp;base64," + base64.b64encode((root / f"src/cat-{kind}.webp").read_bytes()).decode())
     game = game.replace("/*CAT_" + kind.upper() + "_MASK*/", "data:image/webp;base64," + base64.b64encode((root / f"src/cat-{kind}-mask.webp").read_bytes()).decode())
+# The recorded sounds (the bubble pop for placing a cat, the pop for Settings), inlined the same way.
+for kind in ("place", "pop"):
+    game = game.replace("/*" + kind.upper() + "*/", "data:audio/mpeg;base64," + base64.b64encode((root / f"src/{kind}.mp3").read_bytes()).decode())
 # Bundle the font so the app works offline and does not wait on Google Fonts.
 import base64
 # The fonts are cut down to the characters and weights the game uses (tools/subset-fonts.py).

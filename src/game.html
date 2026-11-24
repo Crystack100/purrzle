@@ -604,15 +604,6 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .win::before { content: ""; position: fixed; inset: 0; background: var(--motif, none); pointer-events: none; }
 @keyframes winIn { from { opacity: 0; } }
 .win-page { position: relative; width: 100%; max-width: 400px; min-height: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
-.win-ribbon {
-  position: relative; margin-top: 10px; padding: 9px 30px; background: var(--accent); color: var(--on-accent);
-  font: 800 1.05rem/1 var(--font-display); letter-spacing: .12em; text-transform: uppercase;
-  box-shadow: 0 8px 18px -10px var(--accent); animation: drop .5s cubic-bezier(.3, 1.5, .5, 1) both;
-}
-.win-ribbon::before, .win-ribbon::after { content: ""; position: absolute; top: 7px; width: 20px; height: 100%; background: var(--press); z-index: -1; }
-.win-ribbon::before { left: -16px; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 40% 50%); }
-.win-ribbon::after { right: -16px; clip-path: polygon(0 0, 100% 0, 60% 50%, 100% 100%, 0 100%); }
-.win-ribbon span { position: relative; }
 @keyframes drop { from { transform: translateY(-40px); opacity: 0; } }
 .win-hero { position: relative; display: grid; place-items: center; width: 100%; height: 170px; margin-top: auto; }
 .rays {
@@ -661,11 +652,37 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
   --slab: color-mix(in srgb, var(--surface) 82%, #000); --gold-dk: #c97a14;
   background: radial-gradient(90% 46% at 50% 18%, color-mix(in srgb, var(--star) 34%, transparent), transparent 72%),
     radial-gradient(140% 70% at 50% 0%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 70%) var(--bg); }
-.win-ribbon { padding: 11px 34px 12px; border-radius: 4px; background: linear-gradient(var(--acc-lt), var(--accent) 55%, color-mix(in srgb, var(--accent) 88%, #000));
-  color: #fff; text-shadow: 0 2px 0 var(--acc-dk); font-size: 1.1rem;
-  box-shadow: inset 0 2px 0 rgb(255 255 255 / .45), inset 0 -3px 0 rgb(0 0 0 / .14), 0 5px 0 var(--acc-dk), 0 14px 24px -8px var(--acc-dk); }
-.win-ribbon::before, .win-ribbon::after { top: 12px; width: 26px; background: var(--acc-dk); }
-.win-ribbon::before { left: -20px; } .win-ribbon::after { right: -20px; }
+/* "Level N clear": a cozy stitched ribbon. The band drops in with a bounce, the folded tails unfurl behind it,
+   and a soft shine passes over now and then. */
+.win-ribbon { --rb-dk: color-mix(in srgb, var(--accent) 62%, #000); --rb-mid: color-mix(in srgb, var(--accent) 80%, #000);
+  position: relative; z-index: 1; margin-top: 12px; padding: 0 30px; color: #fff; animation: drop .6s cubic-bezier(.3, 1.5, .5, 1) both; }
+.rb-band { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; padding: 11px 22px 13px; border-radius: 12px; overflow: hidden;
+  background: linear-gradient(var(--acc-lt), var(--accent) 52%, color-mix(in srgb, var(--accent) 90%, #000));
+  outline: 1.5px dashed rgb(255 255 255 / .6); outline-offset: -6px;
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / .45), inset 0 -3px 0 rgb(0 0 0 / .12), 0 4px 0 var(--rb-dk), 0 14px 22px -10px var(--rb-dk); }
+.rb-band::after { content: ""; position: absolute; inset: 0; transform: translateX(-120%); pointer-events: none;
+  background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / .5) 50%, transparent 70%); animation: rbShine 3.6s .9s ease-in-out infinite; }
+@keyframes rbShine { 0% { transform: translateX(-120%); } 35%, 100% { transform: translateX(120%); } }
+.rb-band b { font: 700 1.3rem/1 var(--font-display); letter-spacing: .03em; text-transform: capitalize; white-space: nowrap; text-shadow: 0 2px 0 var(--rb-dk); }
+.rb-band svg { flex: none; width: 18px; height: 16px; fill: currentColor; opacity: .85; filter: drop-shadow(0 1.5px 0 var(--rb-dk)); }
+.rb-band svg:first-child { rotate: -18deg; } .rb-band svg:last-child { rotate: 18deg; }
+/* Each tail: a notched end tucked behind the band, with a dark fold where it turns under. */
+.rb-tail { position: absolute; top: 12px; bottom: -10px; width: 46px; z-index: 0; animation: unfurl .45s .3s cubic-bezier(.3, 1.4, .5, 1) both; }
+.rb-tail::before { content: ""; position: absolute; inset: 0 0 0 0; border-radius: 3px;
+  background: linear-gradient(var(--rb-mid), var(--rb-dk)); box-shadow: inset 0 2px 0 rgb(255 255 255 / .2); }
+.rb-tail::after { content: ""; position: absolute; bottom: 0; width: 16px; height: 10px; background: color-mix(in srgb, var(--rb-dk) 70%, #000); }
+.rb-tail.l { left: 0; transform-origin: 100% 50%; } .rb-tail.r { right: 0; transform-origin: 0 50%; }
+.rb-tail.l::before { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%); }
+.rb-tail.r::before { clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 50%, 100% 100%, 0 100%); }
+.rb-tail.l::after { right: 0; clip-path: polygon(0 0, 100% 0, 100% 100%); }
+.rb-tail.r::after { left: 0; clip-path: polygon(0 0, 100% 0, 0 100%); }
+@keyframes unfurl { from { transform: scaleX(0); } }
+/* Narrow phones: a slimmer ribbon, no paws, so it clears the home button. */
+@media (max-width: 380px) {
+  .win-ribbon { padding: 0 20px; }
+  .rb-band { padding: 10px 14px 12px; } .rb-band svg { display: none; }
+  .rb-band b { font-size: 1.05rem; } .rb-tail { width: 32px; top: 10px; }
+}
 .win-hero { height: 190px; }
 .rays { width: 380px; height: 380px; background: repeating-conic-gradient(color-mix(in srgb, var(--star) 46%, transparent) 0 8deg, transparent 8deg 20deg); }
 .win-hero .glow { position: absolute; width: 190px; height: 190px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--star) 70%, #fff) 0, color-mix(in srgb, var(--star) 40%, transparent) 38%, transparent 70%); animation: breathe 2.4s ease-in-out infinite; }
@@ -1158,7 +1175,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 /* Short phones (iPhone SE and smaller): a slimmer results hero so "Next level" sits on screen without scrolling. */
 @media (max-height: 720px) {
   .win-page { gap: 8px; }
-  .win-ribbon { margin-top: 4px; }
+  .win-ribbon { margin-top: 6px; }
   .win-hero { height: 140px; }
   .rays { width: 290px; height: 290px; }
   .win-hero .glow { width: 150px; height: 150px; }
@@ -1176,9 +1193,28 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
    clear of the Undo, Hint and Clear buttons. */
 .toast { white-space: normal; width: max-content; max-width: calc(100% - 32px); text-align: center; }
 body.playing .toast { bottom: calc(22px + env(safe-area-inset-bottom, 0px)); }
-/* Solved: the cats hop in a wave across the board and the frame glows before the results appear. */
-.board.solved .cell svg { animation: solvedHop .55s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: calc(var(--wave, 0) * 45ms + 120ms); }
-@keyframes solvedHop { 40% { transform: translateY(-14%) scale(1.08); } }
+/* Solved: a wave rolls across the board from the top-left corner. Each cat crouches, springs up with a little stretch
+   and tilt, lands with a squash and settles with a small rebound, while a warm shine sweeps over its tile.
+   --wave is the cell's diagonal (0-10), so neighbours move together and the ripple reads as one smooth swell. */
+.board.solved .cell svg { transform-origin: 50% 88%; animation: solvedHop .95s both; animation-delay: calc(var(--wave, 0) * 58ms + 80ms); }
+.board.solved .cell:nth-child(odd) svg { --tilt: -5deg; } .board.solved .cell:nth-child(even) svg { --tilt: 5deg; }
+@keyframes solvedHop {
+  0% { transform: none; animation-timing-function: cubic-bezier(.3, 0, .5, 1); }
+  13% { transform: translateY(3%) scale(1.1, .88); animation-timing-function: cubic-bezier(.2, .8, .35, 1); }
+  42% { transform: translateY(-26%) scale(.95, 1.07) rotate(var(--tilt, 0deg)); animation-timing-function: cubic-bezier(.55, 0, .85, .35); }
+  62% { transform: translateY(0) scale(1.12, .86); animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
+  76% { transform: translateY(-8%) scale(.98, 1.03); animation-timing-function: cubic-bezier(.5, 0, .7, .4); }
+  88% { transform: translateY(0) scale(1.03, .97); animation-timing-function: ease-out; }
+  100% { transform: none; }
+}
+.board.solved .cell::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0; opacity: 0;
+  background: radial-gradient(70% 60% at 50% 40%, color-mix(in srgb, var(--star) 55%, #fff), transparent 75%);
+  animation: tileGlow .95s ease-out both; animation-delay: calc(var(--wave, 0) * 58ms + 180ms); }
+@keyframes tileGlow { 30% { opacity: .9; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .board.solved .cell svg { animation: solvedCalm .6s ease-in-out both; animation-delay: calc(var(--wave, 0) * 40ms); }
+}
+@keyframes solvedCalm { 50% { transform: scale(1.06); } }
 .board.solved .cell.v0, .board.solved .cell.v1 { transition: filter .3s; }
 html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star), 0 0 28px 4px color-mix(in srgb, var(--star) 60%, transparent), 0 10px 28px -16px var(--shadow); transition: box-shadow .3s; }
 .board.solved .mark { opacity: 0; transition: opacity .3s; }
@@ -1778,7 +1814,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   <div class="confetti" id="confetti" aria-hidden="true"></div>
   <div class="win-page">
     <button class="win-x" id="win-x" type="button" aria-label="Home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg></button>
-    <div class="win-ribbon"><span id="win-label">Level 1</span></div>
+    <div class="win-ribbon"><i class="rb-tail l"></i><i class="rb-tail r"></i><span class="rb-band"><svg viewBox="0 0 40 34" aria-hidden="true"><use href="#paw"/></svg><b id="win-label">Level 1</b><svg viewBox="0 0 40 34" aria-hidden="true"><use href="#paw"/></svg></span></div>
     <div class="win-hero" aria-hidden="true">
       <div class="rays"></div>
       <div class="glow"></div>
@@ -2642,7 +2678,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     clearTimeout(celebrateT);
     celebrateT = setTimeout(function () { revealWin(mine); }, WIN_DELAY);
   }
-  var WIN_DELAY = 1600, celebrating = null, celebrateT = null, celebrateFrom = 0;
+  var WIN_DELAY = 1900, celebrating = null, celebrateT = null, celebrateFrom = 0;
   function revealWin(mine) {
     if (celebrating !== mine) return;
     celebrating = null; clearTimeout(celebrateT);

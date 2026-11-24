@@ -177,7 +177,9 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 :root[data-skin="ocean"] .board-wrap, :root[data-skin="midnight"] .board-wrap { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 80%, #fff), var(--surface) 45%); }
 /* Cat details derive from the fur colors, so every skin gets matching faces.
    Declared on every element so a shop card's own fur colors flow into its previews. */
-* {
+/* Only where a palette is set (the page, shop cards, previews), so these inherit instead of being recomputed on every element.
+   Keeping this off * makes the shop's many cat previews much cheaper to style. */
+:root, .skin, .skin-preview, .duo, [style^="--"] {
   --moon-line: color-mix(in srgb, var(--moon) 62%, #000);
   --eye: #2b1b16;
   --eye2: var(--eye2-base, color-mix(in srgb, var(--moon) 20%, #fff));
@@ -813,7 +815,9 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
   background: linear-gradient(#fff3a6, #ffcc3d); color: #6b3d06; font: 700 1.15rem/1 var(--font-display); box-shadow: inset 0 2px 0 rgb(255 255 255 / .6), 0 4px 0 #c98a12, 0 12px 20px -10px #000; }
 .bc-txt .chunky:active { transform: translateY(3px); box-shadow: inset 0 2px 0 rgb(255 255 255 / .6), 0 1px 0 #c98a12; }
 .bc-txt .chunky svg { width: 18px; height: 18px; fill: #e08a00; }
-.bc-txt .chunky.short { background: rgb(255 255 255 / .9); color: #7a4cf0; box-shadow: 0 4px 0 rgb(0 0 0 / .15); }
+.bc-txt .chunky.short { background: rgb(40 12 64 / .32); color: #fff; font-weight: 600; letter-spacing: .02em; gap: 7px;
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / .45); text-shadow: none; }
+.bc-txt .chunky.short svg { fill: #ffd84d; }
 .odds { position: relative; list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .odds li { background: rgb(255 255 255 / .16); border-radius: 10px; padding: 6px 2px 5px; text-align: center; font: 600 .72rem/1.2 var(--font-body); }
 .odds li b { display: block; font: 700 1.05rem/1.1 var(--font-display); }
@@ -825,7 +829,7 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .tier-head { display: flex; align-items: center; gap: 8px; margin: 8px 2px 8px; font: 700 .95rem var(--font-display); color: var(--rc); letter-spacing: .04em; text-transform: uppercase; }
 .tier-head::after { content: ""; flex: 1; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--rc), transparent); opacity: .5; }
 .tier-head small { color: var(--muted); font: 600 .85rem var(--font-body); text-transform: none; letter-spacing: 0; }
-.tier { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 6px; }
+.tier { content-visibility: auto; contain-intrinsic-size: auto 600px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 6px; }
 .skin { position: relative; border-color: var(--rc, transparent); overflow: hidden; padding-top: 28px; }
 .skin.equipped { border-color: var(--rc, var(--accent)); box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--accent), 0 6px 16px -8px var(--shadow); }
 .rar-tag { position: absolute; top: 0; left: 0; z-index: 1; padding: 3px 9px 4px 8px; border-radius: 0 0 10px 0; background: var(--rc); color: #fff; font: 700 .68rem/1 var(--font-display); letter-spacing: .06em; text-transform: uppercase; }
@@ -2097,7 +2101,9 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     cgPlaying = on;
     try { if (on) CG.game.gameplayStart(); else CG.game.gameplayStop(); } catch (e) {}
   }
+  var shownScreen = "home";
   function show(screen) {
+    shownScreen = screen;
     if (screen !== "game") { $("win").hidden = true; if (celebrating) { celebrating = null; clearTimeout(celebrateT); $("board").classList.remove("solved"); } }
     $("why").hidden = true;
     ["home", "levels", "store", "game"].forEach(function (s) { $(s).hidden = s !== screen; });
@@ -2122,8 +2128,44 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     document.documentElement.setAttribute("data-theme", "light");
     var m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = "#f6f5f3";
   }
+  /* Each cat symbol carries every look's accessories and effects, switched by CSS. Fine for one cat, slow for dozens:
+     so each look gets its own copy holding only the layers it uses, and #sun / #moon are trimmed to the equipped look. */
+  var CAT_TPL = {}, PARTS = {};
+  function catTpl(kind) { return CAT_TPL[kind] || (CAT_TPL[kind] = $(kind).cloneNode(true)); }
+  function lookParts(look) {
+    if (PARTS[look]) return PARTS[look];
+    var probe = document.createElement("div"), on = {};
+    probe.className = "skin-preview sk-" + look; probe.hidden = true; document.body.appendChild(probe);
+    var cs = getComputedStyle(probe);
+    catTpl("sun").querySelectorAll("[style]").forEach(function (el) {
+      var m = /display:\s*var\((--[\w-]+),\s*none\)/.exec(el.getAttribute("style"));
+      if (m) on[m[1]] = cs.getPropertyValue(m[1]).trim() === "inline";
+    });
+    probe.remove();
+    return (PARTS[look] = on);
+  }
+  function trimmedCat(kind, look) {
+    var sym = catTpl(kind).cloneNode(true), on = lookParts(look);
+    Array.prototype.slice.call(sym.children).forEach(function (el) {
+      var m = /display:\s*var\((--[\w-]+),\s*none\)/.exec(el.getAttribute("style") || "");
+      if (m && !on[m[1]]) el.remove();
+    });
+    return sym;
+  }
+  function catSymbol(kind, look) {
+    var id = kind + "-" + look;
+    if (!$(id)) { var sym = trimmedCat(kind, look); sym.id = id; $(kind).parentNode.appendChild(sym); }
+    return id;
+  }
+  function trimCats() {
+    ["sun", "moon"].forEach(function (kind) {
+      var live = $(kind), sym = trimmedCat(kind, save.skin);
+      while (live.firstChild) live.removeChild(live.firstChild);
+      while (sym.firstChild) live.appendChild(sym.firstChild);
+    });
+  }
   function applySkin() {
-    applyTheme();
+    applyTheme(); trimCats();
     if (save.skin === "cozy") document.documentElement.removeAttribute("data-skin");
     else document.documentElement.setAttribute("data-skin", save.skin);
   }
@@ -2147,6 +2189,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     if (goal) {
       for (var v in goal.v) duo.style.setProperty("--" + v, goal.v[v]);
       duo.className = "duo skin-preview sk-" + goal.id;
+      duo.innerHTML = catSvg("sun", goal.id) + catSvg("moon", goal.id);
       duo.style.setProperty("--g-bg", goal.v.cell);
       var len = 2 * Math.PI * 33, frac = Math.min(1, save.wallet / BOX.price);
       $("g-tag").textContent = frac >= 1 ? "Open!" : save.wallet + "/" + BOX.price;
@@ -3226,7 +3269,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   function missing() { return SKINS.filter(function (s) { return !ownsReal(s.id); }); }
   function boxState() { return save.box || (save.box = { n: 0, dry: 0 }); }
   function palette(s) { var css = ""; for (var k in s.v) css += "--" + k + ":" + s.v[k] + ";"; return css; }
-  function catSvg(id) { return '<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#' + id + '"/></svg>'; }
+  function catSvg(kind, look) { return '<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#' + (look ? catSymbol(kind, look) : kind) + '"/></svg>'; }
   function boxArt() {
     return '<svg viewBox="0 0 120 120" aria-hidden="true">' +
       '<defs><linearGradient id="mb-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb3c9"/><stop offset="1" stop-color="#f0679a"/></linearGradient>' +
@@ -3255,44 +3298,51 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     var open = $("bc-open");
     open.disabled = done;
     open.classList.toggle("short", !can && !done);
-    open.innerHTML = done ? "All found!" : can ? "Open " + STAR + BOX.price : STAR + (BOX.price - save.wallet) + " more";
+    open.innerHTML = done ? "All found!" : can ? "Open " + STAR + BOX.price : "Need " + STAR + (BOX.price - save.wallet) + " more";
     open.setAttribute("aria-label", done ? "Collection complete" : "Open a Mystery Box for " + BOX.price + " stars");
     $("odds").innerHTML = TIERS.slice().reverse().map(function (r) {
       return '<li style="--rc: var(--r-' + r + ')"><b>' + RAR[r].odds + "%</b><i></i>" + RAR[r].name + "</li>";
     }).join("");
     var toGo = BOX.pity - b.dry;
-    // Base odds are in the chips above. The guarantee raises Epic and Legendary over many boxes, so the overall rates are stated too
+    // The chips are the base odds. The guarantee lifts Epic and Legendary, so the overall rates are stated too
     // (measured by running rollBox 200,000 times; update them if the odds or the guarantee change).
-    $("bc-note").textContent = "Base odds per box. Every 10th box in a row without an Epic or Legendary is guaranteed one, so over many boxes the chances are about " +
-      "Common 57%, Rare 26%, Epic 13%, Legendary 4%. " + (toGo <= 1 ? "Your next box is guaranteed Epic or better. " : "Epic or better guaranteed within " + toGo + " boxes. ") +
-      "No repeats until you own every look of that rarity, then repeats give stars back.";
+    $("bc-note").textContent = (toGo <= 1 ? "Next box is guaranteed Epic or better." : "Epic or better guaranteed within " + toGo + " boxes.") +
+      " Overall odds with this: 57%, 26%, 13%, 4%.";
     $("coll-n").textContent = (SKINS.length - left.length) + "/" + SKINS.length;
-    var box = $("skins"); box.innerHTML = "";
+    var box = $("skins"), built = !!box.firstChild;
     TIERS.forEach(function (r) {
       var list = SKINS.filter(function (s) { return s.r === r || (r === "common" && s.r === "starter"); });
       var have = list.filter(function (s) { return ownsReal(s.id); }).length;
-      var head = document.createElement("div");
-      head.className = "tier-head"; head.style.setProperty("--rc", "var(--r-" + r + ")");
-      head.innerHTML = RAR[r].name + " <small>" + have + "/" + list.length + "</small>";
-      var grid = document.createElement("div"); grid.className = "tier";
-      list.forEach(function (s) { grid.appendChild(skinCard(s)); });
-      box.appendChild(head); box.appendChild(grid);
+      if (!built) {
+        var head = document.createElement("div");
+        head.className = "tier-head"; head.id = "th-" + r; head.style.setProperty("--rc", "var(--r-" + r + ")");
+        var grid = document.createElement("div"); grid.className = "tier";
+        list.forEach(function (s) { grid.appendChild(skinCard(s)); });
+        box.appendChild(head); box.appendChild(grid);
+      }
+      $("th-" + r).innerHTML = RAR[r].name + " <small>" + have + "/" + list.length + "</small>";
+      list.forEach(paintCard);
     });
   }
+  var LOCK = '<svg viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z"/></svg>';
   function skinCard(s) {
-    var owned = ownsReal(s.id) || !!save.plus, on = save.skin === s.id;
     var card = document.createElement("div");
-    card.className = "skin sk-" + s.id + " r-" + s.r + (on ? " equipped" : "") + (owned ? "" : " locked");
+    card.id = "card-" + s.id;
     card.style.cssText = palette(s) + "--rc: var(--r-" + s.r + ");";
-    var act = owned ? '<button class="chunky" type="button" ' + (on ? "disabled" : "") + ">" + (on ? "Wearing" : "Wear") + "</button>"
-      : '<button class="lockline" type="button"><svg viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z"/></svg>In boxes</button>';
-    card.innerHTML = '<span class="rar-tag">' + RAR[s.r].name + '</span><div class="mini"><span>' + catSvg("sun") + "</span><span>" + catSvg("moon") +
-      "</span><span>" + catSvg("moon") + "</span><span>" + catSvg("sun") + "</span></div><b>" + s.name + "</b><small>" + s.tag + "</small>" + act;
+    card.innerHTML = '<span class="rar-tag">' + RAR[s.r].name + '</span><div class="mini"><span>' + catSvg("sun", s.id) + "</span><span>" + catSvg("moon", s.id) +
+      "</span><span>" + catSvg("moon", s.id) + "</span><span>" + catSvg("sun", s.id) + "</span></div><b>" + s.name + "</b><small>" + s.tag + '</small><button type="button"></button>';
     card.querySelector("button").onclick = function () {
-      if (!owned) { toast(RAR[s.r].name + ": " + RAR[s.r].odds + "% per Mystery Box"); return; }
+      if (!(ownsReal(s.id) || save.plus)) { toast(RAR[s.r].name + ": " + RAR[s.r].odds + "% per Mystery Box"); return; }
       wear(s.id);
     };
     return card;
+  }
+  function paintCard(s) {
+    var card = $("card-" + s.id), btn = card.querySelector("button"), owned = ownsReal(s.id) || !!save.plus, on = save.skin === s.id;
+    card.className = "skin sk-" + s.id + " r-" + s.r + (on ? " equipped" : "") + (owned ? "" : " locked");
+    btn.className = owned ? "chunky" : "lockline";
+    btn.disabled = on;
+    btn.innerHTML = owned ? (on ? "Wearing" : "Wear") : LOCK + "In boxes";
   }
   function wear(id) { save.skin = id; applySkin(); persist(true); renderStore(); }
 
@@ -3344,7 +3394,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     card.className = "bo-card skin-preview sk-" + s.id;
     card.style.cssText = palette(s) + "--rc: var(--r-" + s.r + ");";
     $("bo-rar").className = "rar-chip r-" + s.r; $("bo-rar").textContent = RAR[s.r].name;
-    $("bo-cats").innerHTML = "<span>" + catSvg("sun") + "</span><span>" + catSvg("moon") + "</span>";
+    $("bo-cats").innerHTML = "<span>" + catSvg("sun", s.id) + "</span><span>" + catSvg("moon", s.id) + "</span>";
     $("bo-name").textContent = s.name;
     $("bo-sub").innerHTML = res.dup ? "Already in your collection, so here are <b>" + res.back + " stars</b> back." : "<b>New!</b> " + s.tag + ".";
     $("bo-equip").hidden = res.dup || save.skin === s.id;
@@ -3394,12 +3444,15 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
         ctx = new AC(); master = ctx.createGain(); master.connect(ctx.destination); master.gain.value = muted ? 0 : 1;
         musicBus = ctx.createGain(); sfxBus = ctx.createGain(); musicBus.connect(master); sfxBus.connect(master);
         // A soft room reverb under everything makes the plucks and meows sound warm instead of beepy.
-        var len = Math.floor(ctx.sampleRate * 1.6), ir = ctx.createBuffer(2, len, ctx.sampleRate);
-        for (var ch = 0; ch < 2; ch++) { var d = ir.getChannelData(ch); for (var n = 0; n < len; n++) d[n] = (Math.random() * 2 - 1) * Math.pow(1 - n / len, 3); }
-        var verb = ctx.createConvolver(), wet = ctx.createGain(); verb.buffer = ir; wet.gain.value = .22;
-        musicBus.connect(verb); sfxBus.connect(verb); verb.connect(wet); wet.connect(master);
+        // Built just after the first tap rather than inside it, so that tap's screen opens without a pause.
+        setTimeout(function () {
+          var len = Math.floor(ctx.sampleRate * 1.6), ir = ctx.createBuffer(2, len, ctx.sampleRate);
+          for (var ch = 0; ch < 2; ch++) { var d = ir.getChannelData(ch); for (var n = 0; n < len; n++) d[n] = (Math.random() * 2 - 1) * Math.pow(1 - n / len, 3); }
+          var verb = ctx.createConvolver(), wet = ctx.createGain(); verb.buffer = ir; wet.gain.value = .22;
+          musicBus.connect(verb); sfxBus.connect(verb); verb.connect(wet); wet.connect(master);
+        }, 300);
         noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * .5), ctx.sampleRate);
-        var nd = noiseBuf.getChannelData(0); for (n = 0; n < nd.length; n++) nd[n] = Math.random() * 2 - 1;
+        var nd = noiseBuf.getChannelData(0); for (var n = 0; n < nd.length; n++) nd[n] = Math.random() * 2 - 1;
         volumes();
       }
       if (ctx.state === "suspended") ctx.resume();
@@ -3410,7 +3463,9 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       var m = (save.music || 0) / 100, f = (save.sound || 0) / 100;
       musicBus.gain.setTargetAtTime(m * m * .5, ctx.currentTime, .05);
       sfxBus.gain.setTargetAtTime(f * f * .9, ctx.currentTime, .02);
-      if (m > 0) startMusic(); else stopMusic();
+      // Start the music a moment after the tap: building the first piano notes takes a while on phones,
+      // and doing it inside the first tap made that tap (often the Shop) feel slow to open.
+      if (m > 0) setTimeout(function () { if (save.music > 0) startMusic(); }, 600); else stopMusic();
     }
     function note(bus, freq, t, dur, type, vol, glideTo) {
       var o = ctx.createOscillator(), g = ctx.createGain();
@@ -3682,6 +3737,14 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     // Ads and the store start once the home screen is up, so they never slow the first frame.
     setTimeout(Ads.start, screen ? 0 : 1200);
     setTimeout(Shop.start, screen ? 0 : 1200);
+    // Build the shop's cards while the player is on Home, so the first visit to the Shop is quick too.
+    setTimeout(function () {
+      var st = $("store");
+      if (!st.hidden) return;
+      // Lay it out once off screen (invisible), so images and patterns are ready before the first real visit.
+      renderStore(); st.style.cssText = "position: fixed; left: -300vw; top: 0; width: 100%; visibility: hidden"; st.hidden = false;
+      requestAnimationFrame(function () { requestAnimationFrame(function () { st.style.cssText = ""; if (shownScreen !== "store") st.hidden = true; }); });
+    }, 2500);
   }
   if (window.claude && window.claude.hot) window.claude.hot.snapshot(function () {
     var cur = ["game", "levels", "store", "home"].filter(function (s) { return !$(s).hidden; })[0];

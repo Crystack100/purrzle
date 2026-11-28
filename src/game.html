@@ -146,6 +146,42 @@
   --sun: #ff8fd0; --sun-core: #ffd9ef; --moon: #e6ecff; --star: #ffc94d; --star-off: #dcd2f5;
   --bad: #e0456a; --bad-soft: color-mix(in srgb, #e0456a 18%, transparent); --shadow: rgba(90, 70, 160, .22); color-scheme: light;
 }
+:root[data-skin="phoenix"] { --eye2-base: initial; --alt: #3aa0ff; --brand: #ffd24a;
+  --bg: #1a0806; --bg2: #3a0d08; --surface: #2a0d09; --cell: #34110c; --given: #461a12; --line: #5a2418;
+  --ink: #fff1e0; --muted: #e0a888; --accent: #ff7a1a; --on-accent: #1a0806;
+  --sun: #ff7a1a; --sun-core: #ffb36b; --moon: #7fc4ff; --star: #ffd24a; --star-off: #5a2418;
+  --bad: #ff9aa0; --bad-soft: color-mix(in srgb, #ff9aa0 18%, transparent); --shadow: rgba(0, 0, 0, .55); color-scheme: dark;
+}
+:root[data-skin="crystal"] { --eye2-base: initial; --alt: #ff7ac0; --brand: #4a55c9;
+  --bg: #eef3ff; --bg2: #fdf0fb; --surface: #fbfcff; --cell: #f1f5ff; --given: #dfe6fb; --line: #cfd9f4;
+  --ink: #2a2f5a; --muted: #7a82b0; --accent: #6f7dff; --on-accent: #ffffff;
+  --sun: #ff7ac0; --sun-core: #ffa6d2; --moon: #8fb0ff; --star: #ffc94d; --star-off: #cfd9f4;
+  --bad: #e0456a; --bad-soft: color-mix(in srgb, #e0456a 18%, transparent); --shadow: rgba(70, 80, 160, .22); color-scheme: light;
+}
+:root[data-skin="samurai"] { --eye2-base: initial; --alt: #ffd34d; --brand: #ffd34d;
+  --bg: #160c0e; --bg2: #2e0f14; --surface: #241014; --cell: #2c1418; --given: #3a1b20; --line: #4d252b;
+  --ink: #fbefe6; --muted: #d2a9a0; --accent: #d8343f; --on-accent: #ffffff;
+  --sun: #ef8a3a; --sun-core: #ffb066; --moon: #9fb0c8; --star: #ffd34d; --star-off: #4d252b;
+  --bad: #ff9aa0; --bad-soft: color-mix(in srgb, #ff9aa0 18%, transparent); --shadow: rgba(0, 0, 0, .55); color-scheme: dark;
+}
+:root[data-skin="pirate"] { --eye2-base: initial; --alt: #e0583a; --brand: #e7b84a;
+  --bg: #0f2a33; --bg2: #1c4048; --surface: #163640; --cell: #1b3f4a; --given: #24505c; --line: #2f6270;
+  --ink: #f3ead8; --muted: #b6c9c4; --accent: #e7b84a; --on-accent: #0f2a33;
+  --sun: #e8893a; --sun-core: #ffb36b; --moon: #a9bccc; --star: #ffd24a; --star-off: #2f6270;
+  --bad: #ff9aa0; --bad-soft: color-mix(in srgb, #ff9aa0 18%, transparent); --shadow: rgba(0, 0, 0, .5); color-scheme: dark;
+}
+:root[data-skin="icecream"] { --eye2-base: initial; --alt: #5fc9a0; --brand: #c9577f;
+  --bg: #fff1f6; --bg2: #eefcf6; --surface: #fffbfd; --cell: #fff3f8; --given: #fbdbe8; --line: #f6cadb;
+  --ink: #5a2a3e; --muted: #a07084; --accent: #ff7aa8; --on-accent: #ffffff;
+  --sun: #f2a06b; --sun-core: #ffd0a8; --moon: #9fe3c8; --star: #ffc94d; --star-off: #f6cadb;
+  --bad: #d23a5a; --bad-soft: color-mix(in srgb, #d23a5a 18%, transparent); --shadow: rgba(160, 80, 110, .2); color-scheme: light;
+}
+:root[data-skin="bee"] { --eye2-base: initial; --alt: #7fb7e8; --brand: #6b4a12;
+  --bg: #fff6d6; --bg2: #fffbe9; --surface: #fffdf4; --cell: #fff7de; --given: #f7e6a8; --line: #f0dc95;
+  --ink: #3e2c12; --muted: #8a7444; --accent: #e8a40e; --on-accent: #ffffff;
+  --sun: #f2b01e; --sun-core: #ffd23a; --moon: #c9d6e6; --star: #f2b01e; --star-off: #f0dc95;
+  --bad: #cc3b3b; --bad-soft: color-mix(in srgb, #cc3b3b 18%, transparent); --shadow: rgba(110, 80, 20, .2); color-scheme: light;
+}
 /* Skin identity: background motif and the accessory both cats wear. Also set on shop cards (.sk-*) for previews. */
 :root, .skin.sk-cozy { --tiles: .55; --cat-tint: 0; }
 :root[data-skin] { --cat-tint: 1; }
@@ -158,7 +194,13 @@
 :root[data-skin="snow"], .skin.sk-snow, .skin-preview.sk-snow { --tiles: .3; --acc-beanie: inline; --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='20' cy='24' r='3'/%3E%3Ccircle cx='92' cy='16' r='2'/%3E%3Ccircle cx='60' cy='70' r='2.6'/%3E%3Ccircle cx='120' cy='88' r='3.4'/%3E%3Ccircle cx='30' cy='112' r='2.2'/%3E%3Ccircle cx='100' cy='128' r='1.8'/%3E%3C/g%3E%3C/svg%3E"); }
 :root[data-skin="lavender"], .skin.sk-lavender, .skin-preview.sk-lavender { --tiles: .35; --acc-bow: inline; --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cg fill='%23a88bd6' opacity='.3'%3E%3Cellipse cx='24' cy='26' rx='3' ry='5'/%3E%3Cellipse cx='29' cy='35' rx='3' ry='5'/%3E%3Cellipse cx='24' cy='44' rx='3' ry='5'/%3E%3Cellipse cx='116' cy='96' rx='3' ry='5'/%3E%3Cellipse cx='121' cy='105' rx='3' ry='5'/%3E%3Cellipse cx='116' cy='114' rx='3' ry='5'/%3E%3C/g%3E%3Cg fill='%23e58fb8' opacity='.3'%3E%3Ccircle cx='96' cy='30' r='3'/%3E%3Ccircle cx='40' cy='130' r='3.5'/%3E%3C/g%3E%3C/svg%3E"); }
 :root[data-skin="royal"], .skin.sk-royal, .skin-preview.sk-royal { --tiles: .2; --acc-crown: inline; --acc-ermine: inline; --sheen: url(#p-sheen); --fx-aura: inline; --aura: #f2c94c; --fx-twinkle: inline; --tw: #ffe7a3; --motif: radial-gradient(circle at 50% -10%, rgba(242, 201, 76, .22), transparent 45%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cg fill='%23f2c94c' opacity='.2'%3E%3Cpath d='M30 20 l6 8 -6 8 -6 -8z'/%3E%3Cpath d='M110 80 l8 10 -8 10 -8 -10z'/%3E%3Cpath d='M64 124 l4 6 -4 6 -4 -6z'/%3E%3C/g%3E%3C/svg%3E"); }
-.skin, .skin-preview { --cat-tint: 1; --motif: none; --acc-star: none; --acc-blossom: none; --acc-sprout: none; --acc-bubbles: none; --acc-shades: none; --acc-pumpkin: none; --acc-beanie: none; --acc-bow: none; --acc-crown: none; --acc-berry: none; --acc-frog: none; --acc-bell: none; --acc-tux: none; --acc-witch: none; --acc-horns: none; --acc-ermine: none; --acc-planet: none; --acc-halo: none; --acc-helmet: none; --fx-twinkle: none; --fx-float: none; --fx-aura: none; --pat: none; --pat-moon: initial; --pat-sun: initial; --pat-blend: normal; --pat-op: 1; --sheen: none; }
+.skin, .skin-preview { --cat-tint: 1; --motif: none; --acc-star: none; --acc-blossom: none; --acc-sprout: none; --acc-bubbles: none; --acc-shades: none; --acc-pumpkin: none; --acc-beanie: none; --acc-bow: none; --acc-crown: none; --acc-berry: none; --acc-frog: none; --acc-bell: none; --acc-tux: none; --acc-witch: none; --acc-horns: none; --acc-ermine: none; --acc-planet: none; --acc-halo: none; --acc-helmet: none; --fx-twinkle: none; --fx-float: none; --fx-aura: none; --pat: none; --pat-moon: initial; --pat-sun: initial; --pat-blend: normal; --pat-op: 1; --sheen: none; --acc-phoenix: none; --acc-tiara: none; --acc-kabuto: none; --acc-pirate: none; --acc-icecream: none; --acc-beeband: none; }
+:root[data-skin="phoenix"], .skin.sk-phoenix, .skin-preview.sk-phoenix { --tiles: .2; --acc-phoenix: inline; --fw1: #ff7a1a; --fw2: #ffd24a; --pat: url(#p-flame); --pat-moon: url(#p-flameb); --pat-blend: hard-light; --sheen: url(#p-sheen); --fx-aura: inline; --aura: #ff7a1a; --fx-float: inline; --fl: #ffb13a; --motif: radial-gradient(ellipse at 50% 110%, rgba(255, 122, 26, .45), transparent 55%), radial-gradient(circle at 85% 10%, rgba(58, 160, 255, .25), transparent 30%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cg fill='%23ffb13a'%3E%3Ccircle cx='20' cy='30' r='1.6' opacity='.7'/%3E%3Ccircle cx='100' cy='60' r='1.2' opacity='.6'/%3E%3Ccircle cx='60' cy='110' r='1.8' opacity='.7'/%3E%3Ccircle cx='120' cy='120' r='1' opacity='.5'/%3E%3C/g%3E%3C/svg%3E") 0 0/140px 140px; }
+:root[data-skin="crystal"], .skin.sk-crystal, .skin-preview.sk-crystal { --tiles: .3; --acc-tiara: inline; --gem: #ff7ac0; --pat: url(#p-facet); --sheen: url(#p-sheen); --fx-aura: inline; --aura: #b9c8ff; --fx-twinkle: inline; --tw: #ffffff; --motif: linear-gradient(135deg, rgba(255, 166, 210, .25), rgba(143, 176, 255, .25)), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%238fb0ff' stroke-width='1.4' opacity='.35'%3E%3Cpath d='M20 14 l8 10 -8 12 -8 -12z'/%3E%3Cpath d='M90 80 l6 8 -6 9 -6 -9z'/%3E%3C/g%3E%3Cg fill='%23fff'%3E%3Cpath d='M60 40 l1.5 4 4 1.5 -4 1.5 -1.5 4 -1.5 -4 -4 -1.5 4 -1.5z'/%3E%3C/g%3E%3C/svg%3E") 0 0/120px 120px; }
+:root[data-skin="samurai"], .skin.sk-samurai, .skin-preview.sk-samurai { --tiles: .2; --acc-kabuto: inline; --sheen: url(#p-sheen); --fx-aura: inline; --aura: #d8343f; --fx-twinkle: inline; --tw: #ffd6e0; --motif: radial-gradient(circle at 80% 12%, rgba(216, 52, 63, .4) 0 38px, transparent 40px), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cg fill='%23ff9ec0' opacity='.35'%3E%3Cpath d='M20 30 q8 -12 16 0 q-8 10 -16 0z' transform='rotate(25 28 30)'/%3E%3Cpath d='M110 90 q6 -9 12 0 q-6 8 -12 0z' transform='rotate(-30 116 90)'/%3E%3Cpath d='M60 130 q7 -10 14 0 q-7 9 -14 0z'/%3E%3C/g%3E%3C/svg%3E") 0 0/160px 160px; }
+:root[data-skin="pirate"], .skin.sk-pirate, .skin-preview.sk-pirate { --tiles: .25; --acc-pirate: inline; --sheen: url(#p-sheen); --fx-aura: inline; --aura: #e7b84a; --fx-twinkle: inline; --tw: #ffe7a3; --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cg fill='none' stroke='%23e7b84a' stroke-width='1.4' opacity='.22'%3E%3Ccircle cx='40' cy='40' r='16'/%3E%3Cpath d='M40 20 v40 M20 40 h40 M28 28 l24 24 M52 28 l-24 24'/%3E%3Cpath d='M100 120 q20 -10 40 0' stroke-dasharray='4 5'/%3E%3Cpath d='M130 110 l6 6 M136 110 l-6 6'/%3E%3C/g%3E%3C/svg%3E") 0 0/170px 170px; }
+:root[data-skin="icecream"], .skin.sk-icecream, .skin-preview.sk-icecream { --tiles: .35; --acc-icecream: inline; --fx-float: inline; --fl: #ff7aa8; --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M20 20 l6 2' stroke='%23ffd34d' opacity='.5'/%3E%3Cpath d='M80 30 l2 6' stroke='%236bc7ff' opacity='.5'/%3E%3Cpath d='M50 80 l6 -2' stroke='%237fd65a' opacity='.5'/%3E%3Cpath d='M100 100 l-4 4' stroke='%23ff6b6b' opacity='.5'/%3E%3Cpath d='M30 100 l2 5' stroke='%23c49bff' opacity='.5'/%3E%3C/g%3E%3C/svg%3E") 0 0/120px 120px; }
+:root[data-skin="bee"], .skin.sk-bee, .skin-preview.sk-bee { --tiles: .35; --acc-beeband: inline; --pat: url(#p-bee); --pat-blend: multiply; --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M15 2 L28 9.5 V24.5 L15 32 L2 24.5 V9.5Z M45 32 L58 39.5 V54.5 L45 62 L32 54.5 V39.5Z' fill='none' stroke='%23e8a40e' stroke-width='1.4' opacity='.25'/%3E%3C/svg%3E") 0 0/60px 60px; }
 :root[data-skin="strawberry"], .skin.sk-strawberry, .skin-preview.sk-strawberry { --tiles: .35; --acc-berry: inline; --pat-moon: url(#p-milk); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cg fill='%23ea3b52' opacity='.22'%3E%3Cpath d='M20 24 q0 -9 8 -9 q8 0 8 9 q-4 6 -8 6 q-4 0 -8 -6z'/%3E%3Cpath d='M104 92 q0 -7 6 -7 q6 0 6 7 q-3 5 -6 5 q-3 0 -6 -5z'/%3E%3C/g%3E%3Cg fill='%236cbf6a' opacity='.3'%3E%3Cpath d='M22 15 l6 -3 6 3z'/%3E%3Cpath d='M105 85 l5 -2 5 2z'/%3E%3C/g%3E%3Cg fill='%23ea3b52' opacity='.15'%3E%3Ccircle cx='70' cy='40' r='2.4'/%3E%3Ccircle cx='40' cy='120' r='3'/%3E%3Ccircle cx='130' cy='30' r='2'/%3E%3C/g%3E%3C/svg%3E") 0 0/150px 150px; }
 :root[data-skin="froggy"], .skin.sk-froggy, .skin-preview.sk-froggy { --tiles: .35; --acc-frog: inline; --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cg fill='%235fae4b' opacity='.22'%3E%3Cpath d='M30 40 a16 12 0 1 1 1 0 l-1 -12z'/%3E%3Cpath d='M120 120 a12 9 0 1 1 1 0 l-1 -9z'/%3E%3C/g%3E%3Cg fill='%23ff9bc0' opacity='.35'%3E%3Ccircle cx='36' cy='34' r='3'/%3E%3C/g%3E%3C/svg%3E") 0 0/160px 160px; }
 :root[data-skin="calico"], .skin.sk-calico, .skin-preview.sk-calico { --tiles: .4; --acc-bell: inline; --collar: #d9434f; --pat: url(#p-calico); --pat-moon: url(#p-calico2); --motif: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cg fill='%23ea8a2e' opacity='.14'%3E%3Ccircle cx='24' cy='26' r='12'/%3E%3Ccircle cx='110' cy='96' r='16'/%3E%3C/g%3E%3Cg fill='%233a2c27' opacity='.09'%3E%3Ccircle cx='96' cy='24' r='9'/%3E%3Ccircle cx='34' cy='110' r='11'/%3E%3C/g%3E%3C/svg%3E") 0 0/140px 140px; }
@@ -816,7 +858,7 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 
 
 /* ---------- Mystery Box shop ---------- */
-:root { --r-common: #8d9cab; --r-rare: #3d8bfd; --r-epic: #a457f0; --r-legendary: #f2a81d; --r-starter: #b9b2ab; }
+:root { --r-common: #8d9cab; --r-rare: #3d8bfd; --r-epic: #a457f0; --r-legendary: #f2a81d; --r-mythic: #ff3fa4; --r-starter: #b9b2ab; }
 .boxcard { position: relative; overflow: hidden; border-radius: 16px; padding: 14px 14px 12px; color: #fff;
   background: radial-gradient(circle at 18% 30%, rgb(255 255 255 / .22), transparent 40%), linear-gradient(135deg, #7a4cf0, #e2549b 60%, #ff9a5a);
   box-shadow: 0 14px 30px -14px #7a4cf0; }
@@ -836,7 +878,7 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .bc-txt .chunky.short { background: rgb(40 12 64 / .32); color: #fff; font-weight: 600; letter-spacing: .02em; gap: 7px;
   box-shadow: inset 0 0 0 2px rgb(255 255 255 / .45); text-shadow: none; }
 .bc-txt .chunky.short svg { fill: #ffd84d; }
-.odds { position: relative; list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.odds { position: relative; list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
 .odds li { background: rgb(255 255 255 / .16); border-radius: 10px; padding: 6px 2px 5px; text-align: center; font: 600 .72rem/1.2 var(--font-body); }
 .odds li b { display: block; font: 700 1.05rem/1.1 var(--font-display); }
 .odds li i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; background: var(--rc); box-shadow: 0 0 0 1.5px #fff; vertical-align: 0; }
@@ -855,6 +897,13 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
 .skin.r-legendary::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
   background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / .45) 50%, transparent 65%) -200% 0/250% 100% no-repeat; animation: cardShine 3.4s ease-in-out infinite; }
 @keyframes cardShine { 0%, 55% { background-position: 200% 0; } 100% { background-position: -100% 0; } }
+.skin.r-mythic { border-color: transparent; background: linear-gradient(var(--bg), var(--bg)) padding-box, conic-gradient(from var(--spin, 0deg), #ff3fa4, #ffd24a, #6bd6ff, #b46bff, #ff3fa4) border-box;
+  box-shadow: 0 0 22px -4px #ff3fa4, 0 6px 16px -8px var(--shadow); animation: mythSpin 4s linear infinite; }
+@property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes mythSpin { to { --spin: 360deg; } }
+.skin.r-mythic .rar-tag, .rar-chip.r-mythic { background: linear-gradient(90deg, #ff3fa4, #ffb13a, #6bd6ff, #b46bff); color: #fff; text-shadow: 0 1px 0 rgb(0 0 0 / .25); }
+.skin.r-mythic::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / .5) 50%, transparent 65%) -200% 0/250% 100% no-repeat; animation: cardShine 2.6s ease-in-out infinite; }
 .skin.r-epic { box-shadow: 0 0 0 1px color-mix(in srgb, var(--rc) 40%, transparent), 0 8px 22px -10px var(--rc); }
 .skin.locked .mini { filter: saturate(.85); }
 .skin .lockline { display: inline-flex; justify-content: center; align-items: center; gap: 5px; padding: 10px 6px; border-radius: 12px; border: 2px dashed color-mix(in srgb, var(--muted) 55%, transparent);
@@ -909,6 +958,7 @@ html.on-home .top3 { padding-top: min(12px, 1.4svh); }
   font: 600 1rem/1 var(--font-display); display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
 .bo-btn svg { width: 15px; height: 15px; fill: var(--star); }
 .bo-btn:disabled { opacity: .45; cursor: default; }
+.box-ov[data-r="mythic"] { --rc: var(--r-mythic); } .box-ov[data-r="mythic"] .bo-rays { background: repeating-conic-gradient(from 0deg, #ff6ec7aa 0 6deg, transparent 6deg 12deg, #ffd24aaa 12deg 18deg, transparent 18deg 24deg, #6bd6ffaa 24deg 30deg, transparent 30deg 36deg); }
 .box-ov[data-r="rare"] { --rc: var(--r-rare); } .box-ov[data-r="epic"] { --rc: var(--r-epic); } .box-ov[data-r="legendary"] { --rc: var(--r-legendary); } .box-ov[data-r="common"] { --rc: #c9d3dd; }
 /* Taps on Epic and Legendary cats send out a little burst. */
 .bp { position: fixed; z-index: 30; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; pointer-events: none; border-radius: 50%; background: var(--c);
@@ -1580,6 +1630,104 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
         <circle cx="24" r="1.6"><animate attributeName="cy" values="96;44" dur="2.2s" begin="1.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="2.2s" begin="1.2s" repeatCount="indefinite"/></circle>
       </g>
     </symbol>
+    <!-- ===== Mythic and new high-detail looks ===== -->
+    <linearGradient id="g-flame" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#b81d12"/><stop offset=".45" stop-color="#ff6a1a"/><stop offset=".8" stop-color="#ffc23a"/><stop offset="1" stop-color="#fff1a0"/>
+      <animate attributeName="y1" values="1;.85;1" dur="1.6s" repeatCount="indefinite"/></linearGradient>
+    <linearGradient id="g-flameb" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#1c2a8f"/><stop offset=".45" stop-color="#2f8dff"/><stop offset=".8" stop-color="#7fe3ff"/><stop offset="1" stop-color="#e8fbff"/>
+      <animate attributeName="y1" values="1;.85;1" dur="1.6s" repeatCount="indefinite"/></linearGradient>
+    <pattern id="p-flame" patternUnits="userSpaceOnUse" width="100" height="100"><rect width="100" height="100" fill="url(#g-flame)"/>
+      <path d="M14 96 Q10 70 22 58 Q20 74 30 80 Q28 60 40 48 Q38 66 50 74 Q50 56 62 46 Q60 66 70 76 Q72 60 82 56 Q90 72 86 96Z" fill="#fff3b0" opacity=".28"/></pattern>
+    <pattern id="p-flameb" patternUnits="userSpaceOnUse" width="100" height="100"><rect width="100" height="100" fill="url(#g-flameb)"/>
+      <path d="M14 96 Q10 70 22 58 Q20 74 30 80 Q28 60 40 48 Q38 66 50 74 Q50 56 62 46 Q60 66 70 76 Q72 60 82 56 Q90 72 86 96Z" fill="#e8fbff" opacity=".28"/></pattern>
+    <!-- Cut-gem facets for Crystal -->
+    <pattern id="p-facet" patternUnits="userSpaceOnUse" width="100" height="100">
+      <g stroke="#fff" stroke-width=".7" stroke-opacity=".7">
+        <path d="M0 20 L22 0 L44 18 Z" fill="#fff" fill-opacity=".38"/><path d="M44 18 L22 0 L70 0 Z" fill="#fff" fill-opacity=".14"/><path d="M44 18 L70 0 L100 22 Z" fill="#000" fill-opacity=".08"/>
+        <path d="M0 20 L44 18 L18 46 Z" fill="#fff" fill-opacity=".2"/><path d="M44 18 L100 22 L72 44 Z" fill="#fff" fill-opacity=".3"/><path d="M44 18 L72 44 L18 46 Z" fill="#000" fill-opacity=".05"/>
+        <path d="M0 20 L18 46 L0 70 Z" fill="#000" fill-opacity=".1"/><path d="M100 22 L100 70 L72 44 Z" fill="#000" fill-opacity=".12"/>
+        <path d="M18 46 L72 44 L48 74 Z" fill="#fff" fill-opacity=".22"/><path d="M18 46 L48 74 L0 70 Z" fill="#fff" fill-opacity=".1"/><path d="M72 44 L100 70 L48 74 Z" fill="#fff" fill-opacity=".16"/>
+        <path d="M0 70 L48 74 L22 100 Z" fill="#000" fill-opacity=".12"/><path d="M48 74 L100 70 L78 100 Z" fill="#000" fill-opacity=".1"/><path d="M22 100 L48 74 L78 100 Z" fill="#fff" fill-opacity=".26"/>
+      </g>
+    </pattern>
+    <pattern id="p-bee" patternUnits="userSpaceOnUse" width="100" height="100">
+      <g fill="#2a1d14" opacity=".7"><path d="M8 72 Q50 64 92 72 L90 79 Q50 71 10 79Z"/><path d="M18 86 Q50 80 82 86 L78 92 Q50 87 22 92Z"/><path d="M26 22 Q50 15 74 22 L72 28 Q50 22 28 28Z"/><path d="M8 40 Q14 38 20 41 L18 46 Q13 44 8 46Z"/><path d="M92 40 Q86 38 80 41 L82 46 Q87 44 92 46Z"/></g>
+    </pattern>
+    <symbol id="acc-phoenix" viewBox="0 0 100 100" overflow="visible">
+      <g filter="url(#acc-drop)">
+        <g style="fill: var(--fw1, #ff7a1a)" stroke="#7a1a08" stroke-width=".8" stroke-linejoin="round">
+          <path d="M8 58 Q-12 40 -6 18 Q2 30 8 30 Q0 20 4 6 Q12 22 16 26 Q14 14 20 6 Q22 26 24 40 Q16 50 8 58Z"/>
+          <path d="M92 58 Q112 40 106 18 Q98 30 92 30 Q100 20 96 6 Q88 22 84 26 Q86 14 80 6 Q78 26 76 40 Q84 50 92 58Z"/>
+        </g>
+        <path d="M2 22 Q10 34 14 40 M10 12 Q14 26 18 34 M98 22 Q90 34 86 40 M90 12 Q86 26 82 34" fill="none" style="stroke: var(--fw2, #ffd24a)" stroke-width="1.6" stroke-linecap="round"/>
+        <g style="fill: var(--fw2, #ffd24a)" stroke="#7a1a08" stroke-width=".8" stroke-linejoin="round">
+          <path d="M50 24 Q40 12 44 -6 Q48 6 50 8 Q52 -2 58 -10 Q56 8 60 16 Q58 22 50 24Z">
+            <animateTransform attributeName="transform" type="skewX" values="0;-4;0;4;0" dur="1.4s" repeatCount="indefinite"/>
+          </path>
+          <path d="M42 22 Q32 14 32 2 Q38 12 44 14Z"/><path d="M58 22 Q68 14 70 4 Q62 12 56 14Z"/>
+        </g>
+        <path d="M50 22 Q46 12 49 2" fill="none" stroke="#fff6c8" stroke-width="1.4" stroke-linecap="round" opacity=".9"/>
+      </g>
+    </symbol>
+    <symbol id="acc-tiara" viewBox="0 0 100 100" overflow="visible">
+      <g filter="url(#acc-drop)">
+        <path d="M30 24 Q50 14 70 24" fill="none" stroke="#e9f2ff" stroke-width="3" stroke-linecap="round"/>
+        <path d="M30 24 Q50 14 70 24" fill="none" stroke="#9fb3d6" stroke-width="1" stroke-linecap="round" transform="translate(0 1.4)"/>
+        <g style="fill: var(--gem, #ff7ac0)" stroke="#fff" stroke-width=".9" stroke-linejoin="round">
+          <path d="M50 1 L56 10 L50 20 L44 10Z"/><path d="M38 9 L42 15 L38 22 L34 15Z"/><path d="M62 9 L66 15 L62 22 L58 15Z"/>
+        </g>
+        <path d="M50 1 L52 10 L50 20 M44 10 H56" stroke="#fff" stroke-width=".6" opacity=".8"/>
+        <circle cx="30" cy="24" r="2" fill="#e9f2ff"/><circle cx="70" cy="24" r="2" fill="#e9f2ff"/><circle cx="44" cy="19" r="1.3" fill="#fff"/><circle cx="56" cy="19" r="1.3" fill="#fff"/>
+        <use href="#spark4" transform="translate(54 4) scale(2.6)" fill="#fff"><animate attributeName="opacity" values="0;1;0;0" dur="1.8s" repeatCount="indefinite"/></use>
+      </g>
+    </symbol>
+    <symbol id="acc-kabuto" viewBox="0 0 100 100" overflow="visible">
+      <g filter="url(#acc-drop)">
+        <path d="M20 30 Q20 6 50 4 Q80 6 80 30 Q66 24 50 24 Q34 24 20 30Z" fill="#1d2233" stroke="#05070d" stroke-width="1"/>
+        <path d="M20 30 Q20 6 50 4 Q80 6 80 30 Q66 24 50 24 Q34 24 20 30Z" fill="url(#acc-vol)"/>
+        <g stroke="#c9a24a" stroke-width="1" fill="none" opacity=".8"><path d="M28 22 Q50 10 72 22"/><path d="M24 26 Q50 14 76 26"/><path d="M50 5 V24"/></g>
+        <path d="M14 30 Q8 40 12 50 L22 38 Q20 32 22 28Z M86 30 Q92 40 88 50 L78 38 Q80 32 78 28Z" fill="#b3202a" stroke="#5e0d14" stroke-width=".9"/>
+        <path d="M14 30 Q8 40 12 50 L22 38 Q20 32 22 28Z M86 30 Q92 40 88 50 L78 38 Q80 32 78 28Z" fill="url(#acc-vol)"/>
+        <path d="M50 16 Q34 6 30 -14 Q42 -2 50 6 Q58 -2 70 -14 Q66 6 50 16Z" fill="#ffd34d" stroke="#8a6210" stroke-width="1" stroke-linejoin="round"/>
+        <path d="M50 16 Q34 6 30 -14 Q42 -2 50 6 Q58 -2 70 -14 Q66 6 50 16Z" fill="url(#acc-vol)"/>
+        <circle cx="50" cy="16" r="3.6" fill="#b3202a" stroke="#8a6210" stroke-width="1"/>
+        <path d="M30 88 Q50 98 70 88" fill="none" stroke="#b3202a" stroke-width="4" stroke-linecap="round"/>
+        <path d="M46 92 l-6 8 M54 92 l6 8" stroke="#b3202a" stroke-width="2.4" stroke-linecap="round"/>
+      </g>
+    </symbol>
+    <symbol id="acc-pirate" viewBox="0 0 100 100" overflow="visible">
+      <g filter="url(#acc-drop)">
+        <path d="M14 22 Q30 2 50 8 Q70 2 86 22 Q72 18 50 22 Q28 18 14 22Z" fill="#20181a" stroke="#000" stroke-width="1" stroke-linejoin="round"/>
+        <path d="M14 22 Q30 2 50 8 Q70 2 86 22 Q72 18 50 22 Q28 18 14 22Z" fill="url(#acc-vol)"/>
+        <path d="M14 22 Q30 2 50 8 Q70 2 86 22" fill="none" stroke="#e7b84a" stroke-width="1.6"/>
+        <circle cx="50" cy="13" r="3.6" fill="#f4efe6"/><path d="M48.4 12.4 h.1 M51.6 12.4 h.1" stroke="#20181a" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M44 17 L56 21 M56 17 L44 21" stroke="#f4efe6" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M62 36 Q70 44 84 52" fill="none" stroke="#20181a" stroke-width="1.6"/>
+        <ellipse cx="67" cy="56" rx="8" ry="7" fill="#20181a" stroke="#000" stroke-width=".8"/><ellipse cx="67" cy="56" rx="8" ry="7" fill="url(#acc-vol)"/>
+        <path d="M38 52 Q50 50 59 54" fill="none" stroke="#20181a" stroke-width="1.6"/>
+        <circle cx="13" cy="40" r="3.4" fill="none" stroke="#ffd34d" stroke-width="1.6"/>
+      </g>
+    </symbol>
+    <symbol id="acc-icecream" viewBox="0 0 100 100" overflow="visible">
+      <g filter="url(#acc-drop)">
+        <path d="M30 22 Q28 6 42 4 Q50 -6 60 4 Q72 6 70 22 Q66 26 62 24 Q60 30 56 26 Q52 32 48 26 Q44 30 40 25 Q34 28 30 22Z" fill="#ffb3cf" stroke="#c9577f" stroke-width="1"/>
+        <path d="M30 22 Q28 6 42 4 Q50 -6 60 4 Q72 6 70 22 Q66 26 62 24 Q60 30 56 26 Q52 32 48 26 Q44 30 40 25 Q34 28 30 22Z" fill="url(#acc-vol)"/>
+        <path d="M38 6 Q36 -10 50 -12 Q64 -10 62 6 Q56 10 50 8 Q44 10 38 6Z" fill="#a8ecd0" stroke="#3f9e7a" stroke-width="1"/>
+        <path d="M38 6 Q36 -10 50 -12 Q64 -10 62 6 Q56 10 50 8 Q44 10 38 6Z" fill="url(#acc-vol)"/>
+        <g stroke-width="1.6" stroke-linecap="round"><path d="M40 14 l3 -1" stroke="#ffd34d"/><path d="M52 18 l2 2" stroke="#6bc7ff"/><path d="M60 12 l3 1" stroke="#7fd65a"/><path d="M46 0 l2 -2" stroke="#ff6b6b"/><path d="M56 -4 l-1 2.5" stroke="#ffd34d"/><path d="M36 20 l2 1" stroke="#c49bff"/><path d="M64 20 l-2 1" stroke="#ffd34d"/></g>
+        <circle cx="50" cy="-15" r="4.2" fill="#e5243b" stroke="#8a0f1e" stroke-width=".9"/><circle cx="50" cy="-15" r="4.2" fill="url(#acc-vol)"/>
+        <path d="M50 -19 Q52 -25 57 -27" fill="none" stroke="#3f6b22" stroke-width="1.2" stroke-linecap="round"/>
+      </g>
+    </symbol>
+    <symbol id="acc-beeband" viewBox="0 0 100 100" overflow="visible">
+      <g filter="url(#acc-drop)">
+        <path d="M40 14 Q36 4 30 0 M60 14 Q64 4 70 0" fill="none" stroke="#2a1d14" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="30" cy="0" r="3.4" fill="#2a1d14"/><circle cx="70" cy="0" r="3.4" fill="#2a1d14"/>
+        <g fill="#e6f7ff" fill-opacity=".75" stroke="#9cc6e0" stroke-width="1">
+          <ellipse cx="4" cy="50" rx="9" ry="14" transform="rotate(-25 4 50)"><animate attributeName="ry" values="14;11;14" dur=".35s" repeatCount="indefinite"/></ellipse>
+          <ellipse cx="96" cy="50" rx="9" ry="14" transform="rotate(25 96 50)"><animate attributeName="ry" values="14;11;14" dur=".35s" repeatCount="indefinite"/></ellipse>
+        </g>
+      </g>
+    </symbol>
     <!-- Sunny: the orange tabby (the "sun" piece) -->
     <symbol id="sun" viewBox="0 0 100 100" overflow="visible">
       <g style="display: var(--fx-aura, none); fill: var(--aura, #ffd95a)"><circle cx="50" cy="52" r="52" opacity=".1"/><circle cx="50" cy="52" r="45" opacity=".14"/><circle cx="50" cy="52" r="38" opacity=".18"/><animate attributeName="opacity" values=".55;1;.55" dur="2.4s" repeatCount="indefinite"/></g>
@@ -1627,6 +1775,12 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       <use href="#acc-planet" width="100" height="100" style="display: var(--acc-planet, none)"/>
       <use href="#acc-halo" width="100" height="100" style="display: var(--acc-halo, none)"/>
       <use href="#acc-helmet" width="100" height="100" style="display: var(--acc-helmet, none)"/>
+      <use href="#acc-phoenix" width="100" height="100" style="display: var(--acc-phoenix, none)"/>
+      <use href="#acc-tiara" width="100" height="100" style="display: var(--acc-tiara, none)"/>
+      <use href="#acc-kabuto" width="100" height="100" style="display: var(--acc-kabuto, none)"/>
+      <use href="#acc-pirate" width="100" height="100" style="display: var(--acc-pirate, none)"/>
+      <use href="#acc-icecream" width="100" height="100" style="display: var(--acc-icecream, none)"/>
+      <use href="#acc-beeband" width="100" height="100" style="display: var(--acc-beeband, none)"/>
       <use href="#fx-twinkle" width="100" height="100" style="display: var(--fx-twinkle, none)"/>
       <use href="#fx-float" width="100" height="100" style="display: var(--fx-float, none)"/>
     </symbol>
@@ -1677,6 +1831,12 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
       <use href="#acc-planet" width="100" height="100" style="display: var(--acc-planet, none)"/>
       <use href="#acc-halo" width="100" height="100" style="display: var(--acc-halo, none)"/>
       <use href="#acc-helmet" width="100" height="100" style="display: var(--acc-helmet, none)"/>
+      <use href="#acc-phoenix" width="100" height="100" style="display: var(--acc-phoenix, none); --fw1: var(--fw1m, #3aa0ff); --fw2: var(--fw2m, #bff4ff)"/>
+      <use href="#acc-tiara" width="100" height="100" style="display: var(--acc-tiara, none); --gem: #7fa8ff"/>
+      <use href="#acc-kabuto" width="100" height="100" style="display: var(--acc-kabuto, none)"/>
+      <use href="#acc-pirate" width="100" height="100" style="display: var(--acc-pirate, none)"/>
+      <use href="#acc-icecream" width="100" height="100" style="display: var(--acc-icecream, none)"/>
+      <use href="#acc-beeband" width="100" height="100" style="display: var(--acc-beeband, none)"/>
       <use href="#fx-twinkle" width="100" height="100" style="display: var(--fx-twinkle, none)"/>
       <use href="#fx-float" width="100" height="100" style="display: var(--fx-float, none)"/>
     </symbol>
@@ -2023,14 +2183,20 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     { id: "tiger", name: "Little Tiger", tag: "Bold stripes", r: "rare", v: { "eye2-base": "initial", muted: "#94684a", bg: "#fff0dc", surface: "#fffcf6", cell: "#fff4e6", ink: "#4a2610", accent: "#ef7d1f", "on-accent": "#ffffff", line: "#f0d2ab", sun: "#ef7d1f", "sun-core": "#ffab4a", moon: "#eef0f4", alt: "#3a7bd5" } },
     { id: "tux", name: "Gentlecat", tag: "Top hat and bow tie", r: "rare", v: { "eye2-base": "initial", muted: "#6f6a72", bg: "#efece7", surface: "#fbfaf8", cell: "#f6f4f0", ink: "#1e1d24", accent: "#2f2d38", "on-accent": "#ffffff", line: "#d8d2c8", sun: "#2f2d38", "sun-core": "#f3efe8", moon: "#e9e6ea", alt: "#c9a24a" } },
     { id: "cow", name: "Moo Moo", tag: "Spots and a cowbell", r: "rare", v: { "eye2-base": "initial", muted: "#5d7489", bg: "#e6f3fd", surface: "#fbfdff", cell: "#f0f7fd", ink: "#1f3346", accent: "#3e94d8", "on-accent": "#ffffff", line: "#c6dcee", sun: "#e88aa0", "sun-core": "#fff3ee", moon: "#f2f2f4", alt: "#7cc46a" } },
+    { id: "bee", name: "Busy Bee", tag: "Stripes and fluttering wings", r: "rare", v: { "eye2-base": "initial", muted: "#8a7444", bg: "#fff6d6", surface: "#fffdf4", cell: "#fff7de", ink: "#3e2c12", accent: "#e8a40e", "on-accent": "#ffffff", line: "#f0dc95", sun: "#f2b01e", "sun-core": "#ffd23a", moon: "#c9d6e6", alt: "#7fb7e8" } },
     { id: "arcade", name: "Neon Arcade", tag: "Neon glow", r: "epic", burst: { sh: "spark", c: ["#ff4fbf", "#44e8ff", "#fff3a6"] }, v: { "eye2-base": "initial", muted: "#b9a8de", bg: "#0a0712", surface: "#151024", cell: "#1b142e", ink: "#f7f0ff", accent: "#ff4fbf", "on-accent": "#0a0712", line: "#3d2c66", sun: "#ffd23a", "sun-core": "#fff09a", moon: "#44e8ff" } },
     { id: "galaxy", name: "Cosmic", tag: "Fur full of stars", r: "epic", burst: { sh: "star", c: ["#fff3c9", "#ff6ec7", "#4fd6ff"] }, v: { "eye2-base": "initial", muted: "#aaa4dc", bg: "#0b0a24", surface: "#16143c", cell: "#1d1a4a", ink: "#f2efff", accent: "#ff6ec7", "on-accent": "#16143c", line: "#3a3480", sun: "#ff9d6b", "sun-core": "#ffc79a", moon: "#9fb0ff", alt: "#4fd6ff" } },
     { id: "witch", name: "Little Witch", tag: "Hat, sparks and a black cat", r: "epic", burst: { sh: "star", c: ["#a8f07a", "#c9a2ff", "#ffd84d"] }, v: { "eye2-base": "initial", muted: "#b3a5d6", bg: "#1a1230", surface: "#241a3e", cell: "#2b2049", ink: "#f4ecff", accent: "#8fe05f", "on-accent": "#1a1230", line: "#463670", sun: "#f08a3a", "sun-core": "#ffb36b", moon: "#6b5d8a", alt: "#7fd65a" } },
     { id: "astro", name: "Space Cadet", tag: "Ready for liftoff", r: "epic", burst: { sh: "star", c: ["#ffb347", "#bfe3ff", "#ffffff"] }, v: { "eye2-base": "initial", muted: "#9db4d6", bg: "#0c1a33", surface: "#132544", cell: "#182d52", ink: "#eaf3ff", accent: "#ffb347", "on-accent": "#0c1a33", line: "#2d4a7e", sun: "#f2953f", "sun-core": "#ffcf8f", moon: "#c2d0e6", alt: "#ff8a5c" } },
     { id: "dragon", name: "Baby Dragon", tag: "Scales, horns, embers", r: "epic", burst: { sh: "dot", c: ["#ff9a3c", "#ffd84d", "#ff5a3c"] }, v: { "eye2-base": "initial", muted: "#4f7a69", bg: "#dff3ea", surface: "#f8fffb", cell: "#eaf8f1", ink: "#123a2d", accent: "#1f9e7a", "on-accent": "#ffffff", line: "#b6dfcb", sun: "#f0743a", "sun-core": "#ffa36b", moon: "#5fbfa0", alt: "#f0743a" } },
+    { id: "icecream", name: "Sundae", tag: "Two scoops and a cherry", r: "epic", burst: { sh: "dot", c: ["#ffd34d", "#6bc7ff", "#7fd65a", "#ff6b6b", "#c49bff"] }, v: { "eye2-base": "initial", muted: "#a07084", bg: "#fff1f6", surface: "#fffbfd", cell: "#fff3f8", ink: "#5a2a3e", accent: "#ff7aa8", "on-accent": "#ffffff", line: "#f6cadb", sun: "#f2a06b", "sun-core": "#ffd0a8", moon: "#9fe3c8", alt: "#5fc9a0" } },
     { id: "royal", name: "Royal Court", tag: "Crown, robe and gold", r: "legendary", burst: { sh: "star", c: ["#ffd84d", "#fff3c2", "#e5484d"] }, v: { "eye2-base": "initial", muted: "#c3b0e0", bg: "#1a0f2e", surface: "#241540", cell: "#2d1b4f", ink: "#fbf3ff", accent: "#f2c94c", "on-accent": "#241540", line: "#4a3277", sun: "#f0a43a", "sun-core": "#ffd98a", moon: "#c9b6ff" } },
     { id: "lucky", name: "Lucky Gold", tag: "Solid gold and silver", r: "legendary", burst: { sh: "coin", c: ["#ffd451"] }, v: { "eye2-base": "initial", muted: "#f0c0a6", bg: "#5a0d16", surface: "#701520", cell: "#7c1a26", ink: "#fff3dc", accent: "#ffcc3d", "on-accent": "#5a0d16", line: "#a33440", sun: "#f2b632", "sun-core": "#ffd451", moon: "#dfe6ee", alt: "#ffd84d" } },
-    { id: "celestial", name: "Celestial", tag: "Rainbow fur and a halo", r: "legendary", burst: { sh: "star", c: ["#ff8fd0", "#ffd08a", "#a8f59a", "#8ae2ff", "#c49bff"] }, v: { "eye2-base": "initial", muted: "#8a80b0", bg: "#f3efff", surface: "#fdfcff", cell: "#f7f3ff", ink: "#3a2d66", accent: "#a77bff", "on-accent": "#ffffff", line: "#dcd2f5", sun: "#ff8fd0", "sun-core": "#ffd9ef", moon: "#e6ecff", alt: "#8ae2ff" } }
+    { id: "celestial", name: "Celestial", tag: "Rainbow fur and a halo", r: "legendary", burst: { sh: "star", c: ["#ff8fd0", "#ffd08a", "#a8f59a", "#8ae2ff", "#c49bff"] }, v: { "eye2-base": "initial", muted: "#8a80b0", bg: "#f3efff", surface: "#fdfcff", cell: "#f7f3ff", ink: "#3a2d66", accent: "#a77bff", "on-accent": "#ffffff", line: "#dcd2f5", sun: "#ff8fd0", "sun-core": "#ffd9ef", moon: "#e6ecff", alt: "#8ae2ff" } },
+    { id: "samurai", name: "Samurai", tag: "Golden crest helmet", r: "legendary", burst: { sh: "dot", c: ["#ff9ec0", "#ffd6e0", "#ffd34d"] }, v: { "eye2-base": "initial", muted: "#d2a9a0", bg: "#160c0e", surface: "#241014", cell: "#2c1418", ink: "#fbefe6", accent: "#d8343f", "on-accent": "#ffffff", line: "#4d252b", sun: "#ef8a3a", "sun-core": "#ffb066", moon: "#9fb0c8", alt: "#ffd34d" } },
+    { id: "pirate", name: "Captain Whiskers", tag: "Tricorn, eyepatch, gold", r: "legendary", burst: { sh: "coin", c: ["#ffd451"] }, v: { "eye2-base": "initial", muted: "#b6c9c4", bg: "#0f2a33", surface: "#163640", cell: "#1b3f4a", ink: "#f3ead8", accent: "#e7b84a", "on-accent": "#0f2a33", line: "#2f6270", sun: "#e8893a", "sun-core": "#ffb36b", moon: "#a9bccc", alt: "#e0583a" } },
+    { id: "phoenix", name: "Phoenix", tag: "Fire and ice wings", r: "mythic", burst: { sh: "dot", c: ["#ffd24a", "#ff7a1a", "#7fc4ff", "#fff1a0"] }, v: { "eye2-base": "initial", muted: "#e0a888", bg: "#1a0806", surface: "#2a0d09", cell: "#34110c", ink: "#fff1e0", accent: "#ff7a1a", "on-accent": "#1a0806", line: "#5a2418", sun: "#ff7a1a", "sun-core": "#ffb36b", moon: "#7fc4ff", alt: "#3aa0ff" } },
+    { id: "crystal", name: "Crystal", tag: "Cut-gem fur and a tiara", r: "mythic", burst: { sh: "star", c: ["#ffffff", "#ffa6d2", "#8fb0ff", "#d9c8ff"] }, v: { "eye2-base": "initial", muted: "#7a82b0", bg: "#eef3ff", surface: "#fbfcff", cell: "#f1f5ff", ink: "#2a2f5a", accent: "#6f7dff", "on-accent": "#ffffff", line: "#cfd9f4", sun: "#ff7ac0", "sun-core": "#ffa6d2", moon: "#8fb0ff", alt: "#ff7ac0" } }
   ];
   var $ = function (id) { return document.getElementById(id); };
   // In the phone app, Capacitor connects the game to native add-ons (ads, notifications, sharing).
@@ -2185,7 +2351,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     $("h-play-label").textContent = resume ? "Continue" : "Play";
     $("h-play-sub").textContent = "Level " + lv;
     // Progress toward the next Mystery Box, previewing the rarest look still to find (a different one each day).
-    var left = missing(), duo = $("g-duo"), rank = { legendary: 0, epic: 1, rare: 2, common: 3 };
+    var left = missing(), duo = $("g-duo"), rank = { mythic: -1, legendary: 0, epic: 1, rare: 2, common: 3 };
     left.sort(function (a, b) { return rank[a.r] - rank[b.r]; });
     var top = left.filter(function (s) { return s.r === (left[0] || {}).r; }), goal = top[dayKey() % (top.length || 1)];
     duo.style.cssText = "";
@@ -3274,12 +3440,13 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
      If 9 boxes in a row hold nothing Epic or better, the 10th is guaranteed to. */
   var RAR = {
     starter: { name: "Starter" },
-    common: { name: "Common", odds: 60, back: 5 },
+    common: { name: "Common", odds: 59, back: 5 },
     rare: { name: "Rare", odds: 27, back: 10 },
     epic: { name: "Epic", odds: 10, back: 20 },
-    legendary: { name: "Legendary", odds: 3, back: 40 }
+    legendary: { name: "Legendary", odds: 3, back: 40 },
+    mythic: { name: "Mythic", odds: 1, back: 80 }
   };
-  var TIERS = ["legendary", "epic", "rare", "common"], BOX = { price: 20, pity: 10 };
+  var TIERS = ["mythic", "legendary", "epic", "rare", "common"], BOX = { price: 20, pity: 10 };
   var STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#star"/></svg>';
   function skinOf(id) { return SKINS.filter(function (s) { return s.id === id; })[0] || SKINS[0]; }
   function ownsReal(id) { return save.owned.indexOf(id) >= 0; }
@@ -3324,7 +3491,7 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     // The chips are the base odds. The guarantee lifts Epic and Legendary, so the overall rates are stated too
     // (measured by running rollBox 200,000 times; update them if the odds or the guarantee change).
     $("bc-note").textContent = (toGo <= 1 ? "Next box is guaranteed Epic or better." : "Epic or better guaranteed within " + toGo + " boxes.") +
-      " Overall odds with this: 57%, 26%, 13%, 4%.";
+      " Overall odds with this: 56%, 26%, 13%, 4%, 1%.";
     $("coll-n").textContent = (SKINS.length - left.length) + "/" + SKINS.length;
     var box = $("skins"), built = !!box.firstChild;
     TIERS.forEach(function (r) {
@@ -3366,14 +3533,14 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
   /* Picks what is in a box and saves it straight away, so closing the app mid-animation can't lose or reroll it. */
   function rollBox() {
     var b = boxState(), pity = b.dry >= BOX.pity - 1;
-    var pool = (pity ? ["epic", "legendary"] : ["common", "rare", "epic", "legendary"]);
+    var pool = (pity ? ["epic", "legendary", "mythic"] : ["common", "rare", "epic", "legendary", "mythic"]);
     var draw = pool, tot = 0, x, r = draw[draw.length - 1];
     draw.forEach(function (k) { tot += RAR[k].odds; });
     x = Math.random() * tot;
     for (var i = 0; i < draw.length; i++) { x -= RAR[draw[i]].odds; if (x < 0) { r = draw[i]; break; } }
     var all = SKINS.filter(function (s) { return s.r === r; }), fresh = all.filter(function (s) { return !ownsReal(s.id); });
     var from = fresh.length ? fresh : all, pick = from[Math.floor(Math.random() * from.length)], dup = !fresh.length;
-    b.n++; b.dry = r === "epic" || r === "legendary" ? 0 : b.dry + 1;
+    b.n++; b.dry = r === "common" || r === "rare" ? b.dry + 1 : 0;
     if (dup) save.wallet += RAR[r].back; else save.owned.push(pick.id);
     persist(true);
     return { s: pick, r: r, dup: dup, back: dup ? RAR[r].back : 0 };
@@ -3397,10 +3564,11 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     if (!r || ov.dataset.stage !== "box") return;
     ov.dataset.stage = "shake";
     // Longer shakes for better finds; the glow turns the rarity's color part way through.
-    var shake = { common: 900, rare: 1200, epic: 1600, legendary: 2100 }[r], tick = 0;
+    var shake = { common: 900, rare: 1200, epic: 1600, legendary: 2100, mythic: 2700 }[r], tick = 0;
     var knock = setInterval(function () { Audio.sfx("tap"); if (++tick > shake / 360) clearInterval(knock); }, 360);
     boxT.push(knock);
-    boxT.push(setTimeout(function () { ov.dataset.r = r === "legendary" ? "epic" : r; }, shake * .45));
+    boxT.push(setTimeout(function () { ov.dataset.r = r === "legendary" || r === "mythic" ? "epic" : r; }, shake * .45));
+    if (r === "mythic") boxT.push(setTimeout(function () { ov.dataset.r = "legendary"; }, shake * .65));
     boxT.push(setTimeout(function () { ov.dataset.r = r; }, shake * .8));
     boxT.push(setTimeout(function () { ov.dataset.stage = "open"; Audio.sfx("coin"); }, shake));
     boxT.push(setTimeout(reveal, shake + 420));
@@ -3419,11 +3587,12 @@ html.on-game .board-wrap:has(.board.solved) { box-shadow: 0 0 0 3px var(--star),
     again.disabled = !left || save.wallet < BOX.price;
     again.innerHTML = left ? "Again " + STAR + BOX.price : "All found!";
     card.hidden = false;
-    var good = s.r === "epic" || s.r === "legendary";
+    var good = s.r === "epic" || s.r === "legendary" || s.r === "mythic", top = s.r === "legendary" || s.r === "mythic";
     Audio.sfx(good ? "win" : "star", 2);
     if (res.dup) setTimeout(function () { Audio.sfx("coin"); }, 500);
-    burst($("bo-cats"), { sh: s.r === "legendary" ? "coin" : "star", c: s.burst ? s.burst.c : ["#ffffff", "#ffe27a"] }, good ? 16 : 10, 1.6);
-    if (s.r === "legendary") boxT.push(setTimeout(function () { burst($("bo-cats"), s.burst, 18, 2.2); }, 350));
+    burst($("bo-cats"), { sh: top ? "coin" : "star", c: s.burst ? s.burst.c : ["#ffffff", "#ffe27a"] }, good ? 16 : 10, 1.6);
+    if (top) boxT.push(setTimeout(function () { burst($("bo-cats"), s.burst, 18, 2.2); }, 350));
+    if (s.r === "mythic") boxT.push(setTimeout(function () { burst($("bo-cats"), s.burst, 24, 2.8); }, 750));
     (res.dup ? $("bo-done") : $("bo-equip")).focus();
   }
   function closeBox() {
